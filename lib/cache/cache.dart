@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Cache {
+class CustomerCache {
   static SharedPreferences? _preferences;
 
   static const _keyUserLoggedIn = 'isLoggedIn';
@@ -8,6 +8,7 @@ class Cache {
   static const _keyUserName = 'userName';
   static const _keyUserEmail = 'userEmail';
   static const _keyUserCreatedAt = 'userCreatedAt';
+  static const _keyUserCompany = 'userCompany';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -37,6 +38,11 @@ class Cache {
 
   static String? getUserCreatedAt() =>
       _preferences?.getString(_keyUserCreatedAt);
+
+  static Future setCompanyId(String companyId) async =>
+      await _preferences?.setString(_keyUserCompany, companyId);
+
+  static String? getUserCompany() => _preferences?.getString(_keyUserCompany);
 
   Future<void> clearSharedPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

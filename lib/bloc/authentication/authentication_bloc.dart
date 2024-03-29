@@ -20,7 +20,7 @@ class AuthenticationBloc
 
     try {
       await FirebaseAuth.instance.signOut();
-      Cache().clearSharedPreferences();
+      CustomerCache().clearSharedPreferences();
       emit(LoggedOutOfSession());
     } catch (error) {
       emit(LoggingOutFailed());
@@ -90,11 +90,11 @@ class AuthenticationBloc
   }
 
   Future<void> _cacheUserData(User user) async {
-    await Cache.setUserLoggedIn(true);
-    await Cache.setUserId(user.uid);
-    await Cache.setUserName(user.displayName ?? '');
-    await Cache.setUserEmail(user.email ?? '');
-    await Cache.setUserCreatedAt(DateTime.now().toString());
+    await CustomerCache.setUserLoggedIn(true);
+    await CustomerCache.setUserId(user.uid);
+    await CustomerCache.setUserName(user.displayName ?? '');
+    await CustomerCache.setUserEmail(user.email ?? '');
+    await CustomerCache.setUserCreatedAt(DateTime.now().toString());
   }
 
   String _handleFirebaseAuthError(FirebaseAuthException e) {

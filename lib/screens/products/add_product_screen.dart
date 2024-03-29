@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -15,6 +14,7 @@ import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
+import 'package:saasify/utils/responsive_form.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 import '../../bloc/product/product_event.dart';
 import '../../configs/app_spacing.dart';
@@ -54,7 +54,8 @@ class AddProductScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is CategoriesFetched) {
                 categories = state.categories;
-                return _buildForm(context, state.imagePath);
+                return SingleChildScrollView(
+                    child: _buildForm(context, state.imagePath));
               } else if (state is CategoriesNotFetched) {
                 return Center(child: Text(state.errorMessage));
               } else {
@@ -176,93 +177,67 @@ class AddProductScreen extends StatelessWidget {
   }
 
   Widget _buildForm(BuildContext context, String imagePath) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final isTablet = constraints.maxWidth >= 600;
-      final isMobile = constraints.maxWidth < 600;
-      const isWeb = kIsWeb;
-      int widgetsPerRow = isTablet
-          ? 2
-          : isMobile
-              ? 1
-              : isWeb
-                  ? 3
-                  : 1;
-      List<Widget> formWidgets = [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Category',
-                style: Theme.of(context).textTheme.fieldLabelTextStyle),
-            const SizedBox(height: spacingSmall),
-            DropdownButtonHideUnderline(
-              child: DropdownButtonFormField<String>(
-                value: context.read<CategoryBloc>().selectedCategory,
-                hint: const Text("Select an item"),
-                items: categories.map((category) {
-                  return DropdownMenuItem<String>(
-                    value: category.categoryId,
-                    child: Text(category.name),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  context.read<CategoryBloc>().selectedCategory = newValue!;
-                },
-              ),
+    List<Widget> formWidgets = [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Category',
+              style: Theme.of(context).textTheme.fieldLabelTextStyle),
+          const SizedBox(height: spacingSmall),
+          DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<String>(
+              value: context.read<CategoryBloc>().selectedCategory,
+              hint: const Text("Select an item"),
+              items: categories.map((category) {
+                return DropdownMenuItem<String>(
+                  value: category.categoryId,
+                  child: Text(category.name),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                context.read<CategoryBloc>().selectedCategory = newValue!;
+              },
             ),
-          ],
-        ),
-        LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.drive_file_rename_outline),
-          label: 'Name',
-          isRequired: true,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'This field is required';
-            }
-            return null;
-          },
-          textFieldController: _nameController,
-        ),
-        LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.description),
-          label: 'Description',
-          textFieldController: _descriptionController,
-        ),
-        LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.supervisor_account),
-          label: 'Supplier',
-          textFieldController: _supplierController,
-        ),
-        LabelAndTextFieldWidget(
-            prefixIcon: const Icon(Icons.attach_money),
-            label: 'Tax',
-            keyboardType: TextInputType.number,
-            textFieldController: _taxController),
-        LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.local_shipping),
-          label: 'Minimum Stock Level',
-          keyboardType: TextInputType.number,
-          textFieldController: _minStockLevelController,
-        )
-      ];
-
-      List<Widget> rows = [];
-      for (int i = 0; i < formWidgets.length; i += widgetsPerRow) {
-        List<Widget> rowChildren = [];
-        for (int j = 0; j < widgetsPerRow && i + j < formWidgets.length; j++) {
-          rowChildren.add(Expanded(child: formWidgets[i + j]));
-          if (j < widgetsPerRow - 1) {
-            rowChildren.add(const SizedBox(width: spacingStandard));
+          ),
+        ],
+      ),
+      LabelAndTextFieldWidget(
+        prefixIcon: const Icon(Icons.drive_file_rename_outline),
+        label: 'Name',
+        isRequired: true,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'This field is required';
           }
-        }
-        rows.add(Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: rowChildren,
-        ));
-        rows.add(const SizedBox(height: spacingStandard));
-      }
+          return null;
+        },
+        textFieldController: _nameController,
+      ),
+      LabelAndTextFieldWidget(
+        prefixIcon: const Icon(Icons.description),
+        label: 'Description',
+        textFieldController: _descriptionController,
+      ),
+      LabelAndTextFieldWidget(
+        prefixIcon: const Icon(Icons.supervisor_account),
+        label: 'Supplier',
+        textFieldController: _supplierController,
+      ),
+      LabelAndTextFieldWidget(
+          prefixIcon: const Icon(Icons.attach_money),
+          label: 'Tax',
+          keyboardType: TextInputType.number,
+          textFieldController: _taxController),
+      LabelAndTextFieldWidget(
+        prefixIcon: const Icon(Icons.local_shipping),
+        label: 'Minimum Stock Level',
+        keyboardType: TextInputType.number,
+        textFieldController: _minStockLevelController,
+      )
+    ];
 
-      return AddProductSection(rows: rows, categories: categories);
-    });
+    return ResponsiveForm(
+        formWidgets: formWidgets,
+        widget: AddProductSection(categories: categories));
   }
 }

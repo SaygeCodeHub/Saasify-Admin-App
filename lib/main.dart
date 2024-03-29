@@ -18,7 +18,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await Cache.init();
+  await CustomerCache.init();
   runApp(const MyApp());
 }
 
@@ -60,6 +60,6 @@ class MyApp extends StatelessWidget {
 }
 
 Future<Widget> getInitialScreen() async {
-  final isLoggedIn = Cache.getUserLoggedIn() ?? false;
+  final isLoggedIn = CustomerCache.getUserLoggedIn() ?? false;
   return isLoggedIn ? const HomeScreen() : AuthenticationScreen();
 }

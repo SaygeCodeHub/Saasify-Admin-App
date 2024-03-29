@@ -19,9 +19,43 @@ class ViewCategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<CategoryBloc>().add(FetchCategories());
-    final categoriesBox = Hive.box<ProductCategories>('categories');
-    final ValueListenable<Box<ProductCategories>> listenableBox =
-        categoriesBox.listenable();
+    late final ValueListenable<Box<ProductCategories>> listenableBox;
+    if (kIsOfflineModule) {
+      final categoriesBox = Hive.box<ProductCategories>('categories');
+      listenableBox = categoriesBox.listenable();
+    }
+    final List<Map<String, String>> categories = [
+      {
+        'imagePath': 'assets/category1.jpg',
+        'description1': 'Spicy Corn',
+        'description2': 'Available',
+        'description3': 'Make it happend',
+      },
+      {
+        'imagePath': 'assets/category2.jpg',
+        'description1': 'Noodles',
+        'description2': 'Available',
+        'description3': 'Make it happend',
+      },
+      {
+        'imagePath': 'assets/category3.jpg',
+        'description1': 'Biryani',
+        'description2': 'Available',
+        'description3': 'Make it happend',
+      },
+      {
+        'imagePath': 'assets/category4.jpg',
+        'description1': 'Paasta',
+        'description2': 'Available',
+        'description3': 'Make it happend',
+      },
+      {
+        'imagePath': 'assets/category5.jpg',
+        'description1': 'Rice',
+        'description2': 'Available',
+        'description3': 'Make it happend',
+      },
+    ];
     var width = MediaQuery.of(context).size.width;
     int crossAxisCount = width > 600 ? 5 : 2;
     return SkeletonScreen(
@@ -89,43 +123,89 @@ class ViewCategoryScreen extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.all(spacingStandard),
                       child: GridView.builder(
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            mainAxisSpacing: 10.0,
-                            crossAxisSpacing: 16.0,
-                          ),
-                          itemCount: state.categories.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: AppColors.darkGrey, // Border color
-                                    width: 1.0 // Border width
+                        shrinkWrap: true,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 6,
+                          mainAxisSpacing: 10.0,
+                          crossAxisSpacing: 20,
+                          childAspectRatio: 0.95,
+                        ),
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          final category = categories[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  top: 44,
+                                  left: 0,
+                                  right: 0,
+                                  child: Material(
+                                    borderRadius:
+                                        BorderRadius.circular(spacingSmall),
+                                    elevation: 4,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(spacingSmall),
+                                      ),
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.all(spacingLarge),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(height: 60),
+                                            Text(
+                                              category['description1'] ?? '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .gridViewLabelTextStyle,
+                                            ),
+                                            Text(
+                                              category['description2'] ?? '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium,
+                                            ),
+                                            Text(
+                                              category['description3'] ?? '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                      height: 100,
-                                      width: 100,
-                                      child: Image.asset(
-                                          state.categories[index].imagePath ??
-                                              '',
-                                          fit: BoxFit.cover)),
-                                  const Divider(color: AppColors.darkGrey),
-                                  Text(state.categories[index].name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .gridViewLabelTextStyle),
-                                ],
-                              ),
-                            );
-                          }),
+                                  ),
+                                ),
+                                Positioned(
+                                  top:
+                                      0, // Adjust this value to overlap the previous card
+                                  left: 0,
+                                  right: 0,
+                                  child: Center(
+                                    child: ClipOval(
+                                      child: SizedBox(
+                                        height: 100,
+                                        width: 100,
+                                        child: Image.asset(
+                                          category['imagePath'] ?? '',
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     );
                   } else if (state is CategoriesNotFetched) {
                     return Center(child: Text(state.errorMessage));

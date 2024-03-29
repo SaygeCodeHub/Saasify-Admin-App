@@ -1,21 +1,16 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:saasify/bloc/category/category_bloc.dart';
-import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/screens/widgets/image_picker_widget.dart';
 
 class AddProductSection extends StatelessWidget {
-  final Uint8List? imageBytes;
   final List rows;
   final List<ProductCategories> categories;
+
   const AddProductSection(
-      {super.key,
-      required this.imageBytes,
-      required this.rows,
-      required this.categories});
+      {super.key, required this.rows, required this.categories});
+
+  static String image = '';
 
   @override
   Widget build(BuildContext context) {
@@ -26,38 +21,11 @@ class AddProductSection extends StatelessWidget {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(height: spacingStandard),
-              Text(
-                'Category Display Image',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: spacingStandard),
-              imageBytes != null
-                  ? Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.memory(imageBytes!, fit: BoxFit.cover),
-                    )
-                  : Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        border: Border.all(color: Colors.blue, width: 0.3),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          context
-                              .read<CategoryBloc>()
-                              .add(PickCategoryImage(categories: categories));
-                        },
-                        icon: const Icon(Icons.upload, color: Colors.grey),
-                      ),
-                    ),
+              ImagePickerWidget(
+                  onImagePicked: (String imagePath) {
+                    image = imagePath;
+                  },
+                  label: 'Product display image'),
               const SizedBox(height: spacingStandard),
               ...rows,
             ])));

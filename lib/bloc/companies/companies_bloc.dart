@@ -8,6 +8,7 @@ import 'package:saasify/bloc/companies/companies_event.dart';
 import 'package:saasify/bloc/companies/companies_state.dart';
 import 'package:saasify/models/user/user_details.dart';
 import 'package:saasify/utils/global.dart';
+import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   CompaniesState get initialState => CompaniesInitial();
@@ -19,7 +20,6 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   FutureOr<void> _addCompany(
       AddCompany event, Emitter<CompaniesState> emit) async {
     try {
-      emit(AddingCompany());
       if (kIsOfflineModule) {
         final newCompany = UserDetails(
           ownerName: event.companyDetailsMap['owner_name'] ?? '',
@@ -32,17 +32,18 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
         await companiesBox.add(newCompany);
         emit(CompanyAdded());
       } else {
+        emit(AddingCompany());
         FirebaseFirestore firestore = FirebaseFirestore.instance;
         User? user = FirebaseAuth.instance.currentUser;
         CollectionReference usersCollection = firestore.collection('users');
-        DocumentReference userDocRef = usersCollection
-            .doc(user?.uid); // Replace 'userId' with the actual user ID
+        DocumentReference userDocRef = usersCollection.doc(user?.uid);
         await userDocRef.collection('companies').add({
           'ownerUid': user?.uid,
           'ownerName': event.companyDetailsMap['owner_name'],
           'name': event.companyDetailsMap['company_name'],
           'einNumber': event.companyDetailsMap['einNumber'],
-          'logoUrl': event.companyDetailsMap['logoUrl'],
+          'logoUrl': await RetrieveImageFromFirebase()
+              .getImage(event.companyDetailsMap['logoUrl']),
           'address': event.companyDetailsMap['address'],
           'createdAt': FieldValue.serverTimestamp()
         });

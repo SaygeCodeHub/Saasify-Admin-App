@@ -1,10 +1,10 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
+import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/utils/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
@@ -15,27 +15,17 @@ import '../skeleton_screen.dart';
 import '../widgets/image_picker_widget.dart';
 import '../widgets/lable_and_textfield_widget.dart';
 
-class AddCategoryScreen extends StatefulWidget {
-  const AddCategoryScreen({super.key});
+class AddCategoryScreen extends StatelessWidget {
+  AddCategoryScreen({super.key});
 
-  @override
-  State<AddCategoryScreen> createState() => _AddCategoryScreenState();
-}
-
-class _AddCategoryScreenState extends State<AddCategoryScreen> {
   final TextEditingController textEditingController = TextEditingController();
-  Uint8List? _imageBytes;
+  static String _imagePath = '';
   final Map categoryMap = {};
   final formKey = GlobalKey<FormState>();
 
-  void _handleImagePicked(Uint8List imageBytes) {
-    setState(() {
-      _imageBytes = imageBytes;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    context.read<ImagePickerBloc>().imagePath = '';
     return SkeletonScreen(
         appBarTitle: 'Add Category',
         bodyContent: SingleChildScrollView(
@@ -47,8 +37,10 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
               children: [
                 ImagePickerWidget(
                   label: 'Category Display Image',
-                  initialImage: _imageBytes,
-                  onImagePicked: _handleImagePicked,
+                  initialImage: _imagePath,
+                  onImagePicked: (String imagePath) {
+                    _imagePath = imagePath;
+                  },
                 ),
                 const SizedBox(height: spacingHuge),
                 LabelAndTextFieldWidget(
@@ -101,7 +93,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                       if (kIsOfflineModule) {
                         final category = ProductCategories(
                             name: textEditingController.text,
-                            imageBytes: _imageBytes);
+                            imagePath: _imagePath);
                         final categoriesBox =
                             Hive.box<ProductCategories>('categories');
                         await categoriesBox.add(category).whenComplete(() {
@@ -110,7 +102,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                       } else {
                         categoryMap['category_name'] =
                             textEditingController.text;
-                        categoryMap['image'] = _imageBytes;
+                        categoryMap['image'] = _imagePath;
                         context
                             .read<CategoryBloc>()
                             .add(AddCategory(addCategoryMap: categoryMap));

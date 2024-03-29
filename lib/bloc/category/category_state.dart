@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:saasify/models/category/product_categories.dart';
 
 abstract class CategoryState {}
@@ -23,9 +22,9 @@ final class FetchingCategories extends CategoryState {}
 
 final class CategoriesFetched extends CategoryState {
   final List<ProductCategories> categories;
-  final Uint8List? imageBytes;
+  final String imagePath;
 
-  CategoriesFetched({this.imageBytes, required this.categories});
+  CategoriesFetched({this.imagePath = '', required this.categories});
 }
 
 final class CategoriesNotFetched extends CategoryState {

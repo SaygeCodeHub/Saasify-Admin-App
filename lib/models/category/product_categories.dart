@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:hive/hive.dart';
 
 import '../../hiveConfigs/hive_type_ids.dart';
@@ -11,15 +10,14 @@ class ProductCategories {
   final String name;
 
   @HiveField(1)
-  final Uint8List? imageBytes;
+  final String? imagePath;
 
   @HiveField(2)
   final String? categoryId;
 
-  ProductCategories(
-      {required this.name, this.imageBytes, this.categoryId = ''});
+  ProductCategories({required this.name, this.imagePath, this.categoryId = ''});
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'image_bytes': imageBytes, 'category_id': categoryId};
+    return {'name': name, 'image_path': imagePath, 'category_id': categoryId};
   }
 }

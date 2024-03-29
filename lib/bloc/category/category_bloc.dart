@@ -1,16 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/utils/global.dart';
+import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryState get initialState => CategoryInitial();
@@ -18,7 +16,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryBloc() : super(CategoryInitial()) {
     on<AddCategory>(_addCategory);
     on<FetchCategories>(_fetchCategories);
-    on<PickCategoryImage>(_pickImage);
   }
 
   String selectedCategory = '';
@@ -34,8 +31,10 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       String userId = user.uid;
       ProductCategories category = ProductCategories(
           name: event.addCategoryMap['category_name'],
-          imageBytes: event.addCategoryMap['image']);
+          imagePath: await RetrieveImageFromFirebase()
+              .getImage(event.addCategoryMap['image']));
       Map<String, dynamic> categoryData = category.toMap();
+      categoryData.remove('category_id');
       final usersRef =
           FirebaseFirestore.instance.collection('users').doc(userId);
       CollectionReference companiesRef = usersRef.collection('companies');
@@ -93,8 +92,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           ProductCategories category = ProductCategories(
               name: data['name'],
-              imageBytes:
-                  Uint8List.fromList(data['imageBytes'] ?? Uint8List(0)),
+              imagePath: data['image_path'] ?? '',
               categoryId: doc.id);
           categories.add(category);
         }
@@ -106,20 +104,5 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     } catch (e) {
       emit(CategoriesNotFetched(errorMessage: 'Error fetching categories: $e'));
     }
-  }
-
-  FutureOr<void> _pickImage(
-      PickCategoryImage event, Emitter<CategoryState> emit) async {
-    final ImagePicker picker = ImagePicker();
-    Uint8List? imageBytes;
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
-    );
-    if (image != null) {
-      imageBytes = File(image.path).readAsBytesSync();
-    }
-    emit(CategoriesFetched(
-        categories: event.categories, imageBytes: imageBytes));
   }
 }

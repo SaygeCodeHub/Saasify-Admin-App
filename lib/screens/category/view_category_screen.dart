@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show Uint8List, ValueListenable;
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
@@ -62,7 +62,7 @@ class ViewCategoryScreen extends StatelessWidget {
                                 SizedBox(
                                     height: 100,
                                     width: 100,
-                                    child: Image.memory(category.imageBytes!,
+                                    child: Image.asset(category.imagePath!,
                                         fit: BoxFit.cover)),
                                 const Divider(color: AppColors.darkGrey),
                                 Text(category.name,
@@ -113,9 +113,9 @@ class ViewCategoryScreen extends StatelessWidget {
                                   SizedBox(
                                       height: 100,
                                       width: 100,
-                                      child: Image.memory(
-                                          state.categories[index].imageBytes ??
-                                              Uint8List(0),
+                                      child: Image.asset(
+                                          state.categories[index].imagePath ??
+                                              '',
                                           fit: BoxFit.cover)),
                                   const Divider(color: AppColors.darkGrey),
                                   Text(state.categories[index].name,

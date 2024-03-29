@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
+import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_theme.dart';
@@ -14,6 +15,7 @@ import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/utils/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
+import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 import '../../bloc/product/product_event.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/category/product_categories.dart';
@@ -32,9 +34,16 @@ class AddProductScreen extends StatelessWidget {
   final TextEditingController _minStockLevelController =
       TextEditingController();
 
+  static String image = '';
+
+  getImage() async {
+    image = await RetrieveImageFromFirebase().getImage(AddProductSection.image);
+  }
+
   @override
   Widget build(BuildContext context) {
     context.read<CategoryBloc>().add(FetchCategories());
+    context.read<ImagePickerBloc>().imagePath = '';
     return SkeletonScreen(
         appBarTitle: 'Add Product',
         bodyContent: Form(
@@ -45,7 +54,7 @@ class AddProductScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is CategoriesFetched) {
                 categories = state.categories;
-                return _buildForm(context, state.imageBytes);
+                return _buildForm(context, state.imagePath);
               } else if (state is CategoriesNotFetched) {
                 return Center(child: Text(state.errorMessage));
               } else {
@@ -135,6 +144,7 @@ class AddProductScreen extends StatelessWidget {
                           .read<CategoryBloc>()
                           .selectedCategory
                           .isNotEmpty) {
+                        getImage();
                         context.read<ProductBloc>().add(AddProduct(
                             product: Products(
                               productId: 0,
@@ -142,7 +152,7 @@ class AddProductScreen extends StatelessWidget {
                               category:
                                   context.read<CategoryBloc>().selectedCategory,
                               description: _descriptionController.text,
-                              imageUrl: '',
+                              imageUrl: image,
                               supplier: _supplierController.text,
                               tax: double.tryParse(_taxController.text) ?? 0,
                               minStockLevel:
@@ -165,7 +175,7 @@ class AddProductScreen extends StatelessWidget {
         ]);
   }
 
-  Widget _buildForm(BuildContext context, Uint8List? imageBytes) {
+  Widget _buildForm(BuildContext context, String imagePath) {
     return LayoutBuilder(builder: (context, constraints) {
       final isTablet = constraints.maxWidth >= 600;
       final isMobile = constraints.maxWidth < 600;
@@ -252,8 +262,7 @@ class AddProductScreen extends StatelessWidget {
         rows.add(const SizedBox(height: spacingStandard));
       }
 
-      return AddProductSection(
-          imageBytes: imageBytes, rows: rows, categories: categories);
+      return AddProductSection(rows: rows, categories: categories);
     });
   }
 }

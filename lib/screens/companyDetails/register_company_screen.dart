@@ -1,11 +1,12 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/companies/companies_bloc.dart';
 import 'package:saasify/bloc/companies/companies_event.dart';
 import 'package:saasify/bloc/companies/companies_state.dart';
+import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/utils/custom_dialogs.dart';
+import 'package:saasify/utils/progress_bar.dart';
 import '../../../configs/app_spacing.dart';
 import '../skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
@@ -27,14 +28,11 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
   final TextEditingController identificationNumberController =
       TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  Uint8List? _imageBytes;
-
-  void _handleImagePicked(Uint8List imageBytes) {
-    setState(() => _imageBytes = imageBytes);
-  }
+  String _imagePath = '';
 
   @override
   Widget build(BuildContext context) {
+    context.read<ImagePickerBloc>().imagePath = '';
     return SkeletonScreen(
       appBarTitle: 'Add Company',
       bodyContent: SingleChildScrollView(
@@ -54,8 +52,10 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
       children: <Widget>[
         ImagePickerWidget(
             label: 'Company Logo',
-            initialImage: _imageBytes,
-            onImagePicked: _handleImagePicked),
+            initialImage: _imagePath,
+            onImagePicked: (String imagePath) {
+              _imagePath = imagePath;
+            }),
         const SizedBox(height: spacingHuge),
         buildTextField(ownerNameController, 'Owner Name', Icons.person, true),
         const SizedBox(height: spacingMedium),
@@ -76,8 +76,9 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
       BlocListener<CompaniesBloc, CompaniesState>(
         listener: (context, state) {
           if (state is AddingCompany) {
-            const CircularProgressIndicator();
+            ProgressBar.show(context);
           } else if (state is CompanyAdded) {
+            ProgressBar.dismiss(context);
             showDialog(
                 context: context,
                 builder: (context) {
@@ -89,6 +90,7 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
                               builder: (context) => const HomeScreen())));
                 });
           } else if (state is CompanyNotAdded) {
+            ProgressBar.dismiss(context);
             showDialog(
                 context: context,
                 builder: (context) {
@@ -107,7 +109,7 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
                     'company_name': companyNameController.text,
                     'einNumber': identificationNumberController.text,
                     'address': addressController.text,
-                    'logoUrl': _imageBytes
+                    'logoUrl': _imagePath
                   }));
             }
           },
@@ -115,6 +117,4 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
       ),
     ];
   }
-
-  Future<void> saveUserDetailsToLocalDatabase() async {}
 }

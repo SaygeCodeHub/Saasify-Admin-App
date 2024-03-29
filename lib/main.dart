@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/authentication/authentication_bloc.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/companies/companies_bloc.dart';
+import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/screens/authentication/auth/auth_web_screen.dart';
 import 'configs/app_theme.dart';
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(lazy: false, create: (context) => AuthenticationBloc()),
         BlocProvider(lazy: false, create: (context) => CategoryBloc()),
         BlocProvider(lazy: false, create: (context) => ProductBloc()),
-        BlocProvider(lazy: false, create: (context) => CompaniesBloc())
+        BlocProvider(lazy: false, create: (context) => CompaniesBloc()),
+        BlocProvider(lazy: false, create: (context) => ImagePickerBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

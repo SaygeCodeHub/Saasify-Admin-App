@@ -18,7 +18,7 @@ class ProductCategoriesAdapter extends TypeAdapter<ProductCategories> {
     };
     return ProductCategories(
       name: fields[0] as String,
-      imageBytes: fields[1] as Uint8List?,
+      imagePath: fields[1] as String?,
     );
   }
 
@@ -29,7 +29,7 @@ class ProductCategoriesAdapter extends TypeAdapter<ProductCategories> {
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.imageBytes);
+      ..write(obj.imagePath);
   }
 
   @override

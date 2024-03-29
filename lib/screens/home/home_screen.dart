@@ -87,7 +87,7 @@ class HomeScreen extends StatelessWidget {
                   GridItem(
                     icon: Icons.category_outlined,
                     label: 'Add New Category',
-                    screen: const AddCategoryScreen(),
+                    screen: AddCategoryScreen(),
                     color: cardColors[0],
                   ),
                   GridItem(

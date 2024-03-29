@@ -8,7 +8,7 @@ class RetrieveImageFromFirebase {
     String image = '';
     User? user = FirebaseAuth.instance.currentUser;
     final storageRef = FirebaseStorage.instance.ref();
-    final imagesRef = storageRef.child("user_images/${user?.uid}");
+    final imagesRef = storageRef.child("user_images/${user?.uid}/");
     final uploadTask = imagesRef.putFile(File(imagePath));
     final completedTask = await uploadTask;
     final downloadUrl = await completedTask.ref.getDownloadURL();

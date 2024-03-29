@@ -10,7 +10,7 @@ List<FeatureCardModel> features = [
   FeatureCardModel(
       icon: Icons.category_outlined,
       label: 'Add Category',
-      screen: const AddCategoryScreen()),
+      screen: AddCategoryScreen()),
   FeatureCardModel(
       icon: Icons.view_list_outlined,
       label: 'View Categories',

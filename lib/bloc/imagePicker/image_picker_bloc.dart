@@ -10,16 +10,10 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, ImagePickerState> {
   ImagePickerState get initialState => ImagePickerInitial();
 
   ImagePickerBloc() : super(ImagePickerInitial()) {
-    on<PickImageInitial>(_initialEvent);
     on<PickImage>(_pickImage);
   }
 
   String imagePath = '';
-
-  FutureOr<void> _initialEvent(
-      PickImageInitial event, Emitter<ImagePickerState> emit) {
-    imagePath = '';
-  }
 
   FutureOr<void> _pickImage(
       PickImage event, Emitter<ImagePickerState> emit) async {

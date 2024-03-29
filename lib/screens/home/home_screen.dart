@@ -70,14 +70,14 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const Padding(
-                padding: EdgeInsets.all(spacingMedium), // Add padding
+                padding: EdgeInsets.all(spacingMedium),
                 child: OpenTabsWidget(),
               ),
               const SizedBox(height: spacingLarge),
               const Padding(
-                padding: EdgeInsets.all(spacingMedium), // Add padding
+                padding: EdgeInsets.all(spacingMedium),
                 child: Text(
-                  'Here are some things that you can do', // New text
+                  'Here are some things that you can do',
                   style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -85,6 +85,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 padding: const EdgeInsets.all(spacingSmall),
                 itemCount: features.length,

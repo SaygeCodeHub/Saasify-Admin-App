@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_colors.dart';
 
-
 class CustomDialogs {
   showAlertDialog(BuildContext context, String content,
       {void Function()? onPressed}) {

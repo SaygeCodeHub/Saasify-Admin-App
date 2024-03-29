@@ -13,22 +13,27 @@ class SettingsScreen extends StatelessWidget {
     return IconButton(
         onPressed: () {
           generatePdf(
-            businessInfoModel: const BusinessInfoModel(
-                '9786247171',
-                '76868751381581',
-                'G779AZ69777301',
-                'Vievkanand Nagar, Nagpur - 440015'),
-            customerInfoModel: const CustomerInfoModel(
-                'Joey Tribbiani', '9786247171', '27', ''),
-            billingInfoModel: BillingInfoModel(
-                'Gunther', DateTime.now().toString(), '1766', 'Cash'),
-            items: [
-              {'name': 'Jeans', 'qty': 25, 'price': 45.00, 'amount': 1125.00},
-            ],
-            totalQty: 25,
-            subtotal: 1125.00,
-            grandTotal: 1125.00,
-          );
+              businessInfoModel: const BusinessInfoModel(
+                  '9786247171',
+                  '76868751381581',
+                  'G779AZ69777301',
+                  'Vievkanand Nagar, Nagpur - 440015'),
+              customerInfoModel: const CustomerInfoModel(
+                  'Joey Tribbiani', '9786247171', '27', ''),
+              billingInfoModel: BillingInfoModel(
+                  'Gunther',
+                  DateTime.now().toString(),
+                  '1766',
+                  'Cash',
+                  23,
+                  1000,
+                  100,
+                  1.80,
+                  1.80,
+                  903),
+              items: [
+                {'name': 'Jeans', 'qty': 25, 'price': 45.00, 'amount': 1125.00},
+              ]);
         },
         icon: const Icon(Icons.settings, color: AppColors.darkBlue));
   }

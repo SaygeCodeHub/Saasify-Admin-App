@@ -78,8 +78,8 @@ class AuthenticationBloc
   Future<void> _cacheUserData(User user) async {
     await Cache.setUserLoggedIn(true);
     await Cache.setUserId(user.uid);
-    await Cache.setUserName(user.displayName ?? 'N/A');
-    await Cache.setUserEmail(user.email ?? 'N/A');
+    await Cache.setUserName(user.displayName ?? '');
+    await Cache.setUserEmail(user.email ?? '');
     await Cache.setUserCreatedAt(DateTime.now().toString());
   }
 

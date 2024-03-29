@@ -49,11 +49,8 @@ class AuthenticationBloc
 
   Future<bool> checkUserCompanies(String userUid) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
-    final QuerySnapshot companiesSnapshot = await db
-        .collection('companies')
-        .where('ownerUid', isEqualTo: db.doc('users/$userUid'))
-        .get();
-
+    final QuerySnapshot companiesSnapshot =
+        await db.collection('users').doc(userUid).collection('companies').get();
     return companiesSnapshot.docs.isNotEmpty;
   }
 

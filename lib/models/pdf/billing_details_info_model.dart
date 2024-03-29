@@ -10,7 +10,15 @@ class BillingInfoModel {
   final double? sgstAmount;
   final double? grandTotalAmount;
 
-
   const BillingInfoModel(
-      this.cashierName, this.dateAndTime, this.billNumber, this.paymentType, this.totalItems, this.subTotalAmount, this.discountAmount, this.cgstAmount, this.sgstAmount, this.grandTotalAmount);
+      this.cashierName,
+      this.dateAndTime,
+      this.billNumber,
+      this.paymentType,
+      this.totalItems,
+      this.subTotalAmount,
+      this.discountAmount,
+      this.cgstAmount,
+      this.sgstAmount,
+      this.grandTotalAmount);
 }

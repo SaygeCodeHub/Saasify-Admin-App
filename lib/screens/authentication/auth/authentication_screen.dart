@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:saasify/screens/authentication/auth/widgets/verify_button.dart';
-import 'package:saasify/screens/widgets/lable_and_textfield_widget.dart';
+import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
 import 'package:saasify/utils/authentication_validators.dart';
 import 'package:saasify/utils/constants/string_constants.dart';
 import '../../../configs/app_colors.dart';

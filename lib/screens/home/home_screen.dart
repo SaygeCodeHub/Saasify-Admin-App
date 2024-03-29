@@ -4,6 +4,7 @@ import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/screens/home/widgets/feature_card_widget.dart';
 import 'package:saasify/screens/home/widgets/logout_widget.dart';
 import 'package:saasify/screens/home/widgets/open_tabs_widget.dart';
+import 'package:saasify/screens/home/widgets/settings_widget.dart';
 import 'package:saasify/screens/home/widgets/user_avatar_widget.dart';
 import '../../utils/feature_list.dart';
 
@@ -27,7 +28,17 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [UserAvatarWidget(), LogOutWidget()],
+                      children: [
+                        UserAvatarWidget(),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SettingsScreen(),
+                            LogOutWidget(),
+                          ],
+                        )
+                      ],
                     ),
                     SizedBox(height: spacingLarge),
                     Text(

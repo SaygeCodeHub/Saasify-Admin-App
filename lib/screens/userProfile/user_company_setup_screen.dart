@@ -8,9 +8,10 @@ import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import '../../../configs/app_spacing.dart';
+import '../widgets/label_and_textfield_widget.dart';
+import '../widgets/responsive_form_widget.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
-import '../widgets/form_widgets.dart';
 import '../widgets/image_picker_widget.dart';
 
 class UserCompanySetupScreen extends StatefulWidget {
@@ -36,35 +37,46 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
       appBarTitle: 'Add Company',
       bodyContent: SingleChildScrollView(
         child: Form(
-          key: formKey,
-          child: _buildFormBody(context),
-        ),
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ImagePickerWidget(
+                    label: 'Company Logo',
+                    initialImage: _imagePath,
+                    onImagePicked: (String imagePath) {
+                      _imagePath = imagePath;
+                    }),
+                const SizedBox(height: spacingLarge),
+                ResponsiveFormFieldRow(
+                  childrenWidgets: [
+                    LabelAndTextFieldWidget(
+                      prefixIcon: const Icon(Icons.business),
+                      label: 'Company Name',
+                      isRequired: true,
+                      textFieldController: companyNameController,
+                      // onTextFieldChanged: onTextFieldChanged,
+                    ),
+                    LabelAndTextFieldWidget(
+                      prefixIcon: const Icon(Icons.numbers_outlined),
+                      label: 'EIN / TIN / GST Number',
+                      isRequired: false,
+                      textFieldController: identificationNumberController,
+                      // onTextFieldChanged: onTextFieldChanged,
+                    ),
+                    LabelAndTextFieldWidget(
+                      prefixIcon: const Icon(Icons.location_city),
+                      label: 'Address',
+                      isRequired: false,
+                      textFieldController: addressController,
+                    ),
+                  ],
+                ),
+              ],
+            )),
       ),
       bottomBarButtons: _buildBottomBarButtons(context),
-    );
-  }
-
-  Widget _buildFormBody(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        ImagePickerWidget(
-            label: 'Company Logo',
-            initialImage: _imagePath,
-            onImagePicked: (String imagePath) {
-              _imagePath = imagePath;
-            }),
-        const SizedBox(height: spacingHuge),
-        buildTextField(
-            companyNameController, 'Company Name', Icons.business, true),
-        const SizedBox(height: spacingMedium),
-        buildTextField(identificationNumberController, 'EIN / TIN / GST Number',
-            Icons.numbers_outlined, false),
-        const SizedBox(height: spacingMedium),
-        buildTextField(addressController, 'Address', Icons.location_city, false,
-            maxLines: 2),
-      ],
     );
   }
 
@@ -82,8 +94,8 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
             showDialog(
                 context: context,
                 builder: (context) {
-                  return CustomDialogs().showAlertDialog(
-                      context, 'Company not registered.',
+                  return CustomDialogs().showAlertDialog(context,
+                      'Something went wrong, could not register the company!',
                       onPressed: () => Navigator.pop(context));
                 });
           }

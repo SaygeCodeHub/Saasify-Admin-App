@@ -13,7 +13,7 @@ import '../../models/category/product_categories.dart';
 import '../widgets/buttons/primary_button.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/image_picker_widget.dart';
-import '../widgets/lable_and_textfield_widget.dart';
+import '../widgets/label_and_textfield_widget.dart';
 
 class AddCategoryScreen extends StatelessWidget {
   AddCategoryScreen({super.key});

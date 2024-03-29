@@ -20,7 +20,7 @@ import '../../bloc/product/product_event.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/category/product_categories.dart';
 import '../widgets/skeleton_screen.dart';
-import '../widgets/lable_and_textfield_widget.dart';
+import '../widgets/label_and_textfield_widget.dart';
 
 class AddProductScreen extends StatelessWidget {
   AddProductScreen({super.key});

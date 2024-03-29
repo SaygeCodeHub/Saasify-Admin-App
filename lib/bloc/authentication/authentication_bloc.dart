@@ -39,7 +39,6 @@ class AuthenticationBloc
         user = await _signUp(event.authenticationMap['email'],
             event.authenticationMap['password']);
       }
-
       if (user != null && user.uid.isNotEmpty) {
         await _updateUserData(user, event.authenticationMap);
         await _cacheUserData(user);
@@ -90,9 +89,12 @@ class AuthenticationBloc
   }
 
   Future<void> _cacheUserData(User user) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final usersRef = await firestore.collection('users').doc(user.uid).get();
+    String userName = await usersRef.get('name');
     await CustomerCache.setUserLoggedIn(true);
     await CustomerCache.setUserId(user.uid);
-    await CustomerCache.setUserName(user.displayName ?? '');
+    await CustomerCache.setUserName(userName);
     await CustomerCache.setUserEmail(user.email ?? '');
     await CustomerCache.setUserCreatedAt(DateTime.now().toString());
   }

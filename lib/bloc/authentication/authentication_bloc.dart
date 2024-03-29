@@ -81,8 +81,13 @@ class AuthenticationBloc
 
   Future<void> _updateUserData(User user, Map<dynamic, dynamic> authMap) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String userName = '';
+    if (authMap['is_sign_in']) {
+      final usersRef = await firestore.collection('users').doc(user.uid).get();
+      userName = await usersRef.get('name') ?? '';
+    }
     await firestore.collection('users').doc(user.uid).set({
-      'name': authMap['name'],
+      'name': authMap['name'] ?? userName,
       'email': authMap['email'],
       'createdAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
@@ -91,7 +96,7 @@ class AuthenticationBloc
   Future<void> _cacheUserData(User user) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     final usersRef = await firestore.collection('users').doc(user.uid).get();
-    String userName = await usersRef.get('name');
+    String userName = await usersRef.get('name') ?? '';
     await CustomerCache.setUserLoggedIn(true);
     await CustomerCache.setUserId(user.uid);
     await CustomerCache.setUserName(userName);

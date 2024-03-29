@@ -4,10 +4,8 @@ import 'package:saasify/configs/app_spacing.dart';
 
 class ResponsiveForm extends StatelessWidget {
   final List<Widget> formWidgets;
-  final Widget widget;
 
-  const ResponsiveForm(
-      {super.key, required this.formWidgets, required this.widget});
+  const ResponsiveForm({super.key, required this.formWidgets});
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +40,9 @@ class ResponsiveForm extends StatelessWidget {
       }
 
       return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [widget, ...rows]);
+          children: rows);
     });
   }
 }

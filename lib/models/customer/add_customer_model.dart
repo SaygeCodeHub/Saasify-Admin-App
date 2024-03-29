@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import '../../hiveConfigs/hive_type_ids.dart';
+import '../../configs/hive_type_ids.dart';
 
 part 'add_customer_model.g.dart'; // This file will be generated
 

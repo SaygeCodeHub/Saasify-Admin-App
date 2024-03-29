@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:hive/hive.dart';
 
-import '../../hiveConfigs/hive_type_ids.dart';
+import '../../configs/hive_type_ids.dart';
 
 part 'user_details.g.dart';
 

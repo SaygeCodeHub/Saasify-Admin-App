@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../screens/authentication/auth/authentication_screen.dart';
-import '../screens/authentication/forgetPassword/forget_password_screen.dart';
-import '../screens/authentication/register/register_screen.dart';
 
 class AppRoutes {
   static Route<dynamic> routes(RouteSettings settings) {
     final routeBuilders = <String, WidgetBuilder>{
       AuthenticationScreen.routeName: (_) => AuthenticationScreen(),
-      RegisterScreen.routeName: (_) => RegisterScreen(),
-      ForgotPasswordScreen.routeName: (_) => const ForgotPasswordScreen(),
     };
 
     WidgetBuilder builder = routeBuilders[settings.name] ??

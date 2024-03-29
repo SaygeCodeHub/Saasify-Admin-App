@@ -6,8 +6,8 @@ import '../../../../bloc/authentication/authentication_event.dart';
 import '../../../../bloc/authentication/authentication_state.dart';
 import '../../../../utils/custom_dialogs.dart';
 import '../../../../utils/progress_bar.dart';
-import '../../../companyDetails/register_company_screen.dart';
 import '../../../home/home_screen.dart';
+import '../../../userProfile/user_company_setup_screen.dart';
 import '../../../widgets/buttons/primary_button.dart';
 
 class VerifyButton extends StatelessWidget {
@@ -36,7 +36,7 @@ class VerifyButton extends StatelessWidget {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => const RegisterCompanyWebScreen()));
+                  builder: (context) => const UserCompanySetupScreen()));
         } else if (state is UserNotAuthenticated) {
           ProgressBar.dismiss(context);
           showDialog(

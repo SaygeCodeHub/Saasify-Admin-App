@@ -13,15 +13,14 @@ import '../widgets/buttons/primary_button.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/image_picker_widget.dart';
 
-class RegisterCompanyWebScreen extends StatefulWidget {
-  const RegisterCompanyWebScreen({super.key});
+class UserCompanySetupScreen extends StatefulWidget {
+  const UserCompanySetupScreen({super.key});
 
   @override
-  RegisterCompanyWebScreenState createState() =>
-      RegisterCompanyWebScreenState();
+  UserCompanySetupScreenState createState() => UserCompanySetupScreenState();
 }
 
-class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
+class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController ownerNameController = TextEditingController();
   final TextEditingController companyNameController = TextEditingController();
@@ -38,14 +37,14 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
       bodyContent: SingleChildScrollView(
         child: Form(
           key: formKey,
-          child: _buildFormBody(),
+          child: _buildFormBody(context),
         ),
       ),
       bottomBarButtons: _buildBottomBarButtons(context),
     );
   }
 
-  Widget _buildFormBody() {
+  Widget _buildFormBody(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,

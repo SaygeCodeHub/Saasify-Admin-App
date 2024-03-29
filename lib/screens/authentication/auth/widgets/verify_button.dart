@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../bloc/authentication/authentication_bloc.dart';
 import '../../../../bloc/authentication/authentication_event.dart';
 import '../../../../bloc/authentication/authentication_state.dart';
-import '../../../../utils/custom_dialogs.dart';
+import '../../../widgets/custom_dialogs.dart';
 import '../../../../utils/progress_bar.dart';
 import '../../../home/home_screen.dart';
 import '../../../userProfile/user_company_setup_screen.dart';

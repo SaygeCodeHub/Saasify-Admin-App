@@ -12,7 +12,7 @@ import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
-import 'package:saasify/utils/custom_dialogs.dart';
+import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';

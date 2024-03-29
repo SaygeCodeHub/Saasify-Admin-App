@@ -5,7 +5,7 @@ import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
-import 'package:saasify/utils/custom_dialogs.dart';
+import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import '../../configs/app_spacing.dart';

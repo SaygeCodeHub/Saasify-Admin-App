@@ -19,7 +19,7 @@ import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 import '../../bloc/product/product_event.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/category/product_categories.dart';
-import '../skeleton_screen.dart';
+import '../widgets/skeleton_screen.dart';
 import '../widgets/lable_and_textfield_widget.dart';
 
 class AddProductScreen extends StatelessWidget {

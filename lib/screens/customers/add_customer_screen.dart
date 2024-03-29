@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:saasify/screens/widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
 import '../widgets/form_widgets.dart';
 
@@ -21,37 +22,28 @@ class AddCustomerScreenState extends State<AddCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Add Customer')),
-      body: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: _buildFormBody(),
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _buildBottomBarButtons(context),
-        ),
-      ),
-    );
+    return SkeletonScreen(
+        appBarTitle: 'Add Customer',
+        bottomBarButtons: _buildBottomBarButtons(context),
+        bodyContent: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: _buildFormBody(),
+          ),
+        ));
   }
 
   Widget _buildFormBody() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          buildTextField(nameController, 'Name', Icons.person, true),
-          buildTextField(emailController, 'Email', Icons.email, true),
-          buildTextField(contactController, 'Contact', Icons.phone, true),
-          buildTextField(dobController, 'Date of Birth', Icons.cake, false),
-          buildTextField(
-              loyaltyPointsController, 'Loyalty Points', Icons.star, false),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        buildTextField(nameController, 'Name', Icons.person, true),
+        buildTextField(emailController, 'Email', Icons.email, true),
+        buildTextField(contactController, 'Contact', Icons.phone, true),
+        buildTextField(dobController, 'Date of Birth', Icons.cake, false),
+        buildTextField(
+            loyaltyPointsController, 'Loyalty Points', Icons.star, false),
+      ],
     );
   }
 

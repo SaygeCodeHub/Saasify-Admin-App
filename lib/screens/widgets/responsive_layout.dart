@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../configs/app_dimensions.dart';
+import '../../configs/app_spacing.dart';
 import '../../utils/global.dart';
 
 class ResponsiveLayout extends StatelessWidget {
@@ -22,7 +21,7 @@ class ResponsiveLayout extends StatelessWidget {
         ? SafeArea(
             child: Padding(
               padding: provideMobilePadding
-                  ? const EdgeInsets.all(mobileBodyPadding)
+                  ? const EdgeInsets.all(newMobileBodyPadding)
                   : const EdgeInsets.all(0),
               child: mobileBody,
             ),

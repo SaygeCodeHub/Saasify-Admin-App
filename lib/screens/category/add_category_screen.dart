@@ -11,7 +11,7 @@ import 'package:saasify/utils/progress_bar.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/category/product_categories.dart';
 import '../widgets/buttons/primary_button.dart';
-import '../skeleton_screen.dart';
+import '../widgets/skeleton_screen.dart';
 import '../widgets/image_picker_widget.dart';
 import '../widgets/lable_and_textfield_widget.dart';
 

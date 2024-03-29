@@ -22,7 +22,8 @@ const double spacingXXXXXHuge = 150.00;
 const double spacingXXXXHuge = 200.00;
 
 // General
-
+const double newMobileBodyPadding = 16.00;
+const double newWebBodyPadding = 28.00;
 const double webBodyPadding = 100.0;
 const double mobileBodyPadding = 24.0;
 const double spacingBetweenTextFields = 16.0;

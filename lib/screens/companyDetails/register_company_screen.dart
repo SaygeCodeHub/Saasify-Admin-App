@@ -8,7 +8,7 @@ import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/utils/custom_dialogs.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import '../../../configs/app_spacing.dart';
-import '../skeleton_screen.dart';
+import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/image_picker_widget.dart';
@@ -57,13 +57,11 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
               _imagePath = imagePath;
             }),
         const SizedBox(height: spacingHuge),
-        buildTextField(ownerNameController, 'Owner Name', Icons.person, true),
-        const SizedBox(height: spacingMedium),
         buildTextField(
             companyNameController, 'Company Name', Icons.business, true),
         const SizedBox(height: spacingMedium),
         buildTextField(identificationNumberController, 'EIN / TIN / GST Number',
-            Icons.numbers_outlined, true),
+            Icons.numbers_outlined, false),
         const SizedBox(height: spacingMedium),
         buildTextField(addressController, 'Address', Icons.location_city, false,
             maxLines: 2),
@@ -78,17 +76,8 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
           if (state is AddingCompany) {
             ProgressBar.show(context);
           } else if (state is CompanyAdded) {
-            ProgressBar.dismiss(context);
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return CustomDialogs().showSuccessDialog(
-                      context, 'Company added successfully.',
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen())));
-                });
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()));
           } else if (state is CompanyNotAdded) {
             ProgressBar.dismiss(context);
             showDialog(
@@ -105,7 +94,6 @@ class RegisterCompanyWebScreenState extends State<RegisterCompanyWebScreen> {
           onPressed: () async {
             if (formKey.currentState!.validate()) {
               context.read<CompaniesBloc>().add(AddCompany(companyDetailsMap: {
-                    'owner_name': ownerNameController.text,
                     'company_name': companyNameController.text,
                     'einNumber': identificationNumberController.text,
                     'address': addressController.text,

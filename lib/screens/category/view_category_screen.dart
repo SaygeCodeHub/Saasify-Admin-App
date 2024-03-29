@@ -11,7 +11,7 @@ import 'package:saasify/utils/global.dart';
 import '../../configs/app_colors.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/category/product_categories.dart';
-import '../skeleton_screen.dart';
+import '../widgets/skeleton_screen.dart';
 
 class ViewCategoryScreen extends StatelessWidget {
   const ViewCategoryScreen({super.key});

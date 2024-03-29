@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../configs/app_dimensions.dart';
-import '../utils/global.dart';
-import 'widgets/custom_app_bar.dart';
+import 'package:saasify/configs/app_theme.dart';
+import '../../configs/app_spacing.dart';
+import '../../utils/global.dart';
 
 class SkeletonScreen extends StatelessWidget {
   final String appBarTitle;
@@ -17,20 +17,27 @@ class SkeletonScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double padding = isMobile ? mobileBodyPadding : webBodyPadding;
+    final double padding = isMobile ? newMobileBodyPadding : newWebBodyPadding;
 
     return Scaffold(
+      appBar: AppBar(
+          leading: Padding(
+            padding: EdgeInsets.only(left: isMobile ? 0.00 : spacingLarge),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          title: Text(appBarTitle,
+              style: Theme.of(context).textTheme.appBarTitle)),
       body: Padding(
         padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomAppBar(title: appBarTitle),
-            Expanded(
-                child: Padding(
-              padding: const EdgeInsets.only(left: 12),
-              child: bodyContent,
-            )),
+            Expanded(child: bodyContent),
           ],
         ),
       ),

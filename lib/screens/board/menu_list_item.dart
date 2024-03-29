@@ -43,7 +43,7 @@ class MenuListItem extends StatelessWidget {
                     style: TextStyle(fontSize: spacingMedium),
                   ),
                   CircleAvatar(
-                    backgroundColor: AppColors.lightBlue,
+                    backgroundColor: AppColors.blue,
                     child: Text(
                       name.substring(0, 1),
                       style: const TextStyle(

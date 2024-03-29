@@ -5,7 +5,7 @@ import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
-import 'package:saasify/utils/custom_dialogs.dart';
+import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import '../../configs/app_spacing.dart';
@@ -13,7 +13,7 @@ import '../../models/category/product_categories.dart';
 import '../widgets/buttons/primary_button.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/image_picker_widget.dart';
-import '../widgets/lable_and_textfield_widget.dart';
+import '../widgets/label_and_textfield_widget.dart';
 
 class AddCategoryScreen extends StatelessWidget {
   AddCategoryScreen({super.key});

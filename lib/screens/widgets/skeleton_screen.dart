@@ -20,36 +20,39 @@ class SkeletonScreen extends StatelessWidget {
     final double padding = isMobile ? newMobileBodyPadding : newWebBodyPadding;
 
     return Scaffold(
-      appBar: AppBar(
-          leading: Padding(
-            padding: EdgeInsets.only(left: isMobile ? 0.00 : spacingLarge),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+        appBar: AppBar(
+            leading: Padding(
+              padding: EdgeInsets.only(left: isMobile ? 0.00 : spacingLarge),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             ),
+            title: Text(appBarTitle,
+                style: Theme.of(context).textTheme.appBarTitle)),
+        body: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: bodyContent),
+            ],
           ),
-          title: Text(appBarTitle,
-              style: Theme.of(context).textTheme.appBarTitle)),
-      body: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: bodyContent),
-          ],
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: bottomBarButtons.map((button) {
-            return Expanded(child: button);
-          }).toList(),
-        ),
-      ),
-    );
+        bottomNavigationBar: BottomAppBar(
+            child: Padding(
+          padding: const EdgeInsets.all(spacingSmall),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: bottomBarButtons.map((button) {
+              return SizedBox(
+                width: isMobile ? MediaQuery.sizeOf(context).width * 0.94 : 150,
+                child: bottomBarButtons[0],
+              );
+            }).toList(),
+          ),
+        )));
   }
 }

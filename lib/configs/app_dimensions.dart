@@ -7,3 +7,5 @@ const double kBoardStatuswidth = 290;
 const double kBoardStatusRedius = 4;
 const double kBoardSearchBtnWidth = 300;
 const double kBoardUtilityBtnw = 20;
+const double kBillImageWidth = 100;
+const double kBillImageHeight = 75;

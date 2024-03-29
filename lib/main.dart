@@ -9,10 +9,10 @@ import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/configs/hive_setup.dart';
 import 'package:saasify/screens/authentication/auth/authentication_screen.dart';
 import 'package:saasify/screens/home/home_screen.dart';
+import 'package:saasify/utils/global.dart';
 import 'cache/cache.dart';
 import 'configs/app_theme.dart';
 import 'firebase_options.dart';
-import 'utils/global.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,13 +24,25 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  late Future<Widget> _initialScreenFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialScreenFuture = getInitialScreen();
+  }
 
   @override
   Widget build(BuildContext context) {
     isMobile = MediaQuery.of(context).size.width < mobileBreakPoint;
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(lazy: false, create: (context) => AuthenticationBloc()),
@@ -45,7 +57,7 @@ class MyApp extends StatelessWidget {
         theme: appTheme,
         home: Scaffold(
           body: FutureBuilder<Widget>(
-            future: getInitialScreen(),
+            future: _initialScreenFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 return snapshot.data ?? AuthenticationScreen();

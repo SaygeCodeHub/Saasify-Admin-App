@@ -31,6 +31,8 @@ class ImagePickerWidget extends StatelessWidget {
         } else if (state is ImagePicked) {
           onImagePicked(context.read<ImagePickerBloc>().imagePath);
           return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label,
                   style: Theme.of(context).textTheme.fieldLabelTextStyle),
@@ -68,6 +70,8 @@ class ImagePickerWidget extends StatelessWidget {
           return Text(state.errorMessage);
         } else {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label,
                   style: Theme.of(context).textTheme.fieldLabelTextStyle),

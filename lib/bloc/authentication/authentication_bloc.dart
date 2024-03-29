@@ -11,6 +11,20 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc() : super(AuthenticationInitial()) {
     on<AuthenticateUser>(_authenticateUser);
+    on<LogOutOfSession>(_logOutOfSession);
+  }
+
+  FutureOr<void> _logOutOfSession(
+      LogOutOfSession event, Emitter<AuthenticationState> emit) async {
+    emit(LoggingOutOfSession());
+
+    try {
+      await FirebaseAuth.instance.signOut();
+      Cache().clearSharedPreferences();
+      emit(LoggedOutOfSession());
+    } catch (error) {
+      emit(LoggingOutFailed());
+    }
   }
 
   FutureOr<void> _authenticateUser(

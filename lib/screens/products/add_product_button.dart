@@ -7,7 +7,7 @@ import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
-import 'package:saasify/utils/custom_dialogs.dart';
+import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 
 class AddProductButton extends StatelessWidget {

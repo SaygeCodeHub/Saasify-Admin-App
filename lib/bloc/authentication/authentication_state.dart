@@ -13,3 +13,9 @@ final class UserNotAuthenticated extends AuthenticationState {
 
   UserNotAuthenticated({required this.errorMessage});
 }
+
+final class LoggingOutOfSession extends AuthenticationState {}
+
+final class LoggedOutOfSession extends AuthenticationState {}
+
+final class LoggingOutFailed extends AuthenticationState {}

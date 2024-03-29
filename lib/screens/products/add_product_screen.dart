@@ -12,7 +12,7 @@ import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
-import 'package:saasify/utils/custom_dialogs.dart';
+import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
@@ -20,7 +20,7 @@ import '../../bloc/product/product_event.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/category/product_categories.dart';
 import '../widgets/skeleton_screen.dart';
-import '../widgets/lable_and_textfield_widget.dart';
+import '../widgets/label_and_textfield_widget.dart';
 
 class AddProductScreen extends StatelessWidget {
   AddProductScreen({super.key});

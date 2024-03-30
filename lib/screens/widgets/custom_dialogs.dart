@@ -15,14 +15,8 @@ class CustomDialogs {
       content: Text(content), // Content text
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("No"), // Button text
-        ),
-        TextButton(
           onPressed: onPressed,
-          child: const Text("Yes"), // Button text
+          child: const Text("OK"), // Button text
         ),
       ],
     );

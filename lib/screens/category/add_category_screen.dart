@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
+import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
-import 'package:saasify/screens/widgets/responsive_form_widget.dart';
-import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
+import 'package:saasify/utils/responsive_form.dart';
 import '../../configs/app_spacing.dart';
-import '../../models/category/product_categories.dart';
 import '../widgets/buttons/primary_button.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/image_picker_widget.dart';
@@ -20,12 +18,12 @@ class AddCategoryScreen extends StatelessWidget {
   AddCategoryScreen({super.key});
 
   final TextEditingController textEditingController = TextEditingController();
-  static String _imagePath = '';
   final Map categoryMap = {};
   final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    textEditingController.text = '';
     context.read<ImagePickerBloc>().imagePath = '';
     return SkeletonScreen(
         appBarTitle: 'Add Category',
@@ -38,13 +36,13 @@ class AddCategoryScreen extends StatelessWidget {
               children: [
                 ImagePickerWidget(
                   label: 'Category Display Image',
-                  initialImage: _imagePath,
+                  initialImage: categoryMap['image'] ?? '',
                   onImagePicked: (String imagePath) {
-                    _imagePath = imagePath;
+                    categoryMap['image'] = imagePath;
                   },
                 ),
                 const SizedBox(height: spacingHuge),
-                ResponsiveFormFieldRow(childrenWidgets: [
+                ResponsiveForm(formWidgets: [
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.category),
                     label: 'Category Name',
@@ -75,7 +73,10 @@ class AddCategoryScreen extends StatelessWidget {
                         return CustomDialogs().showSuccessDialog(
                             context, state.successMessage, onPressed: () {
                           Navigator.pop(context);
-                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()));
                         });
                       });
                 } else if (state is CategoryNotAdded) {
@@ -83,9 +84,12 @@ class AddCategoryScreen extends StatelessWidget {
                   showDialog(
                       context: context,
                       builder: (context) {
-                        return CustomDialogs().showSuccessDialog(
+                        return CustomDialogs().showAlertDialog(
                             context, state.errorMessage,
-                            onPressed: () => Navigator.pop(context));
+                            onPressed: () => Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomeScreen())));
                       });
                 }
               },
@@ -93,23 +97,10 @@ class AddCategoryScreen extends StatelessWidget {
                   buttonTitle: 'Add Category',
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      if (kIsOfflineModule) {
-                        final category = ProductCategories(
-                            name: textEditingController.text,
-                            imagePath: _imagePath);
-                        final categoriesBox =
-                            Hive.box<ProductCategories>('categories');
-                        await categoriesBox.add(category).whenComplete(() {
-                          Navigator.pop(context);
-                        });
-                      } else {
-                        categoryMap['category_name'] =
-                            textEditingController.text;
-                        categoryMap['image'] = _imagePath;
-                        context
-                            .read<CategoryBloc>()
-                            .add(AddCategory(addCategoryMap: categoryMap));
-                      }
+                      categoryMap['category_name'] = textEditingController.text;
+                      context
+                          .read<CategoryBloc>()
+                          .add(AddCategory(addCategoryMap: categoryMap));
                     }
                   }))
         ]);

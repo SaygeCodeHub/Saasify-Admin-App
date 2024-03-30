@@ -7,9 +7,9 @@ import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/progress_bar.dart';
+import 'package:saasify/utils/responsive_form.dart';
 import '../../../configs/app_spacing.dart';
 import '../widgets/label_and_textfield_widget.dart';
-import '../widgets/responsive_form_widget.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
 import '../widgets/image_picker_widget.dart';
@@ -49,30 +49,28 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
                       _imagePath = imagePath;
                     }),
                 const SizedBox(height: spacingLarge),
-                ResponsiveFormFieldRow(
-                  childrenWidgets: [
-                    LabelAndTextFieldWidget(
-                      prefixIcon: const Icon(Icons.business),
-                      label: 'Company Name',
-                      isRequired: true,
-                      textFieldController: companyNameController,
-                      // onTextFieldChanged: onTextFieldChanged,
-                    ),
-                    LabelAndTextFieldWidget(
-                      prefixIcon: const Icon(Icons.numbers_outlined),
-                      label: 'EIN / TIN / GST Number',
-                      isRequired: false,
-                      textFieldController: identificationNumberController,
-                      // onTextFieldChanged: onTextFieldChanged,
-                    ),
-                    LabelAndTextFieldWidget(
-                      prefixIcon: const Icon(Icons.location_city),
-                      label: 'Address',
-                      isRequired: false,
-                      textFieldController: addressController,
-                    ),
-                  ],
-                ),
+                ResponsiveForm(formWidgets: [
+                  LabelAndTextFieldWidget(
+                    prefixIcon: const Icon(Icons.business),
+                    label: 'Company Name',
+                    isRequired: true,
+                    textFieldController: companyNameController,
+                    // onTextFieldChanged: onTextFieldChanged,
+                  ),
+                  LabelAndTextFieldWidget(
+                    prefixIcon: const Icon(Icons.numbers_outlined),
+                    label: 'EIN / TIN / GST Number',
+                    isRequired: false,
+                    textFieldController: identificationNumberController,
+                    // onTextFieldChanged: onTextFieldChanged,
+                  ),
+                  LabelAndTextFieldWidget(
+                    prefixIcon: const Icon(Icons.location_city),
+                    label: 'Address',
+                    isRequired: false,
+                    textFieldController: addressController,
+                  ),
+                ])
               ],
             )),
       ),

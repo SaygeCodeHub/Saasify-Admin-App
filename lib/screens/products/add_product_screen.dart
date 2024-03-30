@@ -7,6 +7,7 @@ import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
+import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
@@ -32,12 +33,14 @@ class AddProductScreen extends StatelessWidget {
   final TextEditingController _minStockLevelController =
       TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _eachController = TextEditingController();
-  static String image = '';
+  final TextEditingController _quantityController = TextEditingController();
 
+  static String image = '';
   getImage() async {
-    image = await RetrieveImageFromFirebase().getImage(image);
+    image = await RetrieveImageFromFirebase().getImage(AddProductSection.image);
   }
+
+  static Map soldByMap = {'selected_value': 'Each', 'selected_quantity': 'kg'};
 
   @override
   Widget build(BuildContext context) {
@@ -157,11 +160,11 @@ class AddProductScreen extends StatelessWidget {
                     }
                   } else {
                     if (formKey.currentState!.validate()) {
+                      getImage();
                       if (context
                           .read<CategoryBloc>()
                           .selectedCategory
                           .isNotEmpty) {
-                        getImage();
                         context.read<ProductBloc>().add(AddProduct(
                             product: Products(
                               productId: '0',
@@ -177,7 +180,17 @@ class AddProductScreen extends StatelessWidget {
                                       0,
                               dateAdded: DateTime.now(),
                               isActive: true,
-                              variants: [],
+                              variants: [
+                                ProductVariant(
+                                    variantId: 0,
+                                    productId: 0,
+                                    variantName: _quantityController.text,
+                                    price: double.parse(_priceController.text),
+                                    cost: double.parse(_priceController.text),
+                                    quantityAvailable: int.parse(
+                                        _minStockLevelController.text),
+                                    isActive: true)
+                              ],
                             ),
                             categories: categories));
                       } else {
@@ -201,6 +214,7 @@ class AddProductScreen extends StatelessWidget {
         taxController: _taxController,
         minStockLevelController: _minStockLevelController,
         priceController: _priceController,
-        eachController: _eachController);
+        quantityController: _quantityController,
+        soldByMap: soldByMap);
   }
 }

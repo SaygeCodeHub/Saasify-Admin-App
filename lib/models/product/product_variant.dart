@@ -30,4 +30,15 @@ class ProductVariant {
     required this.quantityAvailable,
     required this.isActive,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'variantId': productId,
+      'productId': productId,
+      'variantName': variantName,
+      'price': price,
+      'cost': cost,
+      'quantityAvailable': quantityAvailable
+    };
+  }
 }

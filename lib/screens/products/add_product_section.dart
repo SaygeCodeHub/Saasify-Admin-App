@@ -16,7 +16,9 @@ class AddProductSection extends StatefulWidget {
   final TextEditingController taxController;
   final TextEditingController minStockLevelController;
   final TextEditingController priceController;
-  final TextEditingController eachController;
+  final TextEditingController quantityController;
+  final Map soldByMap;
+  static String image = '';
 
   const AddProductSection(
       {super.key,
@@ -27,17 +29,16 @@ class AddProductSection extends StatefulWidget {
       required this.taxController,
       required this.minStockLevelController,
       required this.priceController,
-      required this.eachController});
+      required this.quantityController,
+      required this.soldByMap});
 
   @override
   State<AddProductSection> createState() => _AddProductSectionState();
 }
 
 class _AddProductSectionState extends State<AddProductSection> {
-  final soldByList = ['None', 'Each', 'Quantity'];
-  final quantity = ['None', 'kg', 'ltr', 'gm'];
-  String image = '';
-  Map soldByMap = {'selected_value': 'None', 'selected_quantity': 'None'};
+  final soldByList = ['Each', 'Quantity'];
+  final quantity = ['kg', 'ltr', 'gm'];
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class _AddProductSectionState extends State<AddProductSection> {
       const SizedBox(height: spacingStandard),
       ImagePickerWidget(
           onImagePicked: (String imagePath) {
-            image = imagePath;
+            AddProductSection.image = imagePath;
           },
           label: 'Product display image'),
       const SizedBox(height: spacingStandard),
@@ -63,7 +64,9 @@ class _AddProductSectionState extends State<AddProductSection> {
               );
             }).toList(),
             onChanged: (String? newValue) {
-              context.read<CategoryBloc>().selectedCategory = newValue!;
+              setState(() {
+                context.read<CategoryBloc>().selectedCategory = newValue!;
+              });
             },
           ),
         ),
@@ -84,37 +87,38 @@ class _AddProductSectionState extends State<AddProductSection> {
           label: 'Description',
           textFieldController: widget.descriptionController,
         ),
-        LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.supervisor_account),
-          label: 'Supplier',
-          textFieldController: widget.supplierController,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Sold by',
+                style: Theme.of(context).textTheme.fieldLabelTextStyle),
+            const SizedBox(height: spacingSmall),
+            DropdownButtonHideUnderline(
+              child: DropdownButtonFormField<String>(
+                value: widget.soldByMap['selected_value'],
+                hint: const Text("Select an item"),
+                items: soldByList.map((soldBy) {
+                  return DropdownMenuItem<String>(
+                    value: soldBy.toString(),
+                    child: Text(soldBy.toString()),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    widget.soldByMap['selected_value'] = newValue!;
+                  });
+                },
+              ),
+            ),
+          ],
         ),
-        Text('Sold by', style: Theme.of(context).textTheme.fieldLabelTextStyle),
-        const SizedBox(height: spacingSmall),
-        DropdownButtonHideUnderline(
-          child: DropdownButtonFormField<String>(
-            value: soldByMap['selected_value'],
-            hint: const Text("Select an item"),
-            items: soldByList.map((soldBy) {
-              return DropdownMenuItem<String>(
-                value: soldBy.toString(),
-                child: Text(soldBy.toString()),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                soldByMap['selected_value'] = newValue!;
-              });
-            },
-          ),
-        ),
-        if (soldByMap['selected_value'] == 'Each')
+        if (widget.soldByMap['selected_value'] == 'Each')
           LabelAndTextFieldWidget(
-              prefixIcon: const Icon(Icons.first_page),
-              label: 'Each',
+              prefixIcon: const Icon(Icons.ad_units_outlined),
+              label: 'Quantity',
               keyboardType: TextInputType.number,
-              textFieldController: widget.eachController),
-        if (soldByMap['selected_value'] == 'Quantity')
+              textFieldController: widget.quantityController),
+        if (widget.soldByMap['selected_value'] == 'Quantity')
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -123,7 +127,7 @@ class _AddProductSectionState extends State<AddProductSection> {
               const SizedBox(height: spacingSmall),
               DropdownButtonHideUnderline(
                 child: DropdownButtonFormField<String>(
-                  value: soldByMap['selected_quantity'],
+                  value: widget.soldByMap['selected_quantity'],
                   hint: const Text("Select an item"),
                   items: quantity.map((soldBy) {
                     return DropdownMenuItem<String>(
@@ -133,22 +137,32 @@ class _AddProductSectionState extends State<AddProductSection> {
                   }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      soldByMap['selected_quantity'] = newValue!;
+                      widget.soldByMap['selected_quantity'] = newValue!;
                     });
                   },
                 ),
               ),
             ],
           ),
-        if (soldByMap['selected_quantity'] != 'None')
+        if (widget.soldByMap['selected_value'] == 'Quantity')
           LabelAndTextFieldWidget(
               prefixIcon: const Icon(Icons.ad_units_outlined),
-              label: 'Price',
+              label: 'Quantity',
               keyboardType: TextInputType.number,
-              textFieldController: widget.priceController),
-        if (soldByMap['selected_quantity'] == 'None')
+              textFieldController: widget.quantityController),
+        LabelAndTextFieldWidget(
+            prefixIcon: const Icon(Icons.price_change_rounded),
+            label: 'Price',
+            keyboardType: TextInputType.number,
+            textFieldController: widget.priceController),
+        LabelAndTextFieldWidget(
+          prefixIcon: const Icon(Icons.supervisor_account),
+          label: 'Supplier',
+          textFieldController: widget.supplierController,
+        ),
+        if (widget.soldByMap['selected_quantity'] == 'None')
           LabelAndTextFieldWidget(
-              prefixIcon: const Icon(Icons.attach_money),
+              prefixIcon: const Icon(Icons.ad_units_outlined),
               label: 'Tax',
               keyboardType: TextInputType.number,
               textFieldController: widget.taxController),

@@ -25,11 +25,13 @@ final class ProductsFetched extends ProductState {
   final List<Products> products;
   final List<ProductCategories> categories;
   final String categoryId;
+  final List selectedCategories;
 
   ProductsFetched(
       {required this.categories,
       required this.products,
-      required this.categoryId});
+      required this.categoryId,
+      required this.selectedCategories});
 }
 
 final class ProductsCouldNotFetch extends ProductState {

@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/cache/cache.dart';
 import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/utils/global.dart';
 
@@ -24,35 +24,58 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       AddProduct event, Emitter<ProductState> emit) async {
     try {
       emit(AddingProduct());
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception("User not authenticated");
-      }
-
-      String userId = user.uid;
-      String? categoryId = '';
-      for (var item in event.categories) {
-        categoryId = item.categoryId;
-      }
       Map<String, dynamic> productData = event.product.toMap();
-      final usersRef =
-          FirebaseFirestore.instance.collection('users').doc(userId);
+      final usersRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(CustomerCache.getUserId());
       CollectionReference companiesRef = usersRef.collection('companies');
       QuerySnapshot snapshot = await companiesRef.get();
       String companyId = '';
       for (var doc in snapshot.docs) {
         companyId = doc.id;
       }
-      usersRef
-          .collection('companies')
+      List<ProductVariant> variantData = productData['variants'];
+      Map<String, dynamic> variants = {};
+      for (var data in variantData) {
+        variants = data.toMap();
+      }
+      productData.remove('variants');
+      companiesRef
           .doc(companyId)
           .collection('modules')
           .doc('pos')
           .collection('categories')
-          .doc(categoryId)
+          .doc(productData['category'])
           .collection('products')
           .add({...productData, 'dateAdded': FieldValue.serverTimestamp()});
-      emit(ProductAdded(successMessage: 'Product added successfully'));
+      QuerySnapshot getProducts = await companiesRef
+          .doc(companyId)
+          .collection('modules')
+          .doc('pos')
+          .collection('categories')
+          .doc(productData['category'])
+          .collection('products')
+          .get();
+      String productId = '';
+      for (var item in getProducts.docs) {
+        productId = item.id;
+      }
+      if (productId.isNotEmpty) {
+        variants['productId'] = productId;
+        CollectionReference variantsRef = companiesRef
+            .doc(companyId)
+            .collection('modules')
+            .doc('pos')
+            .collection('categories')
+            .doc(productData['category'])
+            .collection('products')
+            .doc(productId)
+            .collection('variants');
+        await variantsRef.add(variants);
+        emit(ProductAdded(successMessage: 'Product added successfully'));
+      } else {
+        emit(ProductNotAdded(errorMessage: 'Could not add the product.'));
+      }
     } catch (error) {
       emit(ProductNotAdded(errorMessage: 'Error adding product: $error'));
     }
@@ -65,18 +88,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         final productsBox = Hive.box<Products>('products');
         final List<Products> products = productsBox.values.toList();
         emit(ProductsFetched(
-            products: products, categories: [], categoryId: ''));
+            products: products,
+            categories: [],
+            categoryId: '',
+            selectedCategories: []));
       } else {
         emit(FetchingProducts());
-        User? user = FirebaseAuth.instance.currentUser;
-        if (user == null) {
+        if (CustomerCache.getUserId() == null) {
           emit(ProductsCouldNotFetch(errorMessage: 'User not authenticated'));
         } else {
           List<ProductCategories> categories = [];
 
-          String userId = user.uid;
-          final usersRef =
-              FirebaseFirestore.instance.collection('users').doc(userId);
+          final usersRef = FirebaseFirestore.instance
+              .collection('users')
+              .doc(CustomerCache.getUserId());
           QuerySnapshot querySnapshot = await usersRef
               .collection('companies')
               .doc(CustomerCache.getUserCompany())
@@ -93,8 +118,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
                 categoryId: doc.id);
             categories.add(category);
           }
-          emit(ProductsFetched(
-              categories: categories, products: [], categoryId: ''));
+          if (categories.isNotEmpty) {
+            emit(ProductsFetched(
+                categories: categories,
+                products: [],
+                categoryId: '',
+                selectedCategories: []));
+          } else {
+            emit(ProductsCouldNotFetch(errorMessage: 'No categories found!'));
+          }
         }
       }
     } catch (e) {
@@ -114,10 +146,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         selectedCategories.add(event.categoryId);
       }
       if (selectedCategories.isNotEmpty) {
-        User? user = FirebaseAuth.instance.currentUser;
-        String userId = user!.uid;
-        final usersRef =
-            FirebaseFirestore.instance.collection('users').doc(userId);
+        final usersRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(CustomerCache.getUserId());
         QuerySnapshot query = await usersRef
             .collection('companies')
             .doc(CustomerCache.getUserCompany())
@@ -143,10 +174,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
               category: event.categoryId,
               variants: []);
           products.add(product);
-          emit(ProductsFetched(
-              categories: event.categories,
-              products: products,
-              categoryId: event.categoryId));
+          if (products.isNotEmpty) {
+            emit(ProductsFetched(
+                categories: event.categories,
+                products: products,
+                categoryId: event.categoryId,
+                selectedCategories: selectedCategories));
+          } else {
+            emit(ProductsCouldNotFetch(errorMessage: 'No products found'));
+          }
         }
       }
     } catch (e) {

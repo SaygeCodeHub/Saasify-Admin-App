@@ -37,7 +37,7 @@ class ProductDetails extends StatelessWidget {
           ),
         ),
       ),
-      bottomBarButtons: const [], // No bottom bar buttons for this screen
+      bottomBarButtons: const [],
     );
   }
 

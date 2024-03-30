@@ -102,13 +102,15 @@ class AddProductScreen extends StatelessWidget {
                             final product = Products(
                               productId: 0,
                               name: _nameController.text,
-                              category: context.read<CategoryBloc>().selectedCategory,
+                              category:
+                                  context.read<CategoryBloc>().selectedCategory,
                               description: _descriptionController.text,
                               imageUrl: '',
                               supplier: _supplierController.text,
                               tax: double.tryParse(_taxController.text) ?? 0,
                               minStockLevel:
-                                  int.tryParse(_minStockLevelController.text) ?? 0,
+                                  int.tryParse(_minStockLevelController.text) ??
+                                      0,
                               dateAdded: DateTime.now(),
                               isActive: true,
                               variants: [],
@@ -132,12 +134,14 @@ class AddProductScreen extends StatelessWidget {
                                   builder: (context) {
                                     return CustomDialogs().showSuccessDialog(
                                         context, 'Failed to add product.',
-                                        onPressed: () => Navigator.pop(context));
+                                        onPressed: () =>
+                                            Navigator.pop(context));
                                   });
                             }
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Select a category!')));
+                                const SnackBar(
+                                    content: Text('Select a category!')));
                           }
                         } else {
                           if (formKey.currentState!.validate()) {
@@ -150,15 +154,17 @@ class AddProductScreen extends StatelessWidget {
                                   product: Products(
                                     productId: 0,
                                     name: _nameController.text,
-                                    category:
-                                        context.read<CategoryBloc>().selectedCategory,
+                                    category: context
+                                        .read<CategoryBloc>()
+                                        .selectedCategory,
                                     description: _descriptionController.text,
                                     imageUrl: image,
                                     supplier: _supplierController.text,
-                                    tax: double.tryParse(_taxController.text) ?? 0,
-                                    minStockLevel:
-                                        int.tryParse(_minStockLevelController.text) ??
-                                            0,
+                                    tax: double.tryParse(_taxController.text) ??
+                                        0,
+                                    minStockLevel: int.tryParse(
+                                            _minStockLevelController.text) ??
+                                        0,
                                     dateAdded: DateTime.now(),
                                     isActive: true,
                                     variants: [],
@@ -174,20 +180,22 @@ class AddProductScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  const SizedBox(width: 20,),
+                  const SizedBox(
+                    width: 20,
+                  ),
                   Expanded(
                     child: PrimaryButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ProductDetails()),
+                          MaterialPageRoute(
+                              builder: (context) => const ProductDetails()),
                         );
                       },
                       buttonTitle: 'Details', // Button title
                       // You can customize the button appearance here if needed
                     ),
                   ),
-
                 ],
               ))
         ]);

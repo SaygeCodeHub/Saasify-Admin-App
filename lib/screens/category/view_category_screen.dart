@@ -132,7 +132,7 @@ class ViewCategoryScreen extends StatelessWidget {
                                                   .gridViewLabelTextStyle,
                                             ),
                                             Text(
-                                             "",
+                                              "",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium,
@@ -154,7 +154,8 @@ class ViewCategoryScreen extends StatelessWidget {
                                         height: 100,
                                         width: 100,
                                         child: Image.asset(
-                                          state.categories[index].imagePath.toString(),
+                                          state.categories[index].imagePath
+                                              .toString(),
                                           fit: BoxFit.cover,
                                         ),
                                       ),

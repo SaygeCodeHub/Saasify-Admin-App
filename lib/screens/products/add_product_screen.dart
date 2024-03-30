@@ -96,7 +96,7 @@ class AddProductScreen extends StatelessWidget {
                         .selectedCategory
                         .isNotEmpty) {
                       final product = Products(
-                        productId: 0,
+                        productId: '0',
                         name: _nameController.text,
                         category: context.read<CategoryBloc>().selectedCategory,
                         description: _descriptionController.text,
@@ -144,7 +144,7 @@ class AddProductScreen extends StatelessWidget {
                         getImage();
                         context.read<ProductBloc>().add(AddProduct(
                             product: Products(
-                              productId: 0,
+                              productId: '0',
                               name: _nameController.text,
                               category:
                                   context.read<CategoryBloc>().selectedCategory,

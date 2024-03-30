@@ -29,7 +29,7 @@ class AddProductButton extends StatelessWidget {
         if (kIsOfflineModule) {
           if (context.read<CategoryBloc>().selectedCategory.isNotEmpty) {
             final product = Products(
-              productId: 0,
+              productId: '0',
               name: productMap['name'],
               category: context.read<CategoryBloc>().selectedCategory,
               description: productMap['description'],
@@ -71,7 +71,7 @@ class AddProductButton extends StatelessWidget {
             if (context.read<CategoryBloc>().selectedCategory.isNotEmpty) {
               context.read<ProductBloc>().add(AddProduct(
                   product: Products(
-                    productId: 0,
+                    productId: '0',
                     name: productMap['name'],
                     category: context.read<CategoryBloc>().selectedCategory,
                     description: productMap['description'],

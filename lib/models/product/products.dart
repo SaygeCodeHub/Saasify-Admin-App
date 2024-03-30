@@ -8,7 +8,7 @@ part 'products.g.dart';
 @HiveType(typeId: HiveTypeIds.products)
 class Products {
   @HiveField(0)
-  late int productId;
+  late String productId;
   @HiveField(1)
   late String name;
   @HiveField(2)

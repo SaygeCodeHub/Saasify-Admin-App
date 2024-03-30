@@ -9,3 +9,12 @@ class AddProduct extends ProductEvent {
 
   AddProduct({required this.product, required this.categories});
 }
+
+class ViewProducts extends ProductEvent {}
+
+class SelectCategory extends ProductEvent {
+  final String categoryId;
+  final List<ProductCategories> categories;
+
+  SelectCategory({required this.categoryId, required this.categories});
+}

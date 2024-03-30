@@ -31,7 +31,7 @@ class AddProductScreen extends StatelessWidget {
   final TextEditingController _taxController = TextEditingController();
   final TextEditingController _minStockLevelController =
       TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
   final TextEditingController _eachController = TextEditingController();
   static String image = '';
 
@@ -200,7 +200,7 @@ class AddProductScreen extends StatelessWidget {
         supplierController: _supplierController,
         taxController: _taxController,
         minStockLevelController: _minStockLevelController,
-        quantityController: _quantityController,
+        priceController: _priceController,
         eachController: _eachController);
   }
 }

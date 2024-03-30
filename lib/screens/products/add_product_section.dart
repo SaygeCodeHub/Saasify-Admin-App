@@ -15,7 +15,7 @@ class AddProductSection extends StatefulWidget {
   final TextEditingController supplierController;
   final TextEditingController taxController;
   final TextEditingController minStockLevelController;
-  final TextEditingController quantityController;
+  final TextEditingController priceController;
   final TextEditingController eachController;
 
   const AddProductSection(
@@ -26,7 +26,7 @@ class AddProductSection extends StatefulWidget {
       required this.supplierController,
       required this.taxController,
       required this.minStockLevelController,
-      required this.quantityController,
+      required this.priceController,
       required this.eachController});
 
   @override
@@ -35,9 +35,9 @@ class AddProductSection extends StatefulWidget {
 
 class _AddProductSectionState extends State<AddProductSection> {
   final soldByList = ['None', 'Each', 'Quantity'];
-  final quantity = ['kg', 'ltr', 'gm'];
+  final quantity = ['None', 'kg', 'ltr', 'gm'];
   String image = '';
-  Map soldByMap = {'selected_value': 'None', 'selected_quantity': 'kg'};
+  Map soldByMap = {'selected_value': 'None', 'selected_quantity': 'None'};
 
   @override
   Widget build(BuildContext context) {
@@ -143,14 +143,15 @@ class _AddProductSectionState extends State<AddProductSection> {
         if (soldByMap['selected_quantity'] != 'None')
           LabelAndTextFieldWidget(
               prefixIcon: const Icon(Icons.ad_units_outlined),
-              label: 'Quantity',
+              label: 'Price',
               keyboardType: TextInputType.number,
-              textFieldController: widget.quantityController),
-        LabelAndTextFieldWidget(
-            prefixIcon: const Icon(Icons.attach_money),
-            label: 'Tax',
-            keyboardType: TextInputType.number,
-            textFieldController: widget.taxController),
+              textFieldController: widget.priceController),
+        if (soldByMap['selected_quantity'] == 'None')
+          LabelAndTextFieldWidget(
+              prefixIcon: const Icon(Icons.attach_money),
+              label: 'Tax',
+              keyboardType: TextInputType.number,
+              textFieldController: widget.taxController),
         LabelAndTextFieldWidget(
           prefixIcon: const Icon(Icons.local_shipping),
           label: 'Minimum Stock Level',

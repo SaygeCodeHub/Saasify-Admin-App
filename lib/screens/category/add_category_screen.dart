@@ -6,6 +6,7 @@ import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
+import 'package:saasify/screens/widgets/responsive_form_widget.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import '../../configs/app_spacing.dart';
@@ -43,18 +44,20 @@ class AddCategoryScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: spacingHuge),
-                LabelAndTextFieldWidget(
-                  prefixIcon: const Icon(Icons.category),
-                  label: 'Category Name',
-                  isRequired: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'This field is required';
-                    }
-                    return null;
-                  },
-                  textFieldController: textEditingController,
-                ),
+                ResponsiveFormFieldRow(childrenWidgets: [
+                  LabelAndTextFieldWidget(
+                    prefixIcon: const Icon(Icons.category),
+                    label: 'Category Name',
+                    isRequired: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required';
+                      }
+                      return null;
+                    },
+                    textFieldController: textEditingController,
+                  )
+                ])
               ],
             ),
           ),

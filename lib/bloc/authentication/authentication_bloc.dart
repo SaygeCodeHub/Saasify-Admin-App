@@ -20,7 +20,7 @@ class AuthenticationBloc
 
     try {
       await FirebaseAuth.instance.signOut();
-      Cache().clearSharedPreferences();
+      CustomerCache().clearSharedPreferences();
       emit(LoggedOutOfSession());
     } catch (error) {
       emit(LoggingOutFailed());
@@ -39,7 +39,6 @@ class AuthenticationBloc
         user = await _signUp(event.authenticationMap['email'],
             event.authenticationMap['password']);
       }
-
       if (user != null && user.uid.isNotEmpty) {
         await _updateUserData(user, event.authenticationMap);
         await _cacheUserData(user);
@@ -82,19 +81,27 @@ class AuthenticationBloc
 
   Future<void> _updateUserData(User user, Map<dynamic, dynamic> authMap) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String userName = '';
+    if (authMap['is_sign_in']) {
+      final usersRef = await firestore.collection('users').doc(user.uid).get();
+      userName = await usersRef.get('name') ?? '';
+    }
     await firestore.collection('users').doc(user.uid).set({
-      'name': authMap['name'],
+      'name': authMap['name'] ?? userName,
       'email': authMap['email'],
       'createdAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 
   Future<void> _cacheUserData(User user) async {
-    await Cache.setUserLoggedIn(true);
-    await Cache.setUserId(user.uid);
-    await Cache.setUserName(user.displayName ?? '');
-    await Cache.setUserEmail(user.email ?? '');
-    await Cache.setUserCreatedAt(DateTime.now().toString());
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final usersRef = await firestore.collection('users').doc(user.uid).get();
+    String userName = await usersRef.get('name') ?? '';
+    await CustomerCache.setUserLoggedIn(true);
+    await CustomerCache.setUserId(user.uid);
+    await CustomerCache.setUserName(userName);
+    await CustomerCache.setUserEmail(user.email ?? '');
+    await CustomerCache.setUserCreatedAt(DateTime.now().toString());
   }
 
   String _handleFirebaseAuthError(FirebaseAuthException e) {

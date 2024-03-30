@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
+import 'package:saasify/cache/cache.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
@@ -59,50 +60,45 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   FutureOr<void> _fetchCategories(
       FetchCategories event, Emitter<CategoryState> emit) async {
     List<ProductCategories> categories = [];
-    try {
-      emit(FetchingCategories());
-      if (kIsOfflineModule) {
-        categories = Hive.box<ProductCategories>('categories').values.toList();
-        if (categories.isNotEmpty) {
-          selectedCategory = categories.first.name;
-        }
-        emit(CategoriesFetched(categories: categories));
-      } else {
-        User? user = FirebaseAuth.instance.currentUser;
-        if (user == null) {
-          throw Exception("User not authenticated");
-        }
-        String userId = user.uid;
-        final usersRef =
-            FirebaseFirestore.instance.collection('users').doc(userId);
-        CollectionReference companiesRef = usersRef.collection('companies');
-        QuerySnapshot snapshot = await companiesRef.get();
-        String companyId = '';
-        for (var doc in snapshot.docs) {
-          companyId = doc.id;
-        }
-        QuerySnapshot querySnapshot = await usersRef
-            .collection('companies')
-            .doc(companyId)
-            .collection('modules')
-            .doc('pos')
-            .collection('categories')
-            .get();
-        for (var doc in querySnapshot.docs) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          ProductCategories category = ProductCategories(
-              name: data['name'],
-              imagePath: data['image_path'] ?? '',
-              categoryId: doc.id);
-          categories.add(category);
-        }
-        if (categories.isNotEmpty) {
-          selectedCategory = categories.last.categoryId ?? '';
-        }
-        emit(CategoriesFetched(categories: categories));
+    // try {
+    emit(FetchingCategories());
+    if (kIsOfflineModule) {
+      categories = Hive.box<ProductCategories>('categories').values.toList();
+      if (categories.isNotEmpty) {
+        selectedCategory = categories.first.name;
       }
-    } catch (e) {
-      emit(CategoriesNotFetched(errorMessage: 'Error fetching categories: $e'));
+      emit(CategoriesFetched(categories: categories));
+    } else {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception("User not authenticated");
+      }
+      String userId = user.uid;
+      final usersRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+
+      QuerySnapshot querySnapshot = await usersRef
+          .collection('companies')
+          .doc(CustomerCache.getUserCompany())
+          .collection('modules')
+          .doc('pos')
+          .collection('categories')
+          .get();
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        ProductCategories category = ProductCategories(
+            name: data['name'],
+            imagePath: data['image_path'],
+            categoryId: doc.id);
+        categories.add(category);
+      }
+      if (categories.isNotEmpty) {
+        selectedCategory = categories.last.categoryId ?? '';
+      }
+      emit(CategoriesFetched(categories: categories));
     }
+    // } catch (e) {
+    //   emit(CategoriesNotFetched(errorMessage: 'Error fetching categories: $e'));
+    // }
   }
 }

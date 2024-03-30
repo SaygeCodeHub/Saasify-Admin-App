@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/companies/companies_event.dart';
 import 'package:saasify/bloc/companies/companies_state.dart';
+import 'package:saasify/cache/cache.dart';
 import 'package:saasify/models/user/user_details.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
@@ -47,6 +48,11 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
           'address': event.companyDetailsMap['address'],
           'createdAt': FieldValue.serverTimestamp()
         });
+        CollectionReference companiesRef = userDocRef.collection('companies');
+        QuerySnapshot snapshot = await companiesRef.get();
+        for (var doc in snapshot.docs) {
+          await CustomerCache.setCompanyId(doc.id);
+        }
         emit(CompanyAdded());
       }
     } catch (e) {

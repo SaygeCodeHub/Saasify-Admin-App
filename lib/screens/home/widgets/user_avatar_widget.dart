@@ -12,7 +12,7 @@ class UserAvatarWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '${Cache.getUserName()} ✌🏻',
+          '${CustomerCache.getUserName()} ✌🏻',
           style: Theme.of(context).textTheme.moduleHeadingTextStyle,
         ),
       ],

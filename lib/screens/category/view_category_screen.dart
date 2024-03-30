@@ -24,40 +24,7 @@ class ViewCategoryScreen extends StatelessWidget {
       final categoriesBox = Hive.box<ProductCategories>('categories');
       listenableBox = categoriesBox.listenable();
     }
-    final List<Map<String, String>> categories = [
-      {
-        'imagePath': 'assets/category1.jpg',
-        'description1': 'Spicy Corn',
-        'description2': 'Available',
-        'description3': 'Make it happend',
-      },
-      {
-        'imagePath': 'assets/category2.jpg',
-        'description1': 'Noodles',
-        'description2': 'Available',
-        'description3': 'Make it happend',
-      },
-      {
-        'imagePath': 'assets/category3.jpg',
-        'description1': 'Biryani',
-        'description2': 'Available',
-        'description3': 'Make it happend',
-      },
-      {
-        'imagePath': 'assets/category4.jpg',
-        'description1': 'Paasta',
-        'description2': 'Available',
-        'description3': 'Make it happend',
-      },
-      {
-        'imagePath': 'assets/category5.jpg',
-        'description1': 'Rice',
-        'description2': 'Available',
-        'description3': 'Make it happend',
-      },
-    ];
-    var width = MediaQuery.of(context).size.width;
-    int crossAxisCount = width > 600 ? 5 : 2;
+
     return SkeletonScreen(
       appBarTitle: 'Categories',
       bodyContent: SingleChildScrollView(
@@ -131,9 +98,8 @@ class ViewCategoryScreen extends StatelessWidget {
                           crossAxisSpacing: 20,
                           childAspectRatio: 0.95,
                         ),
-                        itemCount: categories.length,
+                        itemCount: state.categories.length,
                         itemBuilder: (context, index) {
-                          final category = categories[index];
                           return Padding(
                             padding: const EdgeInsets.all(10),
                             child: Stack(
@@ -160,19 +126,13 @@ class ViewCategoryScreen extends StatelessWidget {
                                           children: [
                                             const SizedBox(height: 60),
                                             Text(
-                                              category['description1'] ?? '',
+                                              state.categories[index].name,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .gridViewLabelTextStyle,
                                             ),
                                             Text(
-                                              category['description2'] ?? '',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium,
-                                            ),
-                                            Text(
-                                              category['description3'] ?? '',
+                                             "",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium,
@@ -194,7 +154,7 @@ class ViewCategoryScreen extends StatelessWidget {
                                         height: 100,
                                         width: 100,
                                         child: Image.asset(
-                                          category['imagePath'] ?? '',
+                                          state.categories[index].imagePath.toString(),
                                           fit: BoxFit.cover,
                                         ),
                                       ),

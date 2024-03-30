@@ -11,6 +11,7 @@ import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
+import 'package:saasify/screens/products/product_detail.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/global.dart';
@@ -90,87 +91,107 @@ class AddProductScreen extends StatelessWidget {
                       });
                 }
               },
-              child: PrimaryButton(
-                buttonTitle: 'Add Product',
-                onPressed: () async {
-                  if (kIsOfflineModule) {
-                    if (context
-                        .read<CategoryBloc>()
-                        .selectedCategory
-                        .isNotEmpty) {
-                      final product = Products(
-                        productId: 0,
-                        name: _nameController.text,
-                        category: context.read<CategoryBloc>().selectedCategory,
-                        description: _descriptionController.text,
-                        imageUrl: '',
-                        supplier: _supplierController.text,
-                        tax: double.tryParse(_taxController.text) ?? 0,
-                        minStockLevel:
-                            int.tryParse(_minStockLevelController.text) ?? 0,
-                        dateAdded: DateTime.now(),
-                        isActive: true,
-                        variants: [],
-                      );
-                      final productsBox = Hive.box<Products>('products');
-                      productsBox.add(product);
-                      if (productsBox.isNotEmpty) {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return CustomDialogs().showSuccessDialog(
-                                  context, 'Product added successfully',
-                                  onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              });
-                            });
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return CustomDialogs().showSuccessDialog(
-                                  context, 'Failed to add product.',
-                                  onPressed: () => Navigator.pop(context));
-                            });
-                      }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Select a category!')));
-                    }
-                  } else {
-                    if (formKey.currentState!.validate()) {
-                      if (context
-                          .read<CategoryBloc>()
-                          .selectedCategory
-                          .isNotEmpty) {
-                        getImage();
-                        context.read<ProductBloc>().add(AddProduct(
-                            product: Products(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: PrimaryButton(
+                      buttonTitle: 'Add Product',
+                      onPressed: () async {
+                        if (kIsOfflineModule) {
+                          if (context
+                              .read<CategoryBloc>()
+                              .selectedCategory
+                              .isNotEmpty) {
+                            final product = Products(
                               productId: 0,
                               name: _nameController.text,
-                              category:
-                                  context.read<CategoryBloc>().selectedCategory,
+                              category: context.read<CategoryBloc>().selectedCategory,
                               description: _descriptionController.text,
-                              imageUrl: image,
+                              imageUrl: '',
                               supplier: _supplierController.text,
                               tax: double.tryParse(_taxController.text) ?? 0,
                               minStockLevel:
-                                  int.tryParse(_minStockLevelController.text) ??
-                                      0,
+                                  int.tryParse(_minStockLevelController.text) ?? 0,
                               dateAdded: DateTime.now(),
                               isActive: true,
                               variants: [],
-                            ),
-                            categories: categories));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Select a category!')));
-                      }
-                    }
-                  }
-                },
+                            );
+                            final productsBox = Hive.box<Products>('products');
+                            productsBox.add(product);
+                            if (productsBox.isNotEmpty) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return CustomDialogs().showSuccessDialog(
+                                        context, 'Product added successfully',
+                                        onPressed: () {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    });
+                                  });
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return CustomDialogs().showSuccessDialog(
+                                        context, 'Failed to add product.',
+                                        onPressed: () => Navigator.pop(context));
+                                  });
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Select a category!')));
+                          }
+                        } else {
+                          if (formKey.currentState!.validate()) {
+                            if (context
+                                .read<CategoryBloc>()
+                                .selectedCategory
+                                .isNotEmpty) {
+                              getImage();
+                              context.read<ProductBloc>().add(AddProduct(
+                                  product: Products(
+                                    productId: 0,
+                                    name: _nameController.text,
+                                    category:
+                                        context.read<CategoryBloc>().selectedCategory,
+                                    description: _descriptionController.text,
+                                    imageUrl: image,
+                                    supplier: _supplierController.text,
+                                    tax: double.tryParse(_taxController.text) ?? 0,
+                                    minStockLevel:
+                                        int.tryParse(_minStockLevelController.text) ??
+                                            0,
+                                    dateAdded: DateTime.now(),
+                                    isActive: true,
+                                    variants: [],
+                                  ),
+                                  categories: categories));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Select a category!')));
+                            }
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 20,),
+                  Expanded(
+                    child: PrimaryButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ProductDetails()),
+                        );
+                      },
+                      buttonTitle: 'Details', // Button title
+                      // You can customize the button appearance here if needed
+                    ),
+                  ),
+
+                ],
               ))
         ]);
   }

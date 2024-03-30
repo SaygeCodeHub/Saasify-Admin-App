@@ -8,13 +8,15 @@ import 'package:saasify/screens/widgets/image_picker_widget.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
 import 'package:saasify/utils/responsive_form.dart';
 
-class AddProductSection extends StatelessWidget {
+class AddProductSection extends StatefulWidget {
   final List<ProductCategories> categories;
   final TextEditingController nameController;
   final TextEditingController descriptionController;
   final TextEditingController supplierController;
   final TextEditingController taxController;
   final TextEditingController minStockLevelController;
+  final TextEditingController quantityController;
+  final TextEditingController eachController;
 
   const AddProductSection(
       {super.key,
@@ -23,9 +25,19 @@ class AddProductSection extends StatelessWidget {
       required this.descriptionController,
       required this.supplierController,
       required this.taxController,
-      required this.minStockLevelController});
+      required this.minStockLevelController,
+      required this.quantityController,
+      required this.eachController});
 
-  static String image = '';
+  @override
+  State<AddProductSection> createState() => _AddProductSectionState();
+}
+
+class _AddProductSectionState extends State<AddProductSection> {
+  final soldByList = ['None', 'Each', 'Quantity'];
+  final quantity = ['kg', 'ltr', 'gm'];
+  String image = '';
+  Map soldByMap = {'selected_value': 'None', 'selected_quantity': 'kg'};
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +56,7 @@ class AddProductSection extends StatelessWidget {
           child: DropdownButtonFormField<String>(
             value: context.read<CategoryBloc>().selectedCategory,
             hint: const Text("Select an item"),
-            items: categories.map((category) {
+            items: widget.categories.map((category) {
               return DropdownMenuItem<String>(
                 value: category.categoryId,
                 child: Text(category.name),
@@ -65,28 +77,85 @@ class AddProductSection extends StatelessWidget {
             }
             return null;
           },
-          textFieldController: nameController,
+          textFieldController: widget.nameController,
         ),
         LabelAndTextFieldWidget(
           prefixIcon: const Icon(Icons.description),
           label: 'Description',
-          textFieldController: descriptionController,
+          textFieldController: widget.descriptionController,
         ),
         LabelAndTextFieldWidget(
           prefixIcon: const Icon(Icons.supervisor_account),
           label: 'Supplier',
-          textFieldController: supplierController,
+          textFieldController: widget.supplierController,
         ),
+        Text('Sold by', style: Theme.of(context).textTheme.fieldLabelTextStyle),
+        const SizedBox(height: spacingSmall),
+        DropdownButtonHideUnderline(
+          child: DropdownButtonFormField<String>(
+            value: soldByMap['selected_value'],
+            hint: const Text("Select an item"),
+            items: soldByList.map((soldBy) {
+              return DropdownMenuItem<String>(
+                value: soldBy.toString(),
+                child: Text(soldBy.toString()),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                soldByMap['selected_value'] = newValue!;
+              });
+            },
+          ),
+        ),
+        if (soldByMap['selected_value'] == 'Each')
+          LabelAndTextFieldWidget(
+              prefixIcon: const Icon(Icons.first_page),
+              label: 'Each',
+              keyboardType: TextInputType.number,
+              textFieldController: widget.eachController),
+        if (soldByMap['selected_value'] == 'Quantity')
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Select Quantity',
+                  style: Theme.of(context).textTheme.fieldLabelTextStyle),
+              const SizedBox(height: spacingSmall),
+              DropdownButtonHideUnderline(
+                child: DropdownButtonFormField<String>(
+                  value: soldByMap['selected_quantity'],
+                  hint: const Text("Select an item"),
+                  items: quantity.map((soldBy) {
+                    return DropdownMenuItem<String>(
+                      value: soldBy.toString(),
+                      child: Text(soldBy.toString()),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      soldByMap['selected_quantity'] = newValue!;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        if (soldByMap['selected_quantity'] != 'None')
+          LabelAndTextFieldWidget(
+              prefixIcon: const Icon(Icons.ad_units_outlined),
+              label: 'Quantity',
+              keyboardType: TextInputType.number,
+              textFieldController: widget.quantityController),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.attach_money),
             label: 'Tax',
             keyboardType: TextInputType.number,
-            textFieldController: taxController),
+            textFieldController: widget.taxController),
         LabelAndTextFieldWidget(
           prefixIcon: const Icon(Icons.local_shipping),
           label: 'Minimum Stock Level',
           keyboardType: TextInputType.number,
-          textFieldController: minStockLevelController,
+          textFieldController: widget.minStockLevelController,
         )
       ])
     ]);

@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
-import 'package:saasify/cache/cache.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
@@ -95,25 +94,34 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
           emit(CategoriesNotFetched(errorMessage: 'User not authenticated.'));
         } else {
           String userId = user.uid;
+          String companyId = '';
           final usersRef =
               FirebaseFirestore.instance.collection('users').doc(userId);
-          QuerySnapshot querySnapshot = await usersRef
-              .collection('companies')
-              .doc(CustomerCache.getUserCompany())
-              .collection('modules')
-              .doc('pos')
-              .collection('categories')
-              .get();
-          for (var doc in querySnapshot.docs) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            ProductCategories category = ProductCategories(
-                name: data['name'],
-                imagePath: data['image_path'],
-                categoryId: doc.id);
-            categories.add(category);
+          CollectionReference companiesRef = usersRef.collection('companies');
+          QuerySnapshot snapshot = await companiesRef.get();
+          for (var doc in snapshot.docs) {
+            companyId = doc.id;
           }
-          if (categories.isNotEmpty) {
-            emit(CategoriesFetched(categories: categories));
+          if (companyId.isNotEmpty) {
+            QuerySnapshot querySnapshot = await usersRef
+                .collection('companies')
+                .doc(companyId)
+                .collection('modules')
+                .doc('pos')
+                .collection('categories')
+                .get();
+            for (var doc in querySnapshot.docs) {
+              Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+              ProductCategories category = ProductCategories(
+                  name: data['name'],
+                  imagePath: data['image_path'],
+                  categoryId: doc.id);
+              categories.add(category);
+            }
+            if (categories.isNotEmpty) {
+              selectedCategory = categories.last.categoryId ?? '';
+              emit(CategoriesFetched(categories: categories));
+            }
           } else {
             emit(CategoriesNotFetched(errorMessage: 'No categories found!'));
           }

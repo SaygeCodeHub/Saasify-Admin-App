@@ -73,6 +73,11 @@ extension AppTextTheme on TextTheme {
         fontSize: 14, color: AppColors.cementGrey, fontWeight: FontWeight.w500);
   }
 
+  TextStyle get errorTextStyle {
+    return const TextStyle(
+        fontSize: 16, color: AppColors.black, fontWeight: FontWeight.w600);
+  }
+
   TextStyle get productNameTextStyle {
     return const TextStyle(
         fontSize: 14, color: AppColors.darkBlue, fontWeight: FontWeight.w700);

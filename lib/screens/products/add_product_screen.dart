@@ -8,9 +8,11 @@ import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/models/product/products.dart';
+import 'package:saasify/screens/category/add_category_screen.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
+import 'package:saasify/utils/error_display.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
@@ -53,7 +55,24 @@ class AddProductScreen extends StatelessWidget {
                 return SingleChildScrollView(
                     child: _buildForm(context, state.imagePath));
               } else if (state is CategoriesNotFetched) {
-                return Center(child: Text(state.errorMessage));
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.sizeOf(context).width * 0.2),
+                    child: Center(
+                      child: ErrorDisplay(
+                        text: state.errorMessage,
+                        buttonText: 'Add Category',
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddCategoryScreen()));
+                        },
+                      ),
+                    ),
+                  ),
+                );
               } else {
                 return const SizedBox.shrink();
               }

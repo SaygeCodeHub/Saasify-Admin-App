@@ -83,14 +83,13 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       FetchCategories event, Emitter<CategoryState> emit) async {
     List<ProductCategories> categories = [];
     try {
-      emit(FetchingCategories());
       if (kIsOfflineModule) {
         categories = Hive.box<ProductCategories>('categories').values.toList();
         if (categories.isNotEmpty) {
-          selectedCategory = categories.first.name;
+          emit(CategoriesFetched(categories: categories));
         }
-        emit(CategoriesFetched(categories: categories));
       } else {
+        emit(FetchingCategories());
         User? user = FirebaseAuth.instance.currentUser;
         if (user == null) {
           emit(CategoriesNotFetched(errorMessage: 'User not authenticated.'));
@@ -114,7 +113,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
             categories.add(category);
           }
           if (categories.isNotEmpty) {
-            selectedCategory = categories.last.categoryId ?? '';
             emit(CategoriesFetched(categories: categories));
           } else {
             emit(CategoriesNotFetched(errorMessage: 'No categories found!'));

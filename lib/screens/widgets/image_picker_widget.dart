@@ -67,7 +67,27 @@ class ImagePickerWidget extends StatelessWidget {
             ],
           );
         } else if (state is CouldNotPickImage) {
-          return Text(state.errorMessage);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(state.errorMessage),
+              const SizedBox(height: spacingSmall),
+              InkWell(
+                onTap: () => context.read<ImagePickerBloc>().add(PickImage()),
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppColors.lightGrey,
+                    border: Border.all(color: AppColors.darkBlue, width: 0.3),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.upload, color: AppColors.darkGrey),
+                ),
+              )
+            ],
+          );
         } else {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,

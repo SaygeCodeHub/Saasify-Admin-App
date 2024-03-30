@@ -40,16 +40,15 @@ class MyApp extends StatelessWidget {
         theme: appTheme,
         home: Scaffold(
           body: FutureBuilder<Widget>(
-            future: getInitialScreen(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return snapshot.data ?? AuthenticationScreen();
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
+              future: getInitialScreen(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return snapshot.data ?? AuthenticationScreen();
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
         ),
       ),
     );

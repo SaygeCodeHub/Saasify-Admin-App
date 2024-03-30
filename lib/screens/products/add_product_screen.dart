@@ -10,7 +10,6 @@ import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
-import 'package:saasify/screens/products/product_detail.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/error_display.dart';

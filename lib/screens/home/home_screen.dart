@@ -85,24 +85,23 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(spacingSmall),
-                itemCount: features.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).size.width ~/ 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemBuilder: (context, index) {
-                  return FeatureCardWidget(
-                    icon: features[index].icon,
-                    label: features[index].label,
-                    screen: features[index].screen,
-                  );
-                },
-              )
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(spacingSmall),
+                  itemCount: features.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: MediaQuery.of(context).size.width ~/ 200,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemBuilder: (context, index) {
+                    return FeatureCardWidget(
+                      icon: features[index].icon,
+                      label: features[index].label,
+                      screen: features[index].screen,
+                    );
+                  })
             ],
           ),
         ),

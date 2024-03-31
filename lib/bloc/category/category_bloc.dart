@@ -81,54 +81,54 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   FutureOr<void> _fetchCategories(
       FetchCategories event, Emitter<CategoryState> emit) async {
     List<ProductCategories> categories = [];
-    try {
-      if (kIsOfflineModule) {
-        categories = Hive.box<ProductCategories>('categories').values.toList();
-        if (categories.isNotEmpty) {
-          emit(CategoriesFetched(categories: categories));
-        }
+    // try {
+    if (kIsOfflineModule) {
+      categories = Hive.box<ProductCategories>('categories').values.toList();
+      if (categories.isNotEmpty) {
+        emit(CategoriesFetched(categories: categories));
+      }
+    } else {
+      emit(FetchingCategories());
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        emit(CategoriesNotFetched(errorMessage: 'User not authenticated.'));
       } else {
-        emit(FetchingCategories());
-        User? user = FirebaseAuth.instance.currentUser;
-        if (user == null) {
-          emit(CategoriesNotFetched(errorMessage: 'User not authenticated.'));
-        } else {
-          String userId = user.uid;
-          String companyId = '';
-          final usersRef =
-              FirebaseFirestore.instance.collection('users').doc(userId);
-          CollectionReference companiesRef = usersRef.collection('companies');
-          QuerySnapshot snapshot = await companiesRef.get();
-          for (var doc in snapshot.docs) {
-            companyId = doc.id;
+        String userId = user.uid;
+        String companyId = '';
+        final usersRef =
+            FirebaseFirestore.instance.collection('users').doc(userId);
+        CollectionReference companiesRef = usersRef.collection('companies');
+        QuerySnapshot snapshot = await companiesRef.get();
+        for (var doc in snapshot.docs) {
+          companyId = doc.id;
+        }
+        if (companyId.isNotEmpty) {
+          QuerySnapshot querySnapshot = await usersRef
+              .collection('companies')
+              .doc(companyId)
+              .collection('modules')
+              .doc('pos')
+              .collection('categories')
+              .get();
+          for (var doc in querySnapshot.docs) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            ProductCategories category = ProductCategories(
+                name: data['name'],
+                imagePath: data['image_path'],
+                categoryId: doc.id);
+            categories.add(category);
           }
-          if (companyId.isNotEmpty) {
-            QuerySnapshot querySnapshot = await usersRef
-                .collection('companies')
-                .doc(companyId)
-                .collection('modules')
-                .doc('pos')
-                .collection('categories')
-                .get();
-            for (var doc in querySnapshot.docs) {
-              Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-              ProductCategories category = ProductCategories(
-                  name: data['name'],
-                  imagePath: data['image_path'],
-                  categoryId: doc.id);
-              categories.add(category);
-            }
-            if (categories.isNotEmpty) {
-              selectedCategory = categories.last.categoryId ?? '';
-              emit(CategoriesFetched(categories: categories));
-            }
+          if (categories.isNotEmpty) {
+            selectedCategory = categories.last.categoryId ?? '';
+            emit(CategoriesFetched(categories: categories));
           } else {
             emit(CategoriesNotFetched(errorMessage: 'No categories found!'));
           }
         }
       }
-    } catch (e) {
-      emit(CategoriesNotFetched(errorMessage: 'Error fetching categories: $e'));
     }
+    // } catch (e) {
+    //   emit(CategoriesNotFetched(errorMessage: 'Error fetching categories: $e'));
+    // }
   }
 }

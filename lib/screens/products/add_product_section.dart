@@ -10,27 +10,15 @@ import 'package:saasify/utils/responsive_form.dart';
 
 class AddProductSection extends StatefulWidget {
   final List<ProductCategories> categories;
-  final TextEditingController nameController;
-  final TextEditingController descriptionController;
-  final TextEditingController supplierController;
-  final TextEditingController taxController;
-  final TextEditingController minStockLevelController;
-  final TextEditingController priceController;
-  final TextEditingController quantityController;
   final Map soldByMap;
   static String image = '';
+  final Map productMap;
 
   const AddProductSection(
       {super.key,
       required this.categories,
-      required this.nameController,
-      required this.descriptionController,
-      required this.supplierController,
-      required this.taxController,
-      required this.minStockLevelController,
-      required this.priceController,
-      required this.quantityController,
-      required this.soldByMap});
+      required this.soldByMap,
+      required this.productMap});
 
   @override
   State<AddProductSection> createState() => _AddProductSectionState();
@@ -46,7 +34,7 @@ class _AddProductSectionState extends State<AddProductSection> {
       const SizedBox(height: spacingStandard),
       ImagePickerWidget(
           onImagePicked: (String imagePath) {
-            AddProductSection.image = imagePath;
+            widget.productMap['image'] = imagePath;
           },
           label: 'Product display image'),
       const SizedBox(height: spacingStandard),
@@ -65,7 +53,7 @@ class _AddProductSectionState extends State<AddProductSection> {
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
-                context.read<CategoryBloc>().selectedCategory = newValue!;
+                widget.productMap['category_id'] = newValue!;
               });
             },
           ),
@@ -80,13 +68,16 @@ class _AddProductSectionState extends State<AddProductSection> {
             }
             return null;
           },
-          textFieldController: widget.nameController,
+          onTextFieldChanged: (String? value) {
+            widget.productMap['name'] = value;
+          },
         ),
         LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.description),
-          label: 'Description',
-          textFieldController: widget.descriptionController,
-        ),
+            prefixIcon: const Icon(Icons.description),
+            label: 'Description',
+            onTextFieldChanged: (String? value) {
+              widget.productMap['description'] = value;
+            }),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -114,10 +105,13 @@ class _AddProductSectionState extends State<AddProductSection> {
         ),
         if (widget.soldByMap['selected_value'] == 'Each')
           LabelAndTextFieldWidget(
-              prefixIcon: const Icon(Icons.ad_units_outlined),
-              label: 'Quantity',
-              keyboardType: TextInputType.number,
-              textFieldController: widget.quantityController),
+            prefixIcon: const Icon(Icons.ad_units_outlined),
+            label: 'Quantity',
+            keyboardType: TextInputType.number,
+            onTextFieldChanged: (String? value) {
+              widget.productMap['quantity'] = value;
+            },
+          ),
         if (widget.soldByMap['selected_value'] == 'Quantity')
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,29 +143,37 @@ class _AddProductSectionState extends State<AddProductSection> {
               prefixIcon: const Icon(Icons.ad_units_outlined),
               label: 'Quantity',
               keyboardType: TextInputType.number,
-              textFieldController: widget.quantityController),
+              onTextFieldChanged: (String? value) {
+                widget.productMap['quantity'] = value;
+              }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.price_change_rounded),
             label: 'Price',
             keyboardType: TextInputType.number,
-            textFieldController: widget.priceController),
+            onTextFieldChanged: (String? value) {
+              widget.productMap['price'] = value;
+            }),
         LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.supervisor_account),
-          label: 'Supplier',
-          textFieldController: widget.supplierController,
-        ),
+            prefixIcon: const Icon(Icons.supervisor_account),
+            label: 'Supplier',
+            onTextFieldChanged: (String? value) {
+              widget.productMap['supplier'] = value;
+            }),
         if (widget.soldByMap['selected_quantity'] == 'None')
           LabelAndTextFieldWidget(
               prefixIcon: const Icon(Icons.ad_units_outlined),
               label: 'Tax',
               keyboardType: TextInputType.number,
-              textFieldController: widget.taxController),
+              onTextFieldChanged: (String? value) {
+                widget.productMap['tax'] = value;
+              }),
         LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.local_shipping),
-          label: 'Minimum Stock Level',
-          keyboardType: TextInputType.number,
-          textFieldController: widget.minStockLevelController,
-        )
+            prefixIcon: const Icon(Icons.local_shipping),
+            label: 'Minimum Stock Level',
+            keyboardType: TextInputType.number,
+            onTextFieldChanged: (String? value) {
+              widget.productMap['stock_level'] = value;
+            })
       ])
     ]);
   }

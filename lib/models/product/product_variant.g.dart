@@ -18,7 +18,7 @@ class ProductVariantAdapter extends TypeAdapter<ProductVariant> {
     };
     return ProductVariant(
       variantId: fields[0] as int,
-      productId: fields[1] as int,
+      productId: fields[1] as String,
       variantName: fields[2] as String,
       price: fields[3] as double,
       cost: fields[4] as double,

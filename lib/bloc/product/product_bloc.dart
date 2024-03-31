@@ -10,6 +10,7 @@ import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/utils/global.dart';
+import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductState get initialState => ProductInitial();
@@ -24,61 +25,82 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       AddProduct event, Emitter<ProductState> emit) async {
     try {
       emit(AddingProduct());
-      Map<String, dynamic> productData = event.product.toMap();
-      final usersRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(CustomerCache.getUserId());
-      CollectionReference companiesRef = usersRef.collection('companies');
-      QuerySnapshot snapshot = await companiesRef.get();
-      String companyId = '';
-      for (var doc in snapshot.docs) {
-        companyId = doc.id;
+      if (kIsOfflineModule) {
+        final productsBox = Hive.box<Products>('products');
+        productsBox.add(Products(
+            productId: '',
+            name: event.productMap['name'] ?? '',
+            category: event.productMap['category_id'] ?? '',
+            description: event.productMap['description'] ?? '',
+            supplier: event.productMap['supplier'] ?? '',
+            tax: event.productMap['tax'] ?? 0.0,
+            minStockLevel: int.parse(event.productMap['stock_level'] ?? 0)));
+      } else {
+        if (event.productMap.isNotEmpty) {
+          _addProductToFirebase(event.productMap);
+          emit(ProductAdded(successMessage: 'Product added successfully'));
+        } else {
+          emit(ProductNotAdded(errorMessage: 'Could not add the product.'));
+        }
       }
-      List<ProductVariant> variantData = productData['variants'];
-      Map<String, dynamic> variants = {};
-      for (var data in variantData) {
-        variants = data.toMap();
-      }
-      productData.remove('variants');
-      companiesRef
-          .doc(companyId)
-          .collection('modules')
-          .doc('pos')
-          .collection('categories')
-          .doc(productData['category'])
-          .collection('products')
-          .add({...productData, 'dateAdded': FieldValue.serverTimestamp()});
-      QuerySnapshot getProducts = await companiesRef
-          .doc(companyId)
-          .collection('modules')
-          .doc('pos')
-          .collection('categories')
-          .doc(productData['category'])
-          .collection('products')
-          .get();
-      String productId = '';
-      for (var item in getProducts.docs) {
-        productId = item.id;
-      }
-      if (productId.isNotEmpty) {
-        variants['productId'] = productId;
+    } catch (error) {
+      emit(ProductNotAdded(errorMessage: 'Error adding product: $error'));
+    }
+  }
+
+  FutureOr<void> _addProductToFirebase(Map productMap) async {
+    final usersRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(CustomerCache.getUserId());
+    CollectionReference companiesRef = usersRef.collection('companies');
+    QuerySnapshot snapshot = await companiesRef.get();
+    String companyId = '';
+    for (var doc in snapshot.docs) {
+      companyId = doc.id;
+    }
+    productMap['image'] =
+        await RetrieveImageFromFirebase().getImage(productMap['image']);
+    Products products = Products(
+        productId: '',
+        name: productMap['name'] ?? '',
+        imageUrl: productMap['image'] ?? '',
+        category: productMap['category_id'] ?? '',
+        description: productMap['description'] ?? '',
+        supplier: productMap['supplier'] ?? '',
+        tax: productMap['tax'] ?? 0.0,
+        minStockLevel: int.parse(productMap['stock_level'] ?? 0));
+    Map<String, dynamic> productData = products.toMap();
+    await companiesRef
+        .doc(companyId)
+        .collection('modules')
+        .doc('pos')
+        .collection('categories')
+        .doc(productMap['category_id'])
+        .collection('products')
+        .add({...productData, 'dateAdded': FieldValue.serverTimestamp()}).then(
+            (DocumentReference productDocRef) async {
+      if (productMap['quantity'] != null || productMap['quantity'] != '') {
+        ProductVariant productVariant = ProductVariant(
+            variantId: 0,
+            productId: productDocRef.id,
+            variantName: productMap['quantity'] ?? '',
+            price: double.parse(productMap['price'] ?? 0.0),
+            cost: double.parse(productMap['price'] ?? 0.0),
+            quantityAvailable: int.parse(productMap['stock_level'] ?? 0),
+            isActive: true);
+        Map<String, dynamic> variantsData = productVariant.toMap();
         CollectionReference variantsRef = companiesRef
             .doc(companyId)
             .collection('modules')
             .doc('pos')
             .collection('categories')
-            .doc(productData['category'])
+            .doc(productMap['category_id'])
             .collection('products')
-            .doc(productId)
+            .doc(productDocRef.id)
             .collection('variants');
-        await variantsRef.add(variants);
-        emit(ProductAdded(successMessage: 'Product added successfully'));
-      } else {
-        emit(ProductNotAdded(errorMessage: 'Could not add the product.'));
+        await variantsRef.add(variantsData);
       }
-    } catch (error) {
-      emit(ProductNotAdded(errorMessage: 'Error adding product: $error'));
-    }
+    });
   }
 
   FutureOr<void> _viewProducts(
@@ -171,8 +193,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
               supplier: productData['supplier'],
               minStockLevel: productData['minStockLevel'],
               dateAdded: DateTime.now(),
-              category: event.categoryId,
-              variants: []);
+              category: event.categoryId);
           products.add(product);
           if (products.isNotEmpty) {
             emit(ProductsFetched(

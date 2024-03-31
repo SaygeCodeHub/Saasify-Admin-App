@@ -20,7 +20,6 @@ class ProductsAdapter extends TypeAdapter<Products> {
       productId: fields[0] as String,
       name: fields[1] as String,
       category: fields[2] as String,
-      variants: (fields[11] as List).cast<ProductVariant>(),
       tax: fields[3] as double,
       supplier: fields[4] as String,
       minStockLevel: fields[5] as int,
@@ -54,9 +53,7 @@ class ProductsAdapter extends TypeAdapter<Products> {
       ..writeByte(8)
       ..write(obj.dateAdded)
       ..writeByte(9)
-      ..write(obj.isActive)
-      ..writeByte(10)
-      ..write(obj.variants);
+      ..write(obj.isActive);
   }
 
   @override

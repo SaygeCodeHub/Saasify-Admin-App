@@ -2,11 +2,9 @@ import 'package:hive/hive.dart';
 
 import '../../configs/hive_type_ids.dart';
 
-part 'add_customer_model.g.dart'; // This file will be generated
+part 'add_customer_model.g.dart';
 
-@HiveType(
-    typeId: HiveTypeIds
-        .customers) // Ensure that typeId is unique if you have other Hive objects
+@HiveType(typeId: HiveTypeIds.customers)
 class AddCustomerModel extends HiveObject {
   @HiveField(0)
   final String name;
@@ -18,7 +16,7 @@ class AddCustomerModel extends HiveObject {
   final String contact;
 
   @HiveField(3)
-  final String dob; // Date of birth
+  final DateTime dob;
 
   @HiveField(4)
   final int loyaltyPoints;

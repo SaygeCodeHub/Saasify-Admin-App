@@ -20,21 +20,21 @@ class ProductsAdapter extends TypeAdapter<Products> {
       productId: fields[0] as String,
       name: fields[1] as String,
       category: fields[2] as String,
-      variants: (fields[11] as List).cast<ProductVariant>(),
+      variants: (fields[10] as List).cast<ProductVariant>(),
       tax: fields[3] as double,
       supplier: fields[4] as String,
       minStockLevel: fields[5] as int,
-      description: fields[7] as String,
-      imageUrl: fields[8] as String,
-      dateAdded: fields[9] as DateTime?,
-      isActive: fields[10] as bool,
+      description: fields[6] as String,
+      imageUrl: fields[7] as String,
+      dateAdded: fields[8] as DateTime?,
+      isActive: fields[9] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Products obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.productId)
       ..writeByte(1)

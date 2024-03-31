@@ -6,6 +6,8 @@ import 'package:saasify/screens/customers/add_customer_screen.dart';
 import 'package:saasify/screens/products/add_product_screen.dart';
 import 'package:saasify/screens/products/view_product_screen.dart';
 
+import '../screens/couponsAndDiscounts/add_coupon_discount_screen.dart';
+
 List<FeatureCardModel> features = [
   FeatureCardModel(
       icon: Icons.category_outlined,
@@ -24,15 +26,13 @@ List<FeatureCardModel> features = [
       label: 'View Products',
       screen: const AllProductsScreen()),
   FeatureCardModel(
-      icon: Icons.people,
-      label: 'Add Customers',
-      screen: const AddCustomerScreen()),
+      icon: Icons.people, label: 'Add Customers', screen: AddCustomerScreen()),
   FeatureCardModel(
       icon: Icons.people_outline,
       label: 'Add Suppliers',
-      screen: const AddCustomerScreen()),
+      screen: AddCustomerScreen()),
   FeatureCardModel(
       icon: Icons.people,
       label: 'Add Coupons',
-      screen: const AddCustomerScreen())
+      screen: const AddCouponDiscountScreen())
 ];

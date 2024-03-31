@@ -15,14 +15,9 @@ import '../widgets/label_and_textfield_widget.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
 
-class AddCustomerScreen extends StatefulWidget {
-  const AddCustomerScreen({super.key});
+class AddCustomerScreen extends StatelessWidget {
+  AddCustomerScreen({super.key});
 
-  @override
-  AddCustomerScreenState createState() => AddCustomerScreenState();
-}
-
-class AddCustomerScreenState extends State<AddCustomerScreen> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController customerNameController = TextEditingController();
   final TextEditingController contactController = TextEditingController();

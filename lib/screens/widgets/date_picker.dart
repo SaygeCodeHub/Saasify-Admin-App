@@ -23,7 +23,7 @@ class CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         LabelAndTextFieldWidget(
-          readOnly:true,
+          readOnly: true,
           label: widget.label,
           textFieldController: widget.dateController,
           prefixIcon: const Icon(Icons.calendar_month),

@@ -45,18 +45,15 @@ class CouponsAndDiscountsBloc
           for (var doc in snapshot.docs) {
             companyId = doc.id;
           }
-          final categoriesRef = usersRef
+          final couponsRef = usersRef
               .collection('companies')
               .doc(companyId)
               .collection('modules')
               .doc('pos')
               .collection('coupons');
-          categoriesRef.add(categoryData);
+
+          couponsRef.add(categoryData);
           emit(CouponAdded(successMessage: 'Coupon added successfully'));
-          QuerySnapshot categorySnapshot = await categoriesRef
-              .where('name', isEqualTo: categoryData['name'])
-              .get();
-          print('beforeee  categorySnapshot  ${categorySnapshot.docs}');
         }
       }
     } catch (e) {

@@ -38,7 +38,9 @@ class AddProductButton extends StatelessWidget {
                 tax: double.tryParse(productMap['tax']) ?? 0,
                 minStockLevel: int.tryParse(productMap['min_stock']) ?? 0,
                 dateAdded: DateTime.now(),
-                isActive: true);
+                isActive: true,
+                soldBy: '',
+                unit: '');
             final productsBox = Hive.box<Products>('products');
             productsBox.add(product);
             if (productsBox.isNotEmpty) {

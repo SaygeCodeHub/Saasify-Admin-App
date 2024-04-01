@@ -19,9 +19,17 @@ class ErrorDisplay extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Image.asset('assets/empty-box.png'),
+        const SizedBox(height: spacingSmall),
         Text(text, style: Theme.of(context).textTheme.errorTextStyle),
         const SizedBox(height: spacingSmallest),
-        ElevatedButton(onPressed: onPressed, child: Text(buttonText)),
+        Row(
+          children: [
+            Text(buttonText, style: Theme.of(context).textTheme.errorTextStyle),
+            IconButton(
+                onPressed: onPressed, icon: const Icon(Icons.arrow_forward))
+          ],
+        )
       ],
     );
   }

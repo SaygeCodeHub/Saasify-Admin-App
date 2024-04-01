@@ -3,25 +3,25 @@ import 'package:saasify/models/product/products.dart';
 
 abstract class ProductState {}
 
-final class ProductInitial extends ProductState {}
+class ProductInitial extends ProductState {}
 
-final class AddingProduct extends ProductState {}
+class AddingProduct extends ProductState {}
 
-final class ProductAdded extends ProductState {
+class ProductAdded extends ProductState {
   final String successMessage;
 
   ProductAdded({required this.successMessage});
 }
 
-final class ProductNotAdded extends ProductState {
+class ProductNotAdded extends ProductState {
   final String errorMessage;
 
   ProductNotAdded({required this.errorMessage});
 }
 
-final class FetchingProducts extends ProductState {}
+class FetchingProducts extends ProductState {}
 
-final class ProductsFetched extends ProductState {
+class ProductsFetched extends ProductState {
   final List<Products> products;
   final List<ProductCategories> categories;
   final String categoryId;
@@ -34,8 +34,36 @@ final class ProductsFetched extends ProductState {
       required this.selectedCategories});
 }
 
-final class ProductsCouldNotFetch extends ProductState {
+class ProductsCouldNotFetch extends ProductState {
   final String errorMessage;
 
   ProductsCouldNotFetch({required this.errorMessage});
+}
+
+class FetchingProduct extends ProductState {}
+
+class ProductFetched extends ProductState {
+  final Products products;
+
+  ProductFetched({required this.products});
+}
+
+class ProductNotFetched extends ProductState {
+  final String errorMessage;
+
+  ProductNotFetched({required this.errorMessage});
+}
+
+class AddingVariant extends ProductState {}
+
+class VariantAdded extends ProductState {
+  final String successMessage;
+
+  VariantAdded({required this.successMessage});
+}
+
+class VariantNotAdded extends ProductState {
+  final String errorMessage;
+
+  VariantNotAdded({required this.errorMessage});
 }

@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:saasify/models/product/product_variant.dart';
 
 import '../../configs/hive_type_ids.dart';
 
@@ -26,6 +27,11 @@ class Products {
   late DateTime dateAdded; // Date Added/Last Updated
   @HiveField(9)
   late bool isActive; // Variants
+  @HiveField(10)
+  late String soldBy;
+  @HiveField(11)
+  late String unit;
+  List<ProductVariant> variants;
 
   Products({
     required this.productId,
@@ -38,9 +44,10 @@ class Products {
     this.imageUrl = '', // Default value for imageUrl
     DateTime? dateAdded, // Optional parameter for dateAdded
     bool isActive = false, // Default value for isActive
-  }) : dateAdded = dateAdded ??
-            DateTime
-                .now(); // Initialize dateAdded with current date if not provided
+    required this.soldBy,
+    required this.unit,
+  })  : dateAdded = dateAdded ?? DateTime.now(),
+        variants = []; // Initialize dateAdded with current date if not provided
 
   Map<String, dynamic> toMap() {
     return {
@@ -53,7 +60,10 @@ class Products {
       'tax': tax,
       'minStockLevel': minStockLevel,
       'dateAdded': dateAdded,
-      'isActive': isActive = true
+      'isActive': isActive = true,
+      'soldBy': soldBy,
+      'unit': unit,
+      'variants': variants
     };
   }
 }

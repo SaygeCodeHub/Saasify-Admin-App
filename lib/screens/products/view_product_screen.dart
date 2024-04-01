@@ -7,9 +7,9 @@ import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
+import 'package:saasify/screens/products/product_detail.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
 import 'package:saasify/utils/error_display.dart';
-
 import '../../configs/app_colors.dart';
 
 class AllProductsScreen extends StatelessWidget {
@@ -17,12 +17,16 @@ class AllProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<ProductBloc>().add(ViewProducts());
+    context.read<ProductBloc>().add(FetchProducts());
     var width = MediaQuery.of(context).size.width;
     int crossAxisCount = width > 600 ? 5 : 2;
     return SkeletonScreen(
         appBarTitle: 'Products',
         bodyContent: BlocBuilder<ProductBloc, ProductState>(
+          buildWhen: (previousState, currentState) =>
+              currentState is FetchingProducts ||
+              currentState is ProductsFetched ||
+              currentState is ProductsCouldNotFetch,
           builder: (context, state) {
             if (state is FetchingProducts) {
               return const Center(child: CircularProgressIndicator());
@@ -38,26 +42,26 @@ class AllProductsScreen extends StatelessWidget {
                     const SizedBox(height: spacingSmall),
                     Wrap(
                       spacing: spacingSmall,
-                      children: state.categories
-                          .map((chip) => FilterChip(
-                              label: Text(chip.name),
-                              selected: state.selectedCategories
-                                  .contains(chip.categoryId),
-                              labelStyle: TextStyle(
-                                  color: state.selectedCategories
-                                          .contains(chip.categoryId)
-                                      ? AppColors.grey
-                                      : AppColors.black),
-                              selectedColor: state.selectedCategories
-                                      .contains(chip.categoryId)
-                                  ? AppColors.successGreen
-                                  : AppColors.grey,
-                              onSelected: (value) {
-                                context.read<ProductBloc>().add(SelectCategory(
-                                    categoryId: chip.categoryId ?? '',
-                                    categories: state.categories));
-                              }))
-                          .toList(),
+                      children: state.categories.map((chip) {
+                        return FilterChip(
+                            label: Text(chip.name),
+                            selected: state.selectedCategories
+                                .contains(chip.categoryId),
+                            labelStyle: TextStyle(
+                                color: state.selectedCategories
+                                        .contains(chip.categoryId)
+                                    ? AppColors.grey
+                                    : AppColors.black),
+                            selectedColor: state.selectedCategories
+                                    .contains(chip.categoryId)
+                                ? AppColors.successGreen
+                                : AppColors.grey,
+                            onSelected: (value) {
+                              context.read<ProductBloc>().add(SelectCategory(
+                                  categoryId: chip.categoryId ?? '',
+                                  categories: state.categories));
+                            });
+                      }).toList(),
                     ),
                     const SizedBox(height: spacingStandard),
                     Text('Products',
@@ -84,36 +88,53 @@ class AllProductsScreen extends StatelessWidget {
                                     borderRadius:
                                         BorderRadius.circular(spacingSmall),
                                     elevation: 4,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(spacingSmall),
-                                      ),
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.all(spacingLarge),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(
-                                                height: spacingXXExcel),
-                                            Text(
-                                              state.products[index].name,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .gridViewLabelTextStyle,
-                                            ),
-                                            const SizedBox(
-                                                height: spacingSmallest),
-                                            Text(
-                                                state.products[index]
-                                                    .description,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProductDetails(
+                                                        categoryId: state
+                                                            .products[index]
+                                                            .category,
+                                                        productId: state
+                                                            .products[index]
+                                                            .productId)));
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              spacingSmall),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(
+                                              spacingLarge),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(
+                                                  height: spacingXXExcel),
+                                              Text(
+                                                state.products[index].name,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodyMedium,
-                                                textAlign: TextAlign.center),
-                                          ],
+                                                    .gridViewLabelTextStyle,
+                                              ),
+                                              const SizedBox(
+                                                  height: spacingSmallest),
+                                              Text(
+                                                  state.products[index]
+                                                      .description,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                  textAlign: TextAlign.center),
+                                              const SizedBox(
+                                                  height: spacingSmallest),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),

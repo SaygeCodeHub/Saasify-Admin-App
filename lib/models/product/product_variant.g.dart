@@ -17,7 +17,7 @@ class ProductVariantAdapter extends TypeAdapter<ProductVariant> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ProductVariant(
-      variantId: fields[0] as int,
+      variantId: fields[0] as String,
       productId: fields[1] as String,
       variantName: fields[2] as String,
       price: fields[3] as double,

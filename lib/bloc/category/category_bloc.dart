@@ -22,7 +22,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   FutureOr<void> _addCategory(
       AddCategory event, Emitter<CategoryState> emit) async {
-    emit(AddingCategory());
     try {
       if (kIsOfflineModule) {
         final category = ProductCategories(
@@ -33,6 +32,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
           emit(CategoryAdded(successMessage: 'Category added successfully'));
         });
       } else {
+        emit(AddingCategory());
         User? user = FirebaseAuth.instance.currentUser;
         if (user == null || user.uid.isEmpty) {
           emit(CategoryNotAdded(errorMessage: 'User not authenticated.'));

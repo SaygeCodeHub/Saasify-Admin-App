@@ -97,6 +97,8 @@ class _AddProductSectionState extends State<AddProductSection> {
                 onChanged: (String? newValue) {
                   setState(() {
                     widget.soldByMap['selected_value'] = newValue!;
+                    widget.productMap['sold_by'] =
+                        widget.soldByMap['selected_value'];
                   });
                 },
               ),
@@ -132,6 +134,8 @@ class _AddProductSectionState extends State<AddProductSection> {
                   onChanged: (String? newValue) {
                     setState(() {
                       widget.soldByMap['selected_quantity'] = newValue!;
+                      widget.soldByMap['unit'] =
+                          widget.soldByMap['selected_quantity'];
                     });
                   },
                 ),

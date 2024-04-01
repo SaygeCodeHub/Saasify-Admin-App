@@ -21,11 +21,8 @@ class AddProductScreen extends StatelessWidget {
 
   static List<ProductCategories> categories = [];
   final formKey = GlobalKey<FormState>();
-
-  static String image = '';
-
   static Map soldByMap = {'selected_value': 'Each', 'selected_quantity': 'kg'};
-  final Map productMap = {};
+  static Map productMap = {};
 
   @override
   Widget build(BuildContext context) {
@@ -99,9 +96,15 @@ class AddProductScreen extends StatelessWidget {
                   buttonTitle: 'Add Product',
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      if (productMap['category_id'] == null) {
+                      if (productMap['category_id'] == null ||
+                          productMap['sold_by'] == null) {
                         productMap['category_id'] =
                             context.read<CategoryBloc>().selectedCategory;
+                        productMap['sold_by'] = soldByMap['selected_value'];
+                        (soldByMap['selected_value'] == 'Quantity')
+                            ? productMap['unit'] =
+                                soldByMap['selected_quantity']
+                            : '';
                         context.read<ProductBloc>().add(AddProduct(
                             categories: categories, productMap: productMap));
                       } else {

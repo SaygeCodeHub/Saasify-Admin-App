@@ -34,7 +34,7 @@ class ProductsAdapter extends TypeAdapter<Products> {
   @override
   void write(BinaryWriter writer, Products obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.productId)
       ..writeByte(1)

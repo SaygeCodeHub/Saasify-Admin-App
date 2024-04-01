@@ -10,13 +10,12 @@ import 'package:saasify/utils/responsive_form.dart';
 import '../../../configs/app_spacing.dart';
 import '../../bloc/customers/customer_bloc.dart';
 import '../../bloc/customers/customer_events.dart';
-import '../widgets/date_picker.dart';
 import '../widgets/label_and_textfield_widget.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
 
-class AddCustomerScreen extends StatelessWidget {
-  AddCustomerScreen({super.key});
+class AddSupplierScreen extends StatelessWidget {
+  AddSupplierScreen({super.key});
 
   final formKey = GlobalKey<FormState>();
   final TextEditingController customerNameController = TextEditingController();
@@ -27,7 +26,7 @@ class AddCustomerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SkeletonScreen(
-      appBarTitle: 'Add Customer',
+      appBarTitle: 'Add Supplier',
       bodyContent: SingleChildScrollView(
         child: Form(
             key: formKey,
@@ -39,11 +38,9 @@ class AddCustomerScreen extends StatelessWidget {
                 ResponsiveForm(formWidgets: [
                   LabelAndTextFieldWidget(
                       prefixIcon: const Icon(Icons.person),
-                      label: 'Customer Name',
+                      label: 'Supplier Name',
                       isRequired: true,
                       textFieldController: customerNameController),
-                  CustomDatePickerWidget(
-                      label: 'Date of Birth', dateController: dobController),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.email),
                     label: 'Email Address',

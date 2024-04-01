@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
@@ -36,8 +37,18 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
   }
 
   Future<void> _addToFirestore(AddCustomerModel customerModel) async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    await firestore.collection('customers').add({
+    User? user = FirebaseAuth.instance.currentUser;
+    final usersRef =
+        FirebaseFirestore.instance.collection('users').doc(user!.uid);
+    CollectionReference companiesRef = usersRef.collection('companies');
+    QuerySnapshot snapshot = await companiesRef.get();
+    String companyId = '';
+    for (var doc in snapshot.docs) {
+      companyId = doc.id;
+    }
+    final customerDataPath =
+        usersRef.collection('companies').doc(companyId).collection('customers');
+    await customerDataPath.add({
       'name': customerModel.name,
       'email': customerModel.email,
       'contact': customerModel.contact,

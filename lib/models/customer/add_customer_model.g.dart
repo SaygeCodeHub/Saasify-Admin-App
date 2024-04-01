@@ -20,7 +20,7 @@ class AddCustomerModelAdapter extends TypeAdapter<AddCustomerModel> {
       name: fields[0] as String,
       email: fields[1] as String,
       contact: fields[2] as String,
-      dob: fields[3] as String,
+      dob: fields[3] as DateTime,
       loyaltyPoints: fields[4] as int,
     );
   }

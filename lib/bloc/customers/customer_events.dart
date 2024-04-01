@@ -5,5 +5,5 @@ abstract class CustomerEvent {}
 class AddCustomer extends CustomerEvent {
   final AddCustomerModel customerModel;
 
-  AddCustomer(this.customerModel);
+  AddCustomer({required this.customerModel});
 }

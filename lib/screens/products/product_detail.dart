@@ -24,8 +24,6 @@ class ProductDetails extends StatelessWidget {
     context
         .read<ProductBloc>()
         .add(FetchProduct(categoryId: categoryId, productId: productId));
-    var width = MediaQuery.of(context).size.width;
-    int crossAxisCount = width > 600 ? 5 : 2;
     return SkeletonScreen(
       appBarTitle: 'Product Details',
       bodyContent: BlocBuilder<ProductBloc, ProductState>(
@@ -132,8 +130,8 @@ class ProductDetails extends StatelessWidget {
                                 );
                               },
                               gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 5,
                                       mainAxisSpacing: 10.0,
                                       crossAxisSpacing: 15,
                                       childAspectRatio: 2.3),

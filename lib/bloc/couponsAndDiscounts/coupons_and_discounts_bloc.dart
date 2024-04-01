@@ -51,17 +51,12 @@ class CouponsAndDiscountsBloc
               .collection('modules')
               .doc('pos')
               .collection('coupons');
+          categoriesRef.add(categoryData);
+          emit(CouponAdded(successMessage: 'Coupon added successfully'));
           QuerySnapshot categorySnapshot = await categoriesRef
               .where('name', isEqualTo: categoryData['name'])
               .get();
-          if (categorySnapshot.docs.isNotEmpty) {
-            emit(CouponNotAdded(
-                errorMessage:
-                    'Coupon already exists. Please add another Coupon!'));
-          } else {
-            categoriesRef.add(categoryData);
-            emit(CouponAdded(successMessage: 'Coupon added successfully'));
-          }
+          print('beforeee  categorySnapshot  ${categorySnapshot.docs}');
         }
       }
     } catch (e) {

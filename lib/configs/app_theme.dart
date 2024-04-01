@@ -105,7 +105,7 @@ extension AppTextTheme on TextTheme {
 
   TextStyle get moduleHeadingTextStyle {
     return const TextStyle(
-        fontSize: 20, color: AppColors.darkBlue, fontWeight: FontWeight.w800);
+        fontSize: 26, color: AppColors.darkBlue, fontWeight: FontWeight.w800);
   }
 
   TextStyle get generalSectionHeadingTextStyle {

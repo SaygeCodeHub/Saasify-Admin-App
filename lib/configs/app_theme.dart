@@ -70,7 +70,7 @@ extension AppTextTheme on TextTheme {
 
   TextStyle get fieldLabelTextStyle {
     return const TextStyle(
-        fontSize: 14, color: AppColors.cementGrey, fontWeight: FontWeight.w500);
+        fontSize: 14, color: AppColors.cementGrey, fontWeight: FontWeight.w600);
   }
 
   TextStyle get errorTextStyle {

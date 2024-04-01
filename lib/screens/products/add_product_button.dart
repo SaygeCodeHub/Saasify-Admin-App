@@ -29,18 +29,18 @@ class AddProductButton extends StatelessWidget {
         if (kIsOfflineModule) {
           if (context.read<CategoryBloc>().selectedCategory.isNotEmpty) {
             final product = Products(
-              productId: '0',
-              name: productMap['name'],
-              category: context.read<CategoryBloc>().selectedCategory,
-              description: productMap['description'],
-              imageUrl: '',
-              supplier: productMap['supplier'],
-              tax: double.tryParse(productMap['tax']) ?? 0,
-              minStockLevel: int.tryParse(productMap['min_stock']) ?? 0,
-              dateAdded: DateTime.now(),
-              isActive: true,
-              variants: [],
-            );
+                productId: '0',
+                name: productMap['name'],
+                category: context.read<CategoryBloc>().selectedCategory,
+                description: productMap['description'],
+                imageUrl: '',
+                supplier: productMap['supplier'],
+                tax: double.tryParse(productMap['tax']) ?? 0,
+                minStockLevel: int.tryParse(productMap['min_stock']) ?? 0,
+                dateAdded: DateTime.now(),
+                isActive: true,
+                soldBy: '',
+                unit: '');
             final productsBox = Hive.box<Products>('products');
             productsBox.add(product);
             if (productsBox.isNotEmpty) {
@@ -69,21 +69,8 @@ class AddProductButton extends StatelessWidget {
         } else {
           if (formKey.currentState!.validate()) {
             if (context.read<CategoryBloc>().selectedCategory.isNotEmpty) {
-              context.read<ProductBloc>().add(AddProduct(
-                  product: Products(
-                    productId: '0',
-                    name: productMap['name'],
-                    category: context.read<CategoryBloc>().selectedCategory,
-                    description: productMap['description'],
-                    imageUrl: '',
-                    supplier: productMap['supplier'],
-                    tax: double.tryParse(productMap['tax']) ?? 0,
-                    minStockLevel: int.tryParse(productMap['min_stock']) ?? 0,
-                    dateAdded: DateTime.now(),
-                    isActive: true,
-                    variants: [],
-                  ),
-                  categories: categories));
+              context.read<ProductBloc>().add(
+                  AddProduct(categories: categories, productMap: productMap));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Select a category!')));

@@ -39,3 +39,31 @@ class ProductsCouldNotFetch extends ProductState {
 
   ProductsCouldNotFetch({required this.errorMessage});
 }
+
+class FetchingProduct extends ProductState {}
+
+class ProductFetched extends ProductState {
+  final Products products;
+
+  ProductFetched({required this.products});
+}
+
+class ProductNotFetched extends ProductState {
+  final String errorMessage;
+
+  ProductNotFetched({required this.errorMessage});
+}
+
+class AddingVariant extends ProductState {}
+
+class VariantAdded extends ProductState {
+  final String successMessage;
+
+  VariantAdded({required this.successMessage});
+}
+
+class VariantNotAdded extends ProductState {
+  final String errorMessage;
+
+  VariantNotAdded({required this.errorMessage});
+}

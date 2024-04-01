@@ -26,15 +26,17 @@ class Products {
   @HiveField(8)
   late DateTime dateAdded; // Date Added/Last Updated
   @HiveField(9)
-  late bool isActive; // Active/Inactive Status
+  late bool isActive; // Variants
   @HiveField(10)
-  late List<ProductVariant> variants; // Variants
+  late String soldBy;
+  @HiveField(11)
+  late String unit;
+  List<ProductVariant> variants;
 
   Products({
     required this.productId,
     required this.name,
     required this.category,
-    required this.variants,
     this.tax = 0.0, // Default value for tax
     this.supplier = '', // Default value for supplier
     this.minStockLevel = 0, // Default value for reorderPoint
@@ -42,9 +44,10 @@ class Products {
     this.imageUrl = '', // Default value for imageUrl
     DateTime? dateAdded, // Optional parameter for dateAdded
     bool isActive = false, // Default value for isActive
-  }) : dateAdded = dateAdded ??
-            DateTime
-                .now(); // Initialize dateAdded with current date if not provided
+    required this.soldBy,
+    required this.unit,
+  })  : dateAdded = dateAdded ?? DateTime.now(),
+        variants = []; // Initialize dateAdded with current date if not provided
 
   Map<String, dynamic> toMap() {
     return {
@@ -58,6 +61,8 @@ class Products {
       'minStockLevel': minStockLevel,
       'dateAdded': dateAdded,
       'isActive': isActive = true,
+      'soldBy': soldBy,
+      'unit': unit,
       'variants': variants
     };
   }

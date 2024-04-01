@@ -7,9 +7,9 @@ part 'product_variant.g.dart';
 @HiveType(typeId: HiveTypeIds.productVariants)
 class ProductVariant {
   @HiveField(0)
-  late int variantId; // Variant ID
+  late String variantId; // Variant ID
   @HiveField(1)
-  late int productId; // Product ID
+  late String productId; // Product ID
   @HiveField(2)
   late String variantName; // Variant Name
   @HiveField(3)

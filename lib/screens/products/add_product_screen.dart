@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
-import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/error_display.dart';
-import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/progress_bar.dart';
-import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 import '../../bloc/product/product_event.dart';
 import '../../models/category/product_categories.dart';
 import '../widgets/skeleton_screen.dart';
@@ -26,21 +21,8 @@ class AddProductScreen extends StatelessWidget {
 
   static List<ProductCategories> categories = [];
   final formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _supplierController = TextEditingController();
-  final TextEditingController _taxController = TextEditingController();
-  final TextEditingController _minStockLevelController =
-      TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
-
-  static String image = '';
-  getImage() async {
-    image = await RetrieveImageFromFirebase().getImage(AddProductSection.image);
-  }
-
   static Map soldByMap = {'selected_value': 'Each', 'selected_quantity': 'kg'};
+  static Map productMap = {};
 
   @override
   Widget build(BuildContext context) {
@@ -111,110 +93,31 @@ class AddProductScreen extends StatelessWidget {
                 }
               },
               child: PrimaryButton(
-                buttonTitle: 'Add Product',
-                onPressed: () async {
-                  if (kIsOfflineModule) {
-                    if (context
-                        .read<CategoryBloc>()
-                        .selectedCategory
-                        .isNotEmpty) {
-                      final product = Products(
-                        productId: '0',
-                        name: _nameController.text,
-                        category: context.read<CategoryBloc>().selectedCategory,
-                        description: _descriptionController.text,
-                        imageUrl: '',
-                        supplier: _supplierController.text,
-                        tax: double.tryParse(_taxController.text) ?? 0,
-                        minStockLevel:
-                            int.tryParse(_minStockLevelController.text) ?? 0,
-                        dateAdded: DateTime.now(),
-                        isActive: true,
-                        variants: [],
-                      );
-                      final productsBox = Hive.box<Products>('products');
-                      productsBox.add(product);
-                      if (productsBox.isNotEmpty) {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return CustomDialogs().showSuccessDialog(
-                                  context, 'Product added successfully',
-                                  onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              });
-                            });
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return CustomDialogs().showSuccessDialog(
-                                  context, 'Failed to add product.',
-                                  onPressed: () => Navigator.pop(context));
-                            });
-                      }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Select a category!')));
-                    }
-                  } else {
+                  buttonTitle: 'Add Product',
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      getImage();
-                      if (context
-                          .read<CategoryBloc>()
-                          .selectedCategory
-                          .isNotEmpty) {
+                      if (productMap['category_id'] == null ||
+                          productMap['sold_by'] == null) {
+                        productMap['category_id'] =
+                            context.read<CategoryBloc>().selectedCategory;
+                        productMap['sold_by'] = soldByMap['selected_value'];
+                        (soldByMap['selected_value'] == 'Quantity')
+                            ? productMap['unit'] =
+                                soldByMap['selected_quantity']
+                            : '';
                         context.read<ProductBloc>().add(AddProduct(
-                            product: Products(
-                              productId: '0',
-                              name: _nameController.text,
-                              category:
-                                  context.read<CategoryBloc>().selectedCategory,
-                              description: _descriptionController.text,
-                              imageUrl: image,
-                              supplier: _supplierController.text,
-                              tax: double.tryParse(_taxController.text) ?? 0,
-                              minStockLevel:
-                                  int.tryParse(_minStockLevelController.text) ??
-                                      0,
-                              dateAdded: DateTime.now(),
-                              isActive: true,
-                              variants: [
-                                ProductVariant(
-                                    variantId: 0,
-                                    productId: 0,
-                                    variantName: _quantityController.text,
-                                    price: double.parse(_priceController.text),
-                                    cost: double.parse(_priceController.text),
-                                    quantityAvailable: int.parse(
-                                        _minStockLevelController.text),
-                                    isActive: true)
-                              ],
-                            ),
-                            categories: categories));
+                            categories: categories, productMap: productMap));
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Select a category!')));
+                        context.read<ProductBloc>().add(AddProduct(
+                            categories: categories, productMap: productMap));
                       }
                     }
-                  }
-                },
-              ))
+                  }))
         ]);
   }
 
   Widget _buildForm(BuildContext context, String imagePath) {
     return AddProductSection(
-        categories: categories,
-        nameController: _nameController,
-        descriptionController: _descriptionController,
-        supplierController: _supplierController,
-        taxController: _taxController,
-        minStockLevelController: _minStockLevelController,
-        priceController: _priceController,
-        quantityController: _quantityController,
-        soldByMap: soldByMap);
+        categories: categories, soldByMap: soldByMap, productMap: productMap);
   }
 }

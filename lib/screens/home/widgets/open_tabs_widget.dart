@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saasify/screens/products/view_product_screen.dart';
 
 class OpenTabsWidget extends StatelessWidget {
   const OpenTabsWidget({super.key});
@@ -18,10 +19,19 @@ class OpenTabsWidget extends StatelessWidget {
                   height: 60,
                   decoration: const BoxDecoration(
                       shape: BoxShape.circle, color: Color(0xFFe9eaec)),
-                  child: const Center(
-                    child: Icon(
-                      Icons.add,
-                      size: 33,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const AllProductsScreen(isFromCart: true)));
+                    },
+                    child: const Center(
+                      child: Icon(
+                        Icons.add,
+                        size: 33,
+                      ),
                     ),
                   ),
                 ),

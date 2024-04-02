@@ -9,7 +9,7 @@ import '../../models/cart_model.dart';
 import 'billing_screen.dart';
 
 class CartScreen extends StatefulWidget {
-  final List<Cart> cart;
+  final List<Billing> cart;
 
   const CartScreen({super.key, required this.cart});
 
@@ -20,7 +20,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   static Map<String, dynamic> billDetailsMap = {};
 
-  void calculateBillDetails(List<Cart> cart) {
+  void calculateBillDetails(List<Billing> cart) {
     double netAmount = 0.0;
     double totalCost = 0.0;
 

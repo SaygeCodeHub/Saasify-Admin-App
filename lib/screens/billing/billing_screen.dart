@@ -16,7 +16,7 @@ class BillingScreen extends StatefulWidget {
 class _BillingScreenState extends State<BillingScreen> {
   late String _selectedCategory;
   late List<ProductCategories> _categories;
-  List<Cart> cart = [];
+  List<Billing> cart = [];
   Map<String, dynamic> cartDetailsMap = {};
   final productsBox = Hive.box<Products>('products');
   final TextEditingController _searchController = TextEditingController();
@@ -96,7 +96,6 @@ class _BillingScreenState extends State<BillingScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: spacingStandard, horizontal: mobileBodyPadding),
-                // Use ValueListenableBuilder here
                 child: ValueListenableBuilder<Box<Products>>(
                   valueListenable: productsBox.listenable(),
                   builder: (context, box, _) {
@@ -111,9 +110,7 @@ class _BillingScreenState extends State<BillingScreen> {
                       shrinkWrap: true,
                       children: List.generate(filteredProducts.length, (index) {
                         return InkWell(
-                          onTap: () {
-                            // Handle onTap
-                          },
+                          onTap: () {},
                           child: const Card(
                             child: Padding(
                               padding: EdgeInsets.all(spacingSmall),

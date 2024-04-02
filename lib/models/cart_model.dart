@@ -1,16 +1,20 @@
-class Billing {
+class PosModel {
   final String name;
   double cost;
   final String quantity;
   int count;
   double variantCost;
-  bool showCart;
+  String variantId;
+  String description;
+  String image;
 
-  Billing(
+  PosModel(
       {required this.cost,
       required this.name,
       required this.quantity,
       required this.count,
       required this.variantCost,
-      this.showCart = false});
+      required this.variantId,
+      required this.description,
+      required this.image});
 }

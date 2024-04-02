@@ -9,7 +9,7 @@ import '../../models/cart_model.dart';
 import 'billing_screen.dart';
 
 class CartScreen extends StatefulWidget {
-  final List<Billing> cart;
+  final List<PosModel> cart;
 
   const CartScreen({super.key, required this.cart});
 
@@ -20,7 +20,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   static Map<String, dynamic> billDetailsMap = {};
 
-  void calculateBillDetails(List<Billing> cart) {
+  void calculateBillDetails(List<PosModel> cart) {
     double netAmount = 0.0;
     double totalCost = 0.0;
 
@@ -503,9 +503,10 @@ class _CartScreenState extends State<CartScreen> {
                                 builder: (context) {
                                   billDetailsMap['cart_items'] = widget.cart;
                                   return SelectPaymentMethod(
-                                      totalAmount:
-                                          billDetailsMap['grand_total'],
-                                      billDetailsMap: billDetailsMap);
+                                    totalAmount: billDetailsMap['grand_total'],
+                                    billDetailsMap: billDetailsMap,
+                                    posDataList: const [],
+                                  );
                                 });
                           },
                           child: const Text('Settle Bill'))),

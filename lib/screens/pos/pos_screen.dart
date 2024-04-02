@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:saasify/configs/app_spacing.dart';
+import 'package:saasify/screens/widgets/skeleton_screen.dart';
 import '../../bloc/category/category_bloc.dart';
 import '../../bloc/category/category_event.dart';
 import 'cart_section.dart';
@@ -13,11 +13,9 @@ class PosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<CategoryBloc>().add(FetchCategories());
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(spacingStandard),
-        child: Row(
+    return const SkeletonScreen(
+        appBarTitle: 'POS',
+        bodyContent: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -25,14 +23,13 @@ class PosScreen extends StatelessWidget {
               flex: 7,
               child: CategoryFilteredProducts(),
             ),
-            const VerticalDivider(),
-            const Expanded(
+            VerticalDivider(),
+            Expanded(
               flex: 3,
               child: CartSection(),
-            ),
+            )
           ],
         ),
-      ),
-    );
+        bottomBarButtons: []);
   }
 }

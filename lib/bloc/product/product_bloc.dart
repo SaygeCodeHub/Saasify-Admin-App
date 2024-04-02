@@ -22,11 +22,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<SelectCategory>(_selectCategory);
     on<FetchProduct>(_fetchProductForVariant);
     on<AddVariant>(_addVariant);
-    on<AddToCart>(_addToCart);
-    on<IncrementVariantCount>(_incrementCount);
-    on<DecrementVariantCount>(_decrementCount);
-    on<CalculateBill>(_calculateBill);
-    on<ClearCart>(_clearCart);
   }
 
   bool showCart = false;
@@ -71,8 +66,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     for (var doc in snapshot.docs) {
       companyId = doc.id;
     }
-    productMap['image'] =
-        await RetrieveImageFromFirebase().getImage(productMap['image']);
+    (productMap['image'] != null)
+        ? productMap['image'] =
+            await RetrieveImageFromFirebase().getImage(productMap['image'])
+        : '';
     Products products = Products(
         productId: '',
         name: productMap['name'] ?? '',
@@ -81,7 +78,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         description: productMap['description'] ?? '',
         supplier: productMap['supplier'] ?? '',
         tax: productMap['tax'] ?? 0.0,
-        minStockLevel: int.parse(productMap['stock_level'] ?? 0),
+        minStockLevel: int.parse(productMap['stock_level'] ?? '0'),
         soldBy: productMap['sold_by'] ?? '',
         unit: productMap['unit'] ?? '');
     Map<String, dynamic> productData = products.toMap();
@@ -101,7 +98,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             variantName: productMap['quantity'] ?? '',
             price: double.parse(productMap['price'] ?? 0.0),
             cost: double.parse(productMap['price'] ?? 0.0),
-            quantityAvailable: int.parse(productMap['stock_level'] ?? 0),
+            quantityAvailable: int.parse(productMap['stock_level'] ?? '0'),
             isActive: true);
         Map<String, dynamic> variantsData = productVariant.toMap();
         CollectionReference variantsRef = companiesRef
@@ -152,7 +149,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             ProductCategories category = ProductCategories(
                 name: data['name'],
                 imagePath: data['image_path'],
-                categoryId: doc.id);
+                categoryId: doc.id,
+                products: []);
             categories.add(category);
           }
           if (categories.isNotEmpty) {
@@ -174,44 +172,19 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   FutureOr<void> _selectCategory(
       SelectCategory event, Emitter<ProductState> emit) async {
-    // try {
-    List<Products> products = [];
-    List selectedCategories = [];
-    if (selectedCategories.contains(event.categoryId)) {
-      selectedCategories.remove(event.categoryId);
-    } else {
-      selectedCategories.add(event.categoryId);
-    }
-    if (selectedCategories.isNotEmpty) {
-      final usersRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(CustomerCache.getUserId());
-      QuerySnapshot query = await usersRef
-          .collection('companies')
-          .doc(CustomerCache.getUserCompany())
-          .collection('modules')
-          .doc('pos')
-          .collection('categories')
-          .doc(event.categoryId)
-          .collection('products')
-          .get();
-      for (var item in query.docs) {
-        Map<String, dynamic> productData = item.data() as Map<String, dynamic>;
-        Products product = Products(
-            productId: item.id,
-            name: productData['name'] ?? '',
-            description: productData['description'] ?? '',
-            tax: productData['tax'] ?? '',
-            imageUrl: productData['imageUrl'] ?? '',
-            isActive: true,
-            supplier: productData['supplier'],
-            minStockLevel: productData['minStockLevel'],
-            dateAdded: DateTime.now(),
-            category: event.categoryId,
-            soldBy: productData['soldBy'] ?? '',
-            unit: productData['unit'] ?? '');
-        products.add(product);
-        CollectionReference collectionReference = usersRef
+    try {
+      List<Products> products = [];
+      List selectedCategories = [];
+      if (selectedCategories.contains(event.categoryId)) {
+        selectedCategories.remove(event.categoryId);
+      } else {
+        selectedCategories.add(event.categoryId);
+      }
+      if (selectedCategories.isNotEmpty) {
+        final usersRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(CustomerCache.getUserId());
+        QuerySnapshot query = await usersRef
             .collection('companies')
             .doc(CustomerCache.getUserCompany())
             .collection('modules')
@@ -219,36 +192,62 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             .collection('categories')
             .doc(event.categoryId)
             .collection('products')
-            .doc(item.id)
-            .collection('variants');
-        QuerySnapshot query = await collectionReference.get();
-        for (var variant in query.docs) {
-          Map<String, dynamic> variantData =
-              variant.data() as Map<String, dynamic>;
-          ProductVariant productVariant = ProductVariant(
-              variantId: variant.id,
+            .get();
+        for (var item in query.docs) {
+          Map<String, dynamic> productData =
+              item.data() as Map<String, dynamic>;
+          Products product = Products(
               productId: item.id,
-              variantName: variantData['variantName'] ?? '',
-              price: variantData['price'] ?? 0.0,
-              cost: variantData['price'] ?? 0.0,
-              quantityAvailable: variantData['quantityAvailable'] ?? 0,
-              isActive: true);
-          product.variants.add(productVariant);
-        }
-        if (products.isNotEmpty) {
-          emit(ProductsFetched(
-              categories: event.categories,
-              products: products,
-              categoryId: event.categoryId,
-              selectedCategories: selectedCategories));
-        } else {
-          emit(ProductsCouldNotFetch(errorMessage: 'No products found'));
+              name: productData['name'] ?? '',
+              description: productData['description'] ?? '',
+              tax: productData['tax'] ?? '',
+              imageUrl: productData['imageUrl'] ?? '',
+              isActive: true,
+              supplier: productData['supplier'],
+              minStockLevel: productData['minStockLevel'],
+              dateAdded: DateTime.now(),
+              category: event.categoryId,
+              soldBy: productData['soldBy'] ?? '',
+              unit: productData['unit'] ?? '');
+          products.add(product);
+          CollectionReference collectionReference = usersRef
+              .collection('companies')
+              .doc(CustomerCache.getUserCompany())
+              .collection('modules')
+              .doc('pos')
+              .collection('categories')
+              .doc(event.categoryId)
+              .collection('products')
+              .doc(item.id)
+              .collection('variants');
+          QuerySnapshot query = await collectionReference.get();
+          for (var variant in query.docs) {
+            Map<String, dynamic> variantData =
+                variant.data() as Map<String, dynamic>;
+            ProductVariant productVariant = ProductVariant(
+                variantId: variant.id,
+                productId: item.id,
+                variantName: variantData['variantName'] ?? '',
+                price: variantData['price'] ?? 0.0,
+                cost: variantData['price'] ?? 0.0,
+                quantityAvailable: variantData['quantityAvailable'] ?? 0,
+                isActive: true);
+            product.variants.add(productVariant);
+          }
+          if (products.isNotEmpty) {
+            emit(ProductsFetched(
+                categories: event.categories,
+                products: products,
+                categoryId: event.categoryId,
+                selectedCategories: selectedCategories));
+          } else {
+            emit(ProductsCouldNotFetch(errorMessage: 'No products found'));
+          }
         }
       }
+    } catch (e) {
+      e.toString();
     }
-    // } catch (e) {
-    //   e.toString();
-    // }
   }
 
   FutureOr<void> _fetchProductForVariant(
@@ -401,73 +400,5 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(VariantNotAdded(
           errorMessage: 'Could not add variant: ${e.toString()}'));
     }
-  }
-
-  FutureOr<void> _addToCart(AddToCart event, Emitter<ProductState> emit) async {
-    try {
-      event.billing.showCart = true;
-      showCart = event.billing.showCart;
-      add(IncrementVariantCount(billingList: event.billingList));
-      for (var item in event.billingList) {
-        item.cost = item.variantCost * item.count;
-      }
-      add(CalculateBill(billingList: event.billingList));
-      emit(BillDataFetched(billingList: event.billingList));
-    } catch (e) {}
-  }
-
-  FutureOr<void> _incrementCount(
-      IncrementVariantCount event, Emitter<ProductState> emit) async {
-    for (var item in event.billingList) {
-      (item.count++);
-      (item.cost = item.variantCost * item.count);
-    }
-
-    add(CalculateBill(billingList: event.billingList));
-    emit(BillDataFetched(billingList: event.billingList));
-  }
-
-  FutureOr<void> _decrementCount(
-      DecrementVariantCount event, Emitter<ProductState> emit) async {
-    for (var item in event.billingList) {
-      (item.count--);
-      (item.cost = item.variantCost * item.count);
-    }
-
-    emit(BillDataFetched(billingList: event.billingList));
-  }
-
-  FutureOr<void> _calculateBill(
-      CalculateBill event, Emitter<ProductState> emit) async {
-    try {
-      double netAmount = 0.0;
-      double totalCost = 0.0;
-
-      for (var cartItem in event.billingList) {
-        totalCost += cartItem.cost;
-      }
-
-      netAmount = totalCost;
-      double discountPercent = billDetailsMap['discount_percentage'] ?? 0.0;
-      double discountAmount = (netAmount * discountPercent) / 100;
-      double subTotal = netAmount - discountAmount;
-
-      double taxPercent = billDetailsMap['tax_percentage'] ?? 0.0;
-      double taxes = (subTotal * taxPercent) / 100;
-
-      double grandTotal = subTotal + taxes;
-
-      billDetailsMap['net_amount'] = netAmount;
-      billDetailsMap['discount_amount'] = discountAmount;
-      billDetailsMap['sub_total'] = subTotal;
-      billDetailsMap['tax'] = taxes;
-      billDetailsMap['grand_total'] = grandTotal;
-      emit(BillDataFetched(billingList: event.billingList));
-    } catch (e) {}
-  }
-
-  FutureOr<void> _clearCart(ClearCart event, Emitter<ProductState> emit) async {
-    event.billingList.clear();
-    emit(BillDataFetched(billingList: event.billingList));
   }
 }

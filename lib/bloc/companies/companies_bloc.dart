@@ -46,12 +46,19 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
           'logoUrl': await RetrieveImageFromFirebase()
               .getImage(event.companyDetailsMap['logoUrl']),
           'address': event.companyDetailsMap['address'],
-          'createdAt': FieldValue.serverTimestamp()
+          'createdAt': FieldValue.serverTimestamp(),
+          'contact': event.companyDetailsMap['contact_number'],
+          'licenseNo': event.companyDetailsMap['license_number']
         });
         CollectionReference companiesRef = userDocRef.collection('companies');
         QuerySnapshot snapshot = await companiesRef.get();
         for (var doc in snapshot.docs) {
           await CustomerCache.setCompanyId(doc.id);
+          await CustomerCache.setUserName(doc['ownerName']);
+          await CustomerCache.userAddress(doc['address']);
+          await CustomerCache.userContact(doc['contact']);
+          await CustomerCache.companyGstNo(doc['einNumber']);
+          await CustomerCache.setCompanyLicenseNo(doc['licenseNo']);
         }
         emit(CompanyAdded());
       }

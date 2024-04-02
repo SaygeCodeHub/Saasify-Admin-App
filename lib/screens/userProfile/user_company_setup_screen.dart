@@ -28,6 +28,8 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
   final TextEditingController identificationNumberController =
       TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController licenseNoController = TextEditingController();
+  final TextEditingController contactController = TextEditingController();
   String _imagePath = '';
 
   @override
@@ -58,12 +60,27 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
                     // onTextFieldChanged: onTextFieldChanged,
                   ),
                   LabelAndTextFieldWidget(
+                    prefixIcon: const Icon(Icons.business),
+                    label: 'Contact number',
+                    isRequired: true,
+                    keyboardType: TextInputType.number,
+                    textFieldController: contactController,
+                    // onTextFieldChanged: onTextFieldChanged,
+                  ),
+                  LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.numbers_outlined),
                     label: 'EIN / TIN / GST Number',
                     isRequired: false,
                     textFieldController: identificationNumberController,
                     // onTextFieldChanged: onTextFieldChanged,
                   ),
+                  LabelAndTextFieldWidget(
+                      prefixIcon: const Icon(Icons.numbers_outlined),
+                      label: 'License Number',
+                      isRequired: false,
+                      textFieldController: licenseNoController
+                      // onTextFieldChanged: onTextFieldChanged,
+                      ),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.location_city),
                     label: 'Address',
@@ -106,7 +123,9 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
                     'company_name': companyNameController.text,
                     'einNumber': identificationNumberController.text,
                     'address': addressController.text,
-                    'logoUrl': _imagePath
+                    'logoUrl': _imagePath,
+                    'contact_number': contactController,
+                    'license_no': licenseNoController
                   }));
             }
           },

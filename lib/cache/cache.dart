@@ -9,6 +9,10 @@ class CustomerCache {
   static const _keyUserEmail = 'userEmail';
   static const _keyUserCreatedAt = 'userCreatedAt';
   static const _keyUserCompany = 'userCompany';
+  static const _keyUserContact = 'userContact';
+  static const _keyUserAddress = 'userAddress';
+  static const _keyCompanyGstNo = 'userCompanyGstNo';
+  static const _keyCompanyLicenseNo = 'companyLicenseNo';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -42,7 +46,28 @@ class CustomerCache {
   static Future setCompanyId(String companyId) async =>
       await _preferences?.setString(_keyUserCompany, companyId);
 
+  static Future userContact(String userContact) async =>
+      await _preferences?.setString(_keyUserContact, userContact);
+
+  static String? getUserContact() => _preferences?.getString(_keyUserContact);
+
+  static Future userAddress(String userAddress) async =>
+      await _preferences?.setString(_keyUserAddress, userAddress);
+
+  static String? getUserAddress() => _preferences?.getString(_keyUserAddress);
+
+  static Future companyGstNo(String userCompanyGst) async =>
+      await _preferences?.setString(_keyCompanyGstNo, userCompanyGst);
+
+  static String? getCompanyGstNo() => _preferences?.getString(_keyCompanyGstNo);
+
   static String? getUserCompany() => _preferences?.getString(_keyUserCompany);
+
+  static Future setCompanyLicenseNo(String licenseNo) async =>
+      await _preferences?.setString(_keyCompanyLicenseNo, licenseNo);
+
+  static String? getCompanyLicenseNo() =>
+      _preferences?.getString(_keyCompanyLicenseNo);
 
   Future<void> clearSharedPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

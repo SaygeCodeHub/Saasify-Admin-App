@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:saasify/screens/products/view_product_screen.dart';
+import 'package:saasify/screens/pos/pos_screen.dart';
 
 class OpenTabsWidget extends StatelessWidget {
   const OpenTabsWidget({super.key});
@@ -24,8 +24,7 @@ class OpenTabsWidget extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const AllProductsScreen(isFromCart: true)));
+                              builder: (context) => const PosScreen()));
                     },
                     child: const Center(
                       child: Icon(

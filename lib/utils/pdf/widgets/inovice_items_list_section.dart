@@ -2,7 +2,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:saasify/configs/app_spacing.dart';
 
 class InvoiceItemsListSection extends pw.StatelessWidget {
-  InvoiceItemsListSection();
+  List<Map<String, dynamic>> items;
+  InvoiceItemsListSection({required this.items});
 
   @override
   pw.Widget build(pw.Context context) {

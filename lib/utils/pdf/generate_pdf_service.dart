@@ -31,7 +31,7 @@ Future<void> generatePdf({
             pw.Divider(),
             InvoiceBillingInfoSection(billingInfoModel: billingInfoModel),
             pw.Divider(),
-            InvoiceItemsListSection(),
+            InvoiceItemsListSection(items: items),
             pw.Divider(),
             InvoiceAmountCalculationSection(billingInfoModel: billingInfoModel),
             pw.SizedBox(height: 10),

@@ -16,7 +16,7 @@ class BillingScreen extends StatefulWidget {
 class _BillingScreenState extends State<BillingScreen> {
   late String _selectedCategory;
   late List<ProductCategories> _categories;
-  List<Billing> cart = [];
+  List<PosModel> cart = [];
   Map<String, dynamic> cartDetailsMap = {};
   final productsBox = Hive.box<Products>('products');
   final TextEditingController _searchController = TextEditingController();

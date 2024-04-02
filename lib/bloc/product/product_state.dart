@@ -1,4 +1,3 @@
-import 'package:saasify/models/cart_model.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/models/product/products.dart';
 
@@ -67,10 +66,4 @@ class VariantNotAdded extends ProductState {
   final String errorMessage;
 
   VariantNotAdded({required this.errorMessage});
-}
-
-class BillDataFetched extends ProductState {
-  final List<Billing> billingList;
-
-  BillDataFetched({required this.billingList});
 }

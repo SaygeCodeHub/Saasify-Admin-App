@@ -20,6 +20,7 @@ class ProductCategoriesAdapter extends TypeAdapter<ProductCategories> {
       name: fields[0] as String,
       imagePath: fields[1] as String?,
       categoryId: fields[2] as String?,
+      products: fields[3] as List<Products>,
     );
   }
 

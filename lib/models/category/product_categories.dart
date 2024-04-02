@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:saasify/models/product/products.dart';
 
 import '../../configs/hive_type_ids.dart';
 
@@ -15,9 +16,20 @@ class ProductCategories {
   @HiveField(2)
   final String? categoryId;
 
-  ProductCategories({required this.name, this.imagePath, this.categoryId = ''});
+  List<Products> products;
+
+  ProductCategories(
+      {required this.name,
+      this.imagePath,
+      this.categoryId = '',
+      required this.products});
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'image_path': imagePath, 'category_id': categoryId};
+    return {
+      'name': name,
+      'image_path': imagePath,
+      'category_id': categoryId,
+      'products': products
+    };
   }
 }

@@ -86,7 +86,7 @@ class LabelAndTextFieldWidget extends StatelessWidget {
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           ),
         ),
       ],

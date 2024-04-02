@@ -45,23 +45,15 @@ class CouponsAndDiscountsBloc
           for (var doc in snapshot.docs) {
             companyId = doc.id;
           }
-          final categoriesRef = usersRef
+          final couponsRef = usersRef
               .collection('companies')
               .doc(companyId)
               .collection('modules')
               .doc('pos')
               .collection('coupons');
-          QuerySnapshot categorySnapshot = await categoriesRef
-              .where('name', isEqualTo: categoryData['name'])
-              .get();
-          if (categorySnapshot.docs.isNotEmpty) {
-            emit(CouponNotAdded(
-                errorMessage:
-                    'Coupon already exists. Please add another Coupon!'));
-          } else {
-            categoriesRef.add(categoryData);
-            emit(CouponAdded(successMessage: 'Coupon added successfully'));
-          }
+
+          couponsRef.add(categoryData);
+          emit(CouponAdded(successMessage: 'Coupon added successfully'));
         }
       }
     } catch (e) {

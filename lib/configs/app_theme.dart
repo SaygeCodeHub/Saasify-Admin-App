@@ -65,7 +65,7 @@ extension AppTextTheme on TextTheme {
 
   TextStyle get gridViewLabelTextStyle {
     return const TextStyle(
-        fontSize: 18, color: AppColors.cementGrey, fontWeight: FontWeight.w600);
+        fontSize: 14, color: AppColors.darkBlue, fontWeight: FontWeight.w500);
   }
 
   TextStyle get fieldLabelTextStyle {
@@ -110,7 +110,7 @@ extension AppTextTheme on TextTheme {
 
   TextStyle get moduleHeadingTextStyle {
     return const TextStyle(
-        fontSize: 20, color: AppColors.darkBlue, fontWeight: FontWeight.w800);
+        fontSize: 26, color: AppColors.darkBlue, fontWeight: FontWeight.w800);
   }
 
   TextStyle get generalSectionHeadingTextStyle {

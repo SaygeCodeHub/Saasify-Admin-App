@@ -5,7 +5,7 @@ import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 
 import 'package:saasify/screens/category/add_category_screen.dart';
-import 'package:saasify/screens/category/product_card_widget.dart';
+import 'package:saasify/screens/widgets/product_card_widget.dart';
 import 'package:saasify/utils/error_display.dart';
 
 import '../../configs/app_spacing.dart';

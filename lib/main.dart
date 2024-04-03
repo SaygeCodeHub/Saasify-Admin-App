@@ -9,6 +9,7 @@ import 'package:saasify/bloc/customers/customer_bloc.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/pos/pos_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
+import 'package:saasify/bloc/suppliers/supplier_bloc.dart';
 import 'package:saasify/screens/authentication/auth/authentication_screen.dart';
 import 'package:saasify/screens/home/home_screen.dart';
 import 'cache/cache.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(lazy: false, create: (context) => CustomerBloc()),
         BlocProvider(lazy: false, create: (context) => ImagePickerBloc()),
         BlocProvider(lazy: false, create: (context) => PosBloc()),
+        BlocProvider(lazy: false, create: (context) => SupplierBloc()),
         BlocProvider(
             lazy: false, create: (context) => CouponsAndDiscountsBloc()),
       ],

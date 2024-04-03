@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:saasify/bloc/customers/customer_states.dart';
-import 'package:saasify/models/customer/add_customer_model.dart';
+import 'package:saasify/bloc/suppliers/supplier_bloc.dart';
+import 'package:saasify/bloc/suppliers/supplier_event.dart';
+import 'package:saasify/bloc/suppliers/supplier_state.dart';
+import 'package:saasify/models/supplier/add_supplier_model.dart';
 import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import 'package:saasify/utils/responsive_form.dart';
 import '../../../configs/app_spacing.dart';
-import '../../bloc/customers/customer_bloc.dart';
-import '../../bloc/customers/customer_events.dart';
 import '../widgets/label_and_textfield_widget.dart';
 import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
@@ -20,7 +19,6 @@ class AddSupplierScreen extends StatelessWidget {
   final formKey = GlobalKey<FormState>();
   final TextEditingController customerNameController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
-  final TextEditingController dobController = TextEditingController();
   final TextEditingController emailAddressController = TextEditingController();
 
   @override
@@ -63,45 +61,41 @@ class AddSupplierScreen extends StatelessWidget {
 
   List<Widget> _buildBottomBarButtons(BuildContext context) {
     return [
-      BlocListener<CustomerBloc, CustomerState>(
+      BlocListener<SupplierBloc, SupplierState>(
         listener: (context, state) {
-          if (state is CustomerAdding) {
+          if (state is AddingSupplier) {
             ProgressBar.show(context);
-          } else if (state is CustomerAddedSuccessfully) {
+          } else if (state is SupplierAdded) {
             showDialog(
                 context: context,
                 builder: (context) {
                   return CustomDialogs().showSuccessDialog(
-                      context, 'Customer added successfully!',
+                      context, state.successMessage,
                       onPressed: () => Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const HomeScreen())));
                 });
-          } else if (state is CustomerAddingError) {
+          } else if (state is CouldNotAddSupplier) {
             ProgressBar.dismiss(context);
             showDialog(
                 context: context,
                 builder: (context) {
-                  return CustomDialogs().showAlertDialog(context,
-                      'Something went wrong, could not add the customer!',
+                  return CustomDialogs().showAlertDialog(
+                      context, state.errorMessage,
                       onPressed: () => Navigator.pop(context));
                 });
           }
         },
         child: PrimaryButton(
-          buttonTitle: 'Add Customer',
+          buttonTitle: 'Add Supplier',
           onPressed: () async {
             if (formKey.currentState!.validate()) {
-              final DateFormat formatter = DateFormat('dd/MM/yyyy');
-              final DateTime dob = formatter.parseStrict(dobController.text);
-              context.read<CustomerBloc>().add(AddCustomer(
-                  customerModel: AddCustomerModel(
+              context.read<SupplierBloc>().add(AddSupplier(
+                  addSupplierData: AddSupplierModel(
                       name: customerNameController.text,
                       email: emailAddressController.text,
-                      contact: contactController.text,
-                      dob: dob,
-                      loyaltyPoints: 0)));
+                      contact: contactController.text)));
             }
           },
         ),

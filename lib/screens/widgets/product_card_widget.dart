@@ -23,6 +23,7 @@ class ProductCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     posDataList.clear();
+    context.read<PosBloc>().billDetailsMap.clear();
     return Wrap(
       spacing: 20,
       runSpacing: 10.0,

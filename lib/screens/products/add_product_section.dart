@@ -176,7 +176,7 @@ class _AddProductSectionState extends State<AddProductSection> {
             },
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              widget.productMap['price'] = value;
+              widget.productMap['price'] = double.tryParse(value!);
             }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.supervisor_account),

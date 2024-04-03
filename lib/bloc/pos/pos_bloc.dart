@@ -104,30 +104,38 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   }
 
   FutureOr<void> _generatePdf(GeneratePdf event, Emitter<PosState> emit) async {
-    List posData = [];
-    posData.add(event.posDataList);
+    List<Map<String, dynamic>> posData = [];
+    for (var item in event.posDataList) {
+      double amount = (item.count * item.variantCost);
+      posData.add({
+        'item': item.name,
+        'qty': item.count.toString(),
+        'price': item.variantCost.toStringAsFixed(2),
+        'amount': amount.toString()
+      });
+    }
     generatePdf(
         businessInfoModel: BusinessInfoModel(
-            CustomerCache.getUserContact(),
-            'license',
-            CustomerCache.getCompanyGstNo(),
-            CustomerCache.getUserAddress()),
+            CustomerCache.getUserContact() ?? '',
+            CustomerCache.getCompanyLicenseNo() ?? '',
+            CustomerCache.getCompanyGstNo() ?? '',
+            CustomerCache.getUserAddress() ?? ''),
         customerInfoModel: CustomerInfoModel(
-            CustomerCache.getUserName(),
-            CustomerCache.getUserContact(),
-            'loaly points',
-            CustomerCache.getUserAddress()),
+            CustomerCache.getUserName() ?? '',
+            CustomerCache.getUserContact() ?? '',
+            '0',
+            CustomerCache.getUserAddress() ?? ''),
         billingInfoModel: BillingInfoModel(
-            CustomerCache.getUserName(),
+            CustomerCache.getUserName() ?? '',
             DateTime.now().toString(),
             '1766',
-            billDetailsMap['selected_payment'],
+            billDetailsMap['payment_method'],
             23,
             billDetailsMap['sub_total'],
             billDetailsMap['discount_amount'] ?? 0,
             billDetailsMap['tax_percentage'] ?? 0,
             billDetailsMap['tax_percentage'] ?? 0,
             billDetailsMap['grand_total']),
-        items: []);
+        items: posData);
   }
 }

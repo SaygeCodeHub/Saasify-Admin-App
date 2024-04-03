@@ -57,15 +57,13 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
                     label: 'Company Name',
                     isRequired: true,
                     textFieldController: companyNameController,
-                    // onTextFieldChanged: onTextFieldChanged,
                   ),
                   LabelAndTextFieldWidget(
-                    prefixIcon: const Icon(Icons.business),
+                    prefixIcon: const Icon(Icons.phone_android),
                     label: 'Contact number',
                     isRequired: true,
                     keyboardType: TextInputType.number,
                     textFieldController: contactController,
-                    // onTextFieldChanged: onTextFieldChanged,
                   ),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.numbers_outlined),
@@ -75,12 +73,10 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
                     // onTextFieldChanged: onTextFieldChanged,
                   ),
                   LabelAndTextFieldWidget(
-                      prefixIcon: const Icon(Icons.numbers_outlined),
+                      prefixIcon: const Icon(Icons.credit_card_rounded),
                       label: 'License Number',
                       isRequired: false,
-                      textFieldController: licenseNoController
-                      // onTextFieldChanged: onTextFieldChanged,
-                      ),
+                      textFieldController: licenseNoController),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.location_city),
                     label: 'Address',
@@ -124,8 +120,8 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
                     'einNumber': identificationNumberController.text,
                     'address': addressController.text,
                     'logoUrl': _imagePath,
-                    'contact_number': contactController,
-                    'license_no': licenseNoController
+                    'contact_number': contactController.text,
+                    'license_no': licenseNoController.text
                   }));
             }
           },

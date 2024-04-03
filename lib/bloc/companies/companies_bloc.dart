@@ -40,21 +40,20 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
         DocumentReference userDocRef = usersCollection.doc(user?.uid);
         await userDocRef.collection('companies').add({
           'ownerUid': user?.uid,
-          'ownerName': event.companyDetailsMap['owner_name'],
-          'name': event.companyDetailsMap['company_name'],
-          'einNumber': event.companyDetailsMap['einNumber'],
+          'ownerName': event.companyDetailsMap['owner_name'] ?? '',
+          'name': event.companyDetailsMap['company_name'] ?? '',
+          'einNumber': event.companyDetailsMap['einNumber'] ?? '',
           'logoUrl': await RetrieveImageFromFirebase()
               .getImage(event.companyDetailsMap['logoUrl']),
-          'address': event.companyDetailsMap['address'],
+          'address': event.companyDetailsMap['address'] ?? '',
           'createdAt': FieldValue.serverTimestamp(),
-          'contact': event.companyDetailsMap['contact_number'],
-          'licenseNo': event.companyDetailsMap['license_number']
+          'contact': event.companyDetailsMap['contact_number'] ?? '',
+          'licenseNo': event.companyDetailsMap['license_no'] ?? ''
         });
         CollectionReference companiesRef = userDocRef.collection('companies');
         QuerySnapshot snapshot = await companiesRef.get();
         for (var doc in snapshot.docs) {
           await CustomerCache.setCompanyId(doc.id);
-          await CustomerCache.setUserName(doc['ownerName']);
           await CustomerCache.userAddress(doc['address']);
           await CustomerCache.userContact(doc['contact']);
           await CustomerCache.companyGstNo(doc['einNumber']);

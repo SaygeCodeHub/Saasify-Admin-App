@@ -45,7 +45,7 @@ class ProductCardWidget extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ProductDetails(
-                              categoryId: list[i].category,
+                              categoryId: list[i].categoryId,
                               productId: list[i].products[index].productId)));
                 }
               },

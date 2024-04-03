@@ -109,6 +109,13 @@ class _AddProductSectionState extends State<AddProductSection> {
           LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.ad_units_outlined),
             label: 'Quantity',
+            isRequired: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'This field is required';
+              }
+              return null;
+            },
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
               widget.productMap['quantity'] = value;
@@ -146,6 +153,13 @@ class _AddProductSectionState extends State<AddProductSection> {
           LabelAndTextFieldWidget(
               prefixIcon: const Icon(Icons.ad_units_outlined),
               label: 'Quantity',
+              isRequired: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'This field is required';
+                }
+                return null;
+              },
               keyboardType: TextInputType.number,
               onTextFieldChanged: (String? value) {
                 widget.productMap['quantity'] = value;
@@ -153,6 +167,13 @@ class _AddProductSectionState extends State<AddProductSection> {
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.price_change_rounded),
             label: 'Price',
+            isRequired: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'This field is required';
+              }
+              return null;
+            },
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
               widget.productMap['price'] = value;

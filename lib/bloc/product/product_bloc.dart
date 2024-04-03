@@ -30,7 +30,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   FutureOr<void> _addProduct(
       AddProduct event, Emitter<ProductState> emit) async {
     try {
-      emit(AddingProduct());
       if (kIsOfflineModule) {
         final productsBox = Hive.box<Products>('products');
         productsBox.add(Products(
@@ -44,6 +43,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             soldBy: '',
             unit: ''));
       } else {
+        emit(AddingProduct());
         if (event.productMap.isNotEmpty) {
           _addProductToFirebase(event.productMap);
           emit(ProductAdded(successMessage: 'Product added successfully'));
@@ -355,10 +355,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
               variantId: '',
               productId: event.variantMap['product_id'],
               variantName: event.variantMap['quantity'] ?? '',
-              price: double.parse(event.variantMap['price'] ?? 0.0),
-              cost: double.parse(event.variantMap['price'] ?? 0.0),
+              price: double.parse(event.variantMap['price'] ?? '0.0'),
+              cost: double.parse(event.variantMap['price'] ?? '0.0'),
               quantityAvailable:
-                  int.parse(event.variantMap['stock_level'] ?? 0),
+                  int.parse(event.variantMap['stock_level'] ?? '0'),
               isActive: true);
           Map<String, dynamic> variantData = productVariant.toMap();
           final userRef =

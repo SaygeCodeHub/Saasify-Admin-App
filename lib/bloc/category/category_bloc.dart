@@ -27,50 +27,50 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   FutureOr<void> _addCategory(
       AddCategory event, Emitter<CategoryState> emit) async {
-    // try {
-    if (kIsOfflineModule) {
-      final category = ProductCategories(
-          name: event.addCategoryMap['category_name'],
-          imagePath: event.addCategoryMap['image'],
-          products: []);
-      final categoriesBox = Hive.box<ProductCategories>('categories');
-      await categoriesBox.add(category).whenComplete(() {
-        emit(CategoryAdded(successMessage: 'Category added successfully'));
-      });
-    } else {
-      emit(AddingCategory());
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null || user.uid.isEmpty) {
-        CustomerCache.setUserId(user!.uid);
-      } else {
-        ProductCategories category = ProductCategories(
+    try {
+      if (kIsOfflineModule) {
+        final category = ProductCategories(
             name: event.addCategoryMap['category_name'],
-            imagePath: (event.addCategoryMap['image'] != null)
-                ? await RetrieveImageFromFirebase()
-                    .getImage(event.addCategoryMap['image'])
-                : '',
+            imagePath: event.addCategoryMap['image'],
             products: []);
-        Map<String, dynamic> categoryData = category.toMap();
-        categoryData.remove('category_id');
-        categoryData.remove('products');
-        final categoriesRef = FirebaseService()
-            .getCategoriesCollectionRef(CustomerCache.getUserCompany() ?? '');
-        QuerySnapshot categorySnapshot = await categoriesRef
-            .where('name', isEqualTo: categoryData['name'])
-            .get();
-        if (categorySnapshot.docs.isNotEmpty) {
-          emit(CategoryNotAdded(
-              errorMessage:
-                  'Category already exists. Please add another category!'));
-        } else {
-          categoriesRef.add(categoryData);
+        final categoriesBox = Hive.box<ProductCategories>('categories');
+        await categoriesBox.add(category).whenComplete(() {
           emit(CategoryAdded(successMessage: 'Category added successfully'));
+        });
+      } else {
+        emit(AddingCategory());
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user == null || user.uid.isEmpty) {
+          CustomerCache.setUserId(user!.uid);
+        } else {
+          ProductCategories category = ProductCategories(
+              name: event.addCategoryMap['category_name'],
+              imagePath: (event.addCategoryMap['image'] != null)
+                  ? await RetrieveImageFromFirebase()
+                      .getImage(event.addCategoryMap['image'])
+                  : '',
+              products: []);
+          Map<String, dynamic> categoryData = category.toMap();
+          categoryData.remove('category_id');
+          categoryData.remove('products');
+          final categoriesRef = FirebaseService()
+              .getCategoriesCollectionRef(CustomerCache.getUserCompany() ?? '');
+          QuerySnapshot categorySnapshot = await categoriesRef
+              .where('name', isEqualTo: categoryData['name'])
+              .get();
+          if (categorySnapshot.docs.isNotEmpty) {
+            emit(CategoryNotAdded(
+                errorMessage:
+                    'Category already exists. Please add another category!'));
+          } else {
+            categoriesRef.add(categoryData);
+            emit(CategoryAdded(successMessage: 'Category added successfully'));
+          }
         }
       }
+    } catch (e) {
+      emit(CategoryNotAdded(errorMessage: 'Error adding category: $e'));
     }
-    // } catch (e) {
-    //   emit(CategoryNotAdded(errorMessage: 'Error adding category: $e'));
-    // }
   }
 
   FutureOr<void> _fetchCategoriesWithProducts(

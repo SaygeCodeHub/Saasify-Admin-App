@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/configs/app_theme.dart';
+import 'package:saasify/screens/category/add_category_screen.dart';
+import 'package:saasify/utils/error_display.dart';
 
 import '../../bloc/category/category_bloc.dart';
 import '../../bloc/category/category_state.dart';
@@ -77,6 +79,22 @@ class CategoryFilteredProducts extends StatelessWidget {
                     child: ProductCardWidget(
                         list: state.categories, isFromCart: true)),
               ],
+            );
+          } else if (state is CategoriesWithProductsNotFetched) {
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.sizeOf(context).width * 0.1),
+              child: Center(
+                child: ErrorDisplay(
+                    text: state.errorMessage,
+                    buttonText: 'Add Category',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddCategoryScreen()));
+                    }),
+              ),
             );
           } else {
             return const SizedBox.shrink();

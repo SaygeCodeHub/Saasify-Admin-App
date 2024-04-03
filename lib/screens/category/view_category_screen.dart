@@ -46,7 +46,7 @@ class ViewCategoryScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: AppColors.lighterGrey)),
                           width: MediaQuery.sizeOf(context).width * 0.089,
-                          height: MediaQuery.sizeOf(context).height * 0.125,
+                          height: MediaQuery.sizeOf(context).height * 0.145,
                           child: Card(
                             borderOnForeground: false,
                             color: AppColors.lightGrey,

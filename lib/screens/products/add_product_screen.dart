@@ -7,6 +7,7 @@ import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
+import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
@@ -80,7 +81,10 @@ class AddProductScreen extends StatelessWidget {
                         return CustomDialogs().showSuccessDialog(
                             context, state.successMessage, onPressed: () {
                           Navigator.pop(context);
-                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()));
                         });
                       });
                 } else if (state is ProductNotAdded) {
@@ -98,17 +102,29 @@ class AddProductScreen extends StatelessWidget {
                   buttonTitle: 'Add Product',
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      if (productMap['category_id'] == null) {
+                      if (productMap['category_id'] == null &&
+                          productMap['sold_by'] == null) {
+                        productMap['category_id'] =
+                            context.read<CategoryBloc>().selectedCategory;
+                        productMap['sold_by'] = soldByMap['selected_value'];
+                        (productMap['sold_by'] == 'Quantity')
+                            ? productMap['unit'] =
+                                soldByMap['selected_quantity']
+                            : '';
+                        context.read<ProductBloc>().add(AddProduct(
+                            categories: categories, productMap: productMap));
+                      } else if (productMap['category_id'] == null) {
                         productMap['category_id'] =
                             context.read<CategoryBloc>().selectedCategory;
                         context.read<ProductBloc>().add(AddProduct(
                             categories: categories, productMap: productMap));
                       } else if (productMap['sold_by'] == null) {
                         productMap['sold_by'] = soldByMap['selected_value'];
-                        (soldByMap['selected_value'] == 'Quantity')
+                        (productMap['sold_by'] == 'Quantity')
                             ? productMap['unit'] =
                                 soldByMap['selected_quantity']
                             : '';
+                        context.read<CategoryBloc>().selectedCategory;
                         context.read<ProductBloc>().add(AddProduct(
                             categories: categories, productMap: productMap));
                       } else {

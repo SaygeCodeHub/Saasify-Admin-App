@@ -101,16 +101,20 @@ class AllProductsScreen extends StatelessWidget {
                 ),
               );
             } else if (state is CategoriesWithProductsNotFetched) {
-              return Center(
-                child: ErrorDisplay(
-                    text: state.errorMessage,
-                    buttonText: 'Add Category',
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddCategoryScreen()));
-                    }),
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.sizeOf(context).width * 0.1),
+                child: Center(
+                  child: ErrorDisplay(
+                      text: state.errorMessage,
+                      buttonText: 'Add Category',
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddCategoryScreen()));
+                      }),
+                ),
               );
             } else {
               return const SizedBox.shrink();

@@ -26,7 +26,7 @@ class AddProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CategoryBloc>().add(FetchCategories());
+    context.read<CategoryBloc>().add(FetchCategoriesWithProducts());
     context.read<ImagePickerBloc>().imagePath = '';
     return SkeletonScreen(
         appBarTitle: 'Add Product',
@@ -34,13 +34,13 @@ class AddProductScreen extends StatelessWidget {
           key: formKey,
           child: BlocBuilder<CategoryBloc, CategoryState>(
             builder: (context, state) {
-              if (state is FetchingCategories) {
+              if (state is FetchingCategoriesWithProducts) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (state is CategoriesFetched) {
+              } else if (state is CategoriesWithProductsFetched) {
                 categories = state.categories;
                 return SingleChildScrollView(
                     child: _buildForm(context, state.imagePath));
-              } else if (state is CategoriesNotFetched) {
+              } else if (state is CategoriesWithProductsNotFetched) {
                 return SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(

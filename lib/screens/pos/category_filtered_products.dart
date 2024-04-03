@@ -18,13 +18,13 @@ class CategoryFilteredProducts extends StatelessWidget {
       padding: const EdgeInsets.all(spacingSmall),
       child: BlocBuilder<CategoryBloc, CategoryState>(
         builder: (context, state) {
-          if (state is FetchingCategories) {
+          if (state is FetchingCategoriesWithProducts) {
             return Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: MediaQuery.of(context).size.width * 0.15,
                     horizontal: 20),
                 child: const Center(child: CircularProgressIndicator()));
-          } else if (state is CategoriesFetched) {
+          } else if (state is CategoriesWithProductsFetched) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,

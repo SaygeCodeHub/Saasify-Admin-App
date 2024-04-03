@@ -8,7 +8,7 @@ class AddCategory extends CategoryEvent {
   AddCategory({required this.addCategoryMap});
 }
 
-class FetchCategories extends CategoryEvent {}
+class FetchCategoriesWithProducts extends CategoryEvent {}
 
 class FetchProductsForSelectedCategory extends CategoryEvent {
   final List<ProductCategories> categories;

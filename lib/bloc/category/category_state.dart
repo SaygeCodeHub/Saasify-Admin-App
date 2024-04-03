@@ -18,17 +18,18 @@ class CategoryNotAdded extends CategoryState {
   CategoryNotAdded({required this.errorMessage});
 }
 
-class FetchingCategories extends CategoryState {}
+class FetchingCategoriesWithProducts extends CategoryState {}
 
-class CategoriesFetched extends CategoryState {
+class CategoriesWithProductsFetched extends CategoryState {
   final List<ProductCategories> categories;
   final String imagePath;
 
-  CategoriesFetched({this.imagePath = '', required this.categories});
+  CategoriesWithProductsFetched(
+      {this.imagePath = '', required this.categories});
 }
 
-class CategoriesNotFetched extends CategoryState {
+class CategoriesWithProductsNotFetched extends CategoryState {
   final String errorMessage;
 
-  CategoriesNotFetched({required this.errorMessage});
+  CategoriesWithProductsNotFetched({required this.errorMessage});
 }

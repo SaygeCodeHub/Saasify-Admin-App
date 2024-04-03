@@ -18,18 +18,18 @@ class AllProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CategoryBloc>().add(FetchCategories());
+    context.read<CategoryBloc>().add(FetchCategoriesWithProducts());
     return SkeletonScreen(
         appBarTitle: 'Products',
         bodyContent: BlocBuilder<CategoryBloc, CategoryState>(
           buildWhen: (previousState, currentState) =>
-              currentState is FetchingCategories ||
-              currentState is CategoriesFetched ||
-              currentState is CategoriesNotFetched,
+              currentState is FetchingCategoriesWithProducts ||
+              currentState is CategoriesWithProductsFetched ||
+              currentState is CategoriesWithProductsNotFetched,
           builder: (context, state) {
-            if (state is FetchingCategories) {
+            if (state is FetchingCategoriesWithProducts) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is CategoriesFetched) {
+            } else if (state is CategoriesWithProductsFetched) {
               return Padding(
                 padding: const EdgeInsets.all(spacingStandard),
                 child: Row(
@@ -100,7 +100,7 @@ class AllProductsScreen extends StatelessWidget {
                   ],
                 ),
               );
-            } else if (state is CategoriesNotFetched) {
+            } else if (state is CategoriesWithProductsNotFetched) {
               return Center(
                 child: ErrorDisplay(
                     text: state.errorMessage,

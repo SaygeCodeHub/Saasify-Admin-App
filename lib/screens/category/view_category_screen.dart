@@ -18,19 +18,19 @@ class ViewCategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CategoryBloc>().add(FetchCategories());
+    context.read<CategoryBloc>().add(FetchCategoriesWithProducts());
 
     return SkeletonScreen(
         appBarTitle: 'All Categories',
         bodyContent: SingleChildScrollView(child:
             BlocBuilder<CategoryBloc, CategoryState>(builder: (context, state) {
-          if (state is FetchingCategories) {
+          if (state is FetchingCategoriesWithProducts) {
             return Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: MediaQuery.of(context).size.width * 0.15,
                     horizontal: 20),
                 child: const Center(child: CircularProgressIndicator()));
-          } else if (state is CategoriesFetched) {
+          } else if (state is CategoriesWithProductsFetched) {
             return Padding(
               padding: const EdgeInsets.all(spacingStandard),
               child: Wrap(
@@ -93,7 +93,7 @@ class ViewCategoryScreen extends StatelessWidget {
                 ],
               ),
             );
-          } else if (state is CategoriesNotFetched) {
+          } else if (state is CategoriesWithProductsNotFetched) {
             return Padding(
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.width * 0.2),

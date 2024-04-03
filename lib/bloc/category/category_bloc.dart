@@ -10,6 +10,7 @@ import 'package:saasify/cache/cache.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
+import 'package:saasify/utils/firestore_services.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 
@@ -18,7 +19,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   CategoryBloc() : super(CategoryInitial()) {
     on<AddCategory>(_addCategory);
-    on<FetchCategories>(_fetchCategories);
+    on<FetchCategoriesWithProducts>(_fetchCategoriesWithProducts);
     on<FetchProductsForSelectedCategory>(_fetchProductForCategory);
   }
 
@@ -40,7 +41,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         emit(AddingCategory());
         User? user = FirebaseAuth.instance.currentUser;
         if (user == null || user.uid.isEmpty) {
-          emit(CategoryNotAdded(errorMessage: 'User not authenticated.'));
+          CustomerCache.setUserId(user!.uid);
         } else {
           ProductCategories category = ProductCategories(
               name: event.addCategoryMap['category_name'],
@@ -52,21 +53,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
           Map<String, dynamic> categoryData = category.toMap();
           categoryData.remove('category_id');
           categoryData.remove('products');
-          final usersRef = FirebaseFirestore.instance
-              .collection('users')
-              .doc(CustomerCache.getUserId());
-          CollectionReference companiesRef = usersRef.collection('companies');
-          QuerySnapshot snapshot = await companiesRef.get();
-          String companyId = '';
-          for (var doc in snapshot.docs) {
-            companyId = doc.id;
-          }
-          final categoriesRef = usersRef
-              .collection('companies')
-              .doc(companyId)
-              .collection('modules')
-              .doc('pos')
-              .collection('categories');
+          final categoriesRef = FirebaseService()
+              .getCategoriesCollectionRef(CustomerCache.getUserCompany() ?? '');
           QuerySnapshot categorySnapshot = await categoriesRef
               .where('name', isEqualTo: categoryData['name'])
               .get();
@@ -85,31 +73,24 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     }
   }
 
-  FutureOr<void> _fetchCategories(
-      FetchCategories event, Emitter<CategoryState> emit) async {
+  FutureOr<void> _fetchCategoriesWithProducts(
+      FetchCategoriesWithProducts event, Emitter<CategoryState> emit) async {
     List<ProductCategories> categories = [];
 
     try {
       if (kIsOfflineModule) {
         categories = Hive.box<ProductCategories>('categories').values.toList();
         if (categories.isNotEmpty) {
-          emit(CategoriesFetched(categories: categories));
+          emit(CategoriesWithProductsFetched(categories: categories));
         }
       } else {
-        emit(FetchingCategories());
+        emit(FetchingCategoriesWithProducts());
         User? user = FirebaseAuth.instance.currentUser;
-        if (user == null) {
-          emit(CategoriesNotFetched(errorMessage: 'User not authenticated.'));
+        if (user == null || user.uid.isEmpty) {
+          CustomerCache.setUserId(user!.uid);
         } else {
-          final usersRef = FirebaseFirestore.instance
-              .collection('users')
-              .doc(CustomerCache.getUserId());
-          QuerySnapshot querySnapshot = await usersRef
-              .collection('companies')
-              .doc(CustomerCache.getUserCompany())
-              .collection('modules')
-              .doc('pos')
-              .collection('categories')
+          QuerySnapshot querySnapshot = await FirebaseService()
+              .getCategoriesCollectionRef(CustomerCache.getUserCompany() ?? '')
               .get();
           for (var doc in querySnapshot.docs) {
             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -127,27 +108,20 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
                 .first
                 .products = await fetchProductsByCategory(selectedCategory);
           }
-          emit(CategoriesFetched(categories: categories));
+          emit(CategoriesWithProductsFetched(categories: categories));
         }
       }
     } catch (e) {
-      emit(CategoriesNotFetched(errorMessage: 'Error fetching categories: $e'));
+      emit(CategoriesWithProductsNotFetched(
+          errorMessage: 'Error fetching categories: $e'));
     }
   }
 
   Future<List<Products>> fetchProductsByCategory(String categoryId) async {
     List<Products> products = [];
-    final usersRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(CustomerCache.getUserId());
-    QuerySnapshot productSnapshot = await usersRef
-        .collection('companies')
-        .doc(CustomerCache.getUserCompany())
-        .collection('modules')
-        .doc('pos')
-        .collection('categories')
-        .doc(categoryId)
-        .collection('products')
+    QuerySnapshot productSnapshot = await FirebaseService()
+        .getProductsCollectionRef(
+            CustomerCache.getUserCompany() ?? '', categoryId)
         .get();
 
     for (var productDoc in productSnapshot.docs) {
@@ -166,14 +140,9 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       );
 
       List<ProductVariant> variants = [];
-      QuerySnapshot variantSnapshot = await usersRef
-          .collection('companies')
-          .doc(CustomerCache.getUserCompany())
-          .collection('modules')
-          .doc('pos')
-          .collection('categories')
-          .doc(categoryId)
-          .collection('products')
+      QuerySnapshot variantSnapshot = await FirebaseService()
+          .getProductsCollectionRef(
+              CustomerCache.getUserCompany() ?? '', categoryId)
           .doc(productDoc.id)
           .collection('variants')
           .where('productId', isEqualTo: productDoc.id)
@@ -206,7 +175,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       item.products.clear();
       if (selectedCategory == item.categoryId) {
         item.products = await fetchProductsByCategory(selectedCategory);
-        emit(CategoriesFetched(categories: event.categories));
+        emit(CategoriesWithProductsFetched(categories: event.categories));
       }
     }
   }

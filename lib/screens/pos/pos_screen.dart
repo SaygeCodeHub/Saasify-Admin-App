@@ -11,7 +11,7 @@ class PosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CategoryBloc>().add(FetchCategories());
+    context.read<CategoryBloc>().add(FetchCategoriesWithProducts());
 
     return const SkeletonScreen(
         appBarTitle: 'POS',

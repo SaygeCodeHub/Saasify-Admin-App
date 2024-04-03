@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
@@ -47,9 +48,13 @@ class ImagePickerWidget extends StatelessWidget {
                           border: Border.all(color: AppColors.transparent),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Image.file(
-                            File(context.read<ImagePickerBloc>().imagePath),
-                            fit: BoxFit.cover),
+                        child: (kIsWeb)
+                            ? Image.network(
+                                context.read<ImagePickerBloc>().imagePath,
+                                fit: BoxFit.cover)
+                            : Image.file(
+                                File(context.read<ImagePickerBloc>().imagePath),
+                                fit: BoxFit.cover),
                       )
                     : Container(
                         width: 120,

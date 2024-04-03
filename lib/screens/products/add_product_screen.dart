@@ -40,6 +40,7 @@ class AddProductScreen extends StatelessWidget {
               } else if (state is CategoriesWithProductsFetched) {
                 categories = state.categories;
                 return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     child: _buildForm(context, state.imagePath));
               } else if (state is CategoriesWithProductsNotFetched) {
                 return SingleChildScrollView(

@@ -22,6 +22,7 @@ class ProductCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    posDataList.clear();
     return Wrap(
       spacing: 20,
       runSpacing: 10.0,

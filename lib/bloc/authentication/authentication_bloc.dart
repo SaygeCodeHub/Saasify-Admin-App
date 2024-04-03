@@ -97,6 +97,14 @@ class AuthenticationBloc
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     final usersRef = await firestore.collection('users').doc(user.uid).get();
     String userName = await usersRef.get('name') ?? '';
+    final companyRef = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('companies')
+        .get();
+    for (var item in companyRef.docs) {
+      await CustomerCache.setCompanyId(item.id);
+    }
     await CustomerCache.setUserLoggedIn(true);
     await CustomerCache.setUserId(user.uid);
     await CustomerCache.setUserName(userName);

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_event.dart';
@@ -20,12 +21,17 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, ImagePickerState> {
     try {
       final XFile? pickedImageFile = await ImageUtil.pickImage();
       emit(PickingImage());
-      if (pickedImageFile != null) {
-        imagePath = pickedImageFile.path;
+      if (kIsWeb) {
+        imagePath = pickedImageFile!.path;
         emit(ImagePicked());
       } else {
-        emit(CouldNotPickImage(
-            errorMessage: 'Could not pick image. Please try again!'));
+        if (pickedImageFile != null) {
+          imagePath = pickedImageFile.path;
+          emit(ImagePicked());
+        } else {
+          emit(CouldNotPickImage(
+              errorMessage: 'Could not pick image. Please try again!'));
+        }
       }
     } catch (e) {
       emit(CouldNotPickImage(

@@ -36,7 +36,7 @@ class _AddProductSectionState extends State<AddProductSection> {
           onImagePicked: (String imagePath) {
             widget.productMap['image'] = imagePath;
           },
-          label: 'Product display image'),
+          label: 'Product Display Image'),
       const SizedBox(height: spacingStandard),
       Text('Category', style: Theme.of(context).textTheme.fieldLabelTextStyle),
       const SizedBox(height: spacingSmall),
@@ -81,7 +81,7 @@ class _AddProductSectionState extends State<AddProductSection> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Sold by',
+            Text('Sold By',
                 style: Theme.of(context).textTheme.fieldLabelTextStyle),
             const SizedBox(height: spacingSmall),
             DropdownButtonHideUnderline(

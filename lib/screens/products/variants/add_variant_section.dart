@@ -61,7 +61,7 @@ class AddVariantSection extends StatelessWidget {
               variantMap['quantity'] = value;
             },
           ),
-        if (products.soldBy == 'Quantity')
+        if (products.soldBy == 'Quantity' && products.unit.isNotEmpty)
           SoldByQuantityDropdown(
               soldByMap: AddVariantScreen.soldByMap, products: products),
         if (products.soldBy == 'Quantity')

@@ -8,6 +8,7 @@ import 'package:saasify/models/cart_model.dart';
 import 'package:saasify/models/pdf/billing_details_info_model.dart';
 import 'package:saasify/models/pdf/business_info_model.dart';
 import 'package:saasify/models/pdf/customer_info_model.dart';
+import 'package:saasify/utils/firestore_services.dart';
 import 'package:saasify/utils/pdf/generate_pdf_service.dart';
 
 class PosBloc extends Bloc<PosEvent, PosState> {
@@ -20,6 +21,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<CalculateBill>(_calculateBill);
     on<ClearCart>(_clearCart);
     on<GeneratePdf>(_generatePdf);
+    on<PlaceOrder>(_placeOrder);
   }
 
   Map<String, dynamic> billDetailsMap = {};
@@ -111,7 +113,8 @@ class PosBloc extends Bloc<PosEvent, PosState> {
         'item': item.name,
         'qty': item.count.toString(),
         'price': item.variantCost.toStringAsFixed(2),
-        'amount': amount.toString()
+        'amount': amount.toString(),
+        'variant_id': item.variantId
       });
     }
     generatePdf(
@@ -137,5 +140,45 @@ class PosBloc extends Bloc<PosEvent, PosState> {
             billDetailsMap['tax_percentage'] ?? 0,
             billDetailsMap['grand_total']),
         items: posData);
+    add(PlaceOrder(billDetailsMap: billDetailsMap, items: posData));
+  }
+
+  FutureOr<void> _placeOrder(PlaceOrder event, Emitter<PosState> emit) async {
+    try {
+      emit(PlacingOrder());
+      Map<String, dynamic> orderData = {
+        'customerInfo': {
+          'name': CustomerCache.getUserName() ?? '',
+          'contact': CustomerCache.getUserContact() ?? '',
+          'address': CustomerCache.getUserAddress() ?? '',
+          'loyalty_points': 0
+        },
+        'billingInfo': {
+          'customerName': CustomerCache.getUserName() ?? '',
+          'date': DateTime.now().toString(),
+          'invoiceNumber': '1766',
+          'paymentMethod': event.billDetailsMap['payment_method'],
+          'subTotal': event.billDetailsMap['sub_total'],
+          'discountAmount': event.billDetailsMap['discount_amount'] ?? 0,
+          'sgst': event.billDetailsMap['tax_percentage'] ?? 0,
+          'cgst': event.billDetailsMap['tax_percentage'] ?? 0,
+          'grandTotal': event.billDetailsMap['grand_total'],
+        },
+        'items': event.items
+      };
+      if (orderData.isNotEmpty) {
+        await FirebaseService()
+            .getModulesCollectionRef(CustomerCache.getUserCompany() ?? '')
+            .doc('pos')
+            .collection('orders')
+            .add(orderData);
+        emit(OrderPlaced(successMessage: 'Order placed successfully!'));
+      } else {
+        emit(OrderNotPlaced(
+            errorMessage: 'Could not place order. Please try again!'));
+      }
+    } catch (e) {
+      emit(OrderNotPlaced(errorMessage: 'Error: ${e.toString()}'));
+    }
   }
 }

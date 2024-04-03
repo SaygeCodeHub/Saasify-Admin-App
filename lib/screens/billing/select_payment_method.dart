@@ -111,11 +111,6 @@ class _SelectPaymentMethodState extends State<SelectPaymentMethod> {
                                 selectedPaymentMethod;
                             context.read<PosBloc>().add(
                                 GeneratePdf(posDataList: widget.posDataList));
-                            Navigator.pop(context);
-                            // Navigator.pushReplacement(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => const HomeScreen()));
                           },
                           child: const Text('Settle bill'))
                     ])

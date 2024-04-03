@@ -9,3 +9,17 @@ class PosDataFetched extends PosState {
 
   PosDataFetched({required this.posDataList});
 }
+
+class PlacingOrder extends PosState {}
+
+class OrderPlaced extends PosState {
+  final String successMessage;
+
+  OrderPlaced({required this.successMessage});
+}
+
+class OrderNotPlaced extends PosState {
+  final String errorMessage;
+
+  OrderNotPlaced({required this.errorMessage});
+}

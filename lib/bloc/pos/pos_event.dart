@@ -42,3 +42,10 @@ class GeneratePdf extends PosEvent {
 
   GeneratePdf({required this.posDataList});
 }
+
+class PlaceOrder extends PosEvent {
+  final Map billDetailsMap;
+  final List<Map<String, dynamic>> items;
+
+  PlaceOrder({required this.billDetailsMap, required this.items});
+}

@@ -56,7 +56,7 @@ class ViewCategoryScreen extends StatelessWidget {
                               children: [
                                 const SizedBox(height: spacingXXExcel),
                                 Text(
-                                  state.categories[index].name,
+                                  state.categories[index].name!,
                                   style: Theme.of(context)
                                       .textTheme
                                       .gridViewLabelTextStyle,

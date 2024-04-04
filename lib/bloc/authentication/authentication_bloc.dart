@@ -20,11 +20,12 @@ class AuthenticationBloc
     on<LogOutOfSession>(_logOutOfSession);
     on<CheckActiveSession>(_checkActiveSession);
   }
+
   FutureOr<void> _checkActiveSession(
       CheckActiveSession event, Emitter<AuthenticationState> emit) async {
     bool isLoggedIn = await UserCache.getUserLoggedIn();
     if (isLoggedIn) {
-      String? companyId = await CompanyCache.getCompanyId();
+      String? companyId = CompanyCache.getCompanyId();
       if (companyId != null || companyId!.isNotEmpty) {
         emit(UserAuthenticated());
       } else {

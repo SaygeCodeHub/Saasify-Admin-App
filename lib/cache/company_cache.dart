@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyCache {
@@ -10,14 +11,15 @@ class CompanyCache {
   static const _industryKey = 'industry';
   static const _companyLogoUrlKey = 'companyLogoUrl';
 
+  static SharedPreferences get _prefs => GetIt.instance<SharedPreferences>();
+
   static Future<void> setCompanyId(String companyId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_companyIdKey, companyId);
   }
 
-  static Future<String?> getCompanyId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_companyIdKey);
+  static String? getCompanyId() {
+    return _prefs.getString(_companyIdKey);
   }
 
   static Future<void> setUserAddress(String address) async {

@@ -48,7 +48,7 @@ class _AddProductSectionState extends State<AddProductSection> {
             items: widget.categories.map((category) {
               return DropdownMenuItem<String>(
                 value: category.categoryId,
-                child: Text(category.name),
+                child: Text(category.name!),
               );
             }).toList(),
             onChanged: (String? newValue) {

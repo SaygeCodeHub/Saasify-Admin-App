@@ -2,11 +2,7 @@ import 'package:saasify/models/category/product_categories.dart';
 
 abstract class CategoryEvent {}
 
-class AddCategory extends CategoryEvent {
-  final Map addCategoryMap;
-
-  AddCategory({required this.addCategoryMap});
-}
+class AddCategory extends CategoryEvent {}
 
 class FetchCategoriesWithProducts extends CategoryEvent {}
 

@@ -62,7 +62,7 @@ class AllProductsScreen extends StatelessWidget {
                                 },
                                 child: Chip(
                                   label: Text(
-                                    label.name,
+                                    label.name!,
                                     style: TextStyle(
                                       color: isSelected
                                           ? Colors.white

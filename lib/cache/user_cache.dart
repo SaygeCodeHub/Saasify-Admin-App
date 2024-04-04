@@ -31,7 +31,7 @@ class UserCache {
     await _prefs.setString(_userIdKey, id);
   }
 
-  static Future<String?> getUserId() async {
+  static String? getUserId() {
     return _prefs.getString(_userIdKey);
   }
 

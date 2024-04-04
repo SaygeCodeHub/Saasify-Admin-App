@@ -8,28 +8,25 @@ part 'product_categories.g.dart';
 @HiveType(typeId: HiveTypeIds.productCategories)
 class ProductCategories {
   @HiveField(0)
-  final String name;
+  String? name;
 
   @HiveField(1)
-  final String? imagePath;
+  String? imagePath;
 
   @HiveField(2)
-  final String? categoryId;
+  String? categoryId;
 
-  List<Products> products;
+  List<Products>? products;
 
   ProductCategories(
-      {required this.name,
-      this.imagePath,
-      this.categoryId = '',
-      required this.products});
+      {this.name = '', this.imagePath, this.categoryId = '', this.products});
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'image_path': imagePath,
       'category_id': categoryId,
-      'products': products
+      'products': products = []
     };
   }
 }

@@ -46,7 +46,7 @@ class _BillingScreenState extends State<BillingScreen> {
   @override
   void initState() {
     _categories = Hive.box<ProductCategories>('categories').values.toList();
-    _selectedCategory = _categories.isNotEmpty ? _categories.first.name : '';
+    _selectedCategory = _categories.isNotEmpty ? _categories.first.name! : '';
     filteredProducts = productsBox.values.toList();
     super.initState();
   }
@@ -78,7 +78,7 @@ class _BillingScreenState extends State<BillingScreen> {
               items: _categories.map((category) {
                 return DropdownMenuItem<String>(
                   value: category.name,
-                  child: Text(category.name),
+                  child: Text(category.name!),
                 );
               }).toList(),
               onChanged: (value) {

@@ -6,13 +6,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
-import 'package:saasify/cache/cache.dart';
+import 'package:saasify/cache/user_cache.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/utils/firestore_services.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
+
+import '../../cache/cache.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryState get initialState => CategoryInitial();
@@ -41,7 +43,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         emit(AddingCategory());
         User? user = FirebaseAuth.instance.currentUser;
         if (user == null || user.uid.isEmpty) {
-          CustomerCache.setUserId(user!.uid);
+          UserCache.setUserId(user!.uid);
         } else {
           ProductCategories category = ProductCategories(
               name: event.addCategoryMap['category_name'],

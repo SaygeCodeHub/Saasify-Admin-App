@@ -12,12 +12,14 @@ import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/suppliers/supplier_bloc.dart';
 import 'package:saasify/screens/authentication/auth/authentication_screen.dart';
 import 'package:saasify/screens/home/home_screen.dart';
+import 'package:saasify/services/service_locator.dart';
 import 'cache/cache.dart';
 import 'configs/app_theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setupServiceLocator();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

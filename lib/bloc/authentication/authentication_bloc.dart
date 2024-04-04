@@ -18,6 +18,21 @@ class AuthenticationBloc
   AuthenticationBloc() : super(AuthenticationInitial()) {
     on<AuthenticateUser>(_authenticateUser);
     on<LogOutOfSession>(_logOutOfSession);
+    on<CheckActiveSession>(_checkActiveSession);
+  }
+  FutureOr<void> _checkActiveSession(
+      CheckActiveSession event, Emitter<AuthenticationState> emit) async {
+    bool isLoggedIn = await UserCache.getUserLoggedIn();
+    if (isLoggedIn) {
+      String? companyId = await CompanyCache.getCompanyId();
+      if (companyId != null || companyId!.isNotEmpty) {
+        emit(UserAuthenticated());
+      } else {
+        emit(UserAuthenticatedWithoutCompany());
+      }
+    } else {
+      emit(InActiveSession());
+    }
   }
 
   FutureOr<void> _logOutOfSession(

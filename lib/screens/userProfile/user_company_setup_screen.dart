@@ -1,40 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/companies/companies_bloc.dart';
-import 'package:saasify/bloc/companies/companies_event.dart';
-import 'package:saasify/bloc/companies/companies_state.dart';
-import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
-import 'package:saasify/screens/home/home_screen.dart';
-import 'package:saasify/screens/widgets/custom_dialogs.dart';
-import 'package:saasify/utils/progress_bar.dart';
+import 'package:saasify/screens/userProfile/widgets/save_company_button.dart';
 import 'package:saasify/utils/responsive_form.dart';
 import '../../../configs/app_spacing.dart';
+import '../../enums/currency_enum.dart';
+import '../../enums/industry_enum.dart';
 import '../widgets/label_and_textfield_widget.dart';
+import '../widgets/label_dropdown_widget.dart';
 import '../widgets/skeleton_screen.dart';
-import '../widgets/buttons/primary_button.dart';
 import '../widgets/image_picker_widget.dart';
 
-class UserCompanySetupScreen extends StatefulWidget {
-  const UserCompanySetupScreen({super.key});
+class UserCompanySetupScreen extends StatelessWidget {
+  UserCompanySetupScreen({super.key});
 
-  @override
-  UserCompanySetupScreenState createState() => UserCompanySetupScreenState();
-}
-
-class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
   final formKey = GlobalKey<FormState>();
-  final TextEditingController ownerNameController = TextEditingController();
-  final TextEditingController companyNameController = TextEditingController();
-  final TextEditingController identificationNumberController =
-      TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final TextEditingController licenseNoController = TextEditingController();
-  final TextEditingController contactController = TextEditingController();
-  String _imagePath = '';
 
   @override
   Widget build(BuildContext context) {
-    context.read<ImagePickerBloc>().imagePath = '';
     return SkeletonScreen(
       appBarTitle: 'Add Company',
       bodyContent: SingleChildScrollView(
@@ -46,87 +29,100 @@ class UserCompanySetupScreenState extends State<UserCompanySetupScreen> {
               children: [
                 ImagePickerWidget(
                     label: 'Company Logo',
-                    initialImage: _imagePath,
+                    initialImage: '',
                     onImagePicked: (String imagePath) {
-                      _imagePath = imagePath;
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['logoUrl'] = imagePath;
                     }),
                 const SizedBox(height: spacingLarge),
                 ResponsiveForm(formWidgets: [
+                  LabelDropdownWidget<Industry>(
+                    label: 'Select Industry',
+                    initialValue: Industry.foodAndBeverage,
+                    items: Industry.values.map((industry) {
+                      return DropdownMenuItem<Industry>(
+                        value: industry,
+                        child: Text("${industry.name} "),
+                      );
+                    }).toList(),
+                    onChanged: (Industry? newValue) {
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['industryName'] = newValue!;
+                    },
+                  ),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.business),
                     label: 'Company Name',
                     isRequired: true,
-                    textFieldController: companyNameController,
+                    onTextFieldChanged: (value) {
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['companyName'] = value!;
+                    },
                   ),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.phone_android),
                     label: 'Contact number',
                     isRequired: true,
                     keyboardType: TextInputType.number,
-                    textFieldController: contactController,
+                    onTextFieldChanged: (value) {
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['contactNumber'] = value!;
+                    },
                   ),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.numbers_outlined),
                     label: 'EIN / TIN / GST Number',
                     isRequired: false,
-                    textFieldController: identificationNumberController,
-                    // onTextFieldChanged: onTextFieldChanged,
+                    onTextFieldChanged: (value) {
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['einNumber'] = value!;
+                    },
                   ),
                   LabelAndTextFieldWidget(
-                      prefixIcon: const Icon(Icons.credit_card_rounded),
-                      label: 'License Number',
-                      isRequired: false,
-                      textFieldController: licenseNoController),
+                    prefixIcon: const Icon(Icons.credit_card_rounded),
+                    label: 'Shop License Number',
+                    isRequired: false,
+                    onTextFieldChanged: (value) {
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['licenseNo'] = value!;
+                    },
+                  ),
+                  LabelDropdownWidget<Currency>(
+                    label: 'Currency',
+                    initialValue: Currency.euro,
+                    items: Currency.values.map((currency) {
+                      return DropdownMenuItem<Currency>(
+                        value: currency,
+                        child: Text("${currency.symbol} - ${currency.name}"),
+                      );
+                    }).toList(),
+                    onChanged: (Currency? newValue) {
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['currency'] = newValue!;
+                    },
+                  ),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.location_city),
                     label: 'Address',
                     isRequired: false,
-                    textFieldController: addressController,
+                    onTextFieldChanged: (value) {
+                      context
+                          .read<CompaniesBloc>()
+                          .companyDetailsMap['address'] = value!;
+                    },
                   ),
                 ])
               ],
             )),
       ),
-      bottomBarButtons: _buildBottomBarButtons(context),
+      bottomBarButtons: [SaveCompanyButton(formKey: formKey)],
     );
-  }
-
-  List<Widget> _buildBottomBarButtons(BuildContext context) {
-    return [
-      BlocListener<CompaniesBloc, CompaniesState>(
-        listener: (context, state) {
-          if (state is AddingCompany) {
-            ProgressBar.show(context);
-          } else if (state is CompanyAdded) {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
-          } else if (state is CompanyNotAdded) {
-            ProgressBar.dismiss(context);
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return CustomDialogs().showAlertDialog(context,
-                      'Something went wrong, could not register the company!',
-                      onPressed: () => Navigator.pop(context));
-                });
-          }
-        },
-        child: PrimaryButton(
-          buttonTitle: 'Save Profile Details',
-          onPressed: () async {
-            if (formKey.currentState!.validate()) {
-              context.read<CompaniesBloc>().add(AddCompany(companyDetailsMap: {
-                    'company_name': companyNameController.text,
-                    'einNumber': identificationNumberController.text,
-                    'address': addressController.text,
-                    'logoUrl': _imagePath,
-                    'contact_number': contactController.text,
-                    'license_no': licenseNoController.text
-                  }));
-            }
-          },
-        ),
-      ),
-    ];
   }
 }

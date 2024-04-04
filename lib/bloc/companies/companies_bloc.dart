@@ -1,17 +1,19 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/companies/companies_event.dart';
 import 'package:saasify/bloc/companies/companies_state.dart';
-import 'package:saasify/cache/cache.dart';
-import 'package:saasify/models/user/user_details.dart';
+import 'package:saasify/enums/firestore_collections_enum.dart';
 import 'package:saasify/utils/global.dart';
-import 'package:saasify/utils/retrieve_image_from_firebase.dart';
+import '../../cache/company_cache.dart';
+import '../../models/companies/company.dart';
+import '../../services/firebase_services_two.dart';
+import '../../services/service_locator.dart';
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
+  final firebaseServices = getIt<FirebaseServices>();
+  final Map<dynamic, dynamic> companyDetailsMap = {};
+  Company? company;
   CompaniesState get initialState => CompaniesInitial();
 
   CompaniesBloc() : super(CompaniesInitial()) {
@@ -22,47 +24,32 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       AddCompany event, Emitter<CompaniesState> emit) async {
     try {
       if (kIsOfflineModule) {
-        final newCompany = UserDetails(
-          ownerName: event.companyDetailsMap['owner_name'] ?? '',
-          companyName: event.companyDetailsMap['company_name'] ?? '',
-          identificationNumber: event.companyDetailsMap['einNumber'] ?? '',
-          logo: event.companyDetailsMap['logoUrl'] ?? '',
-          address: event.companyDetailsMap['address'] ?? '',
-        );
-        final companiesBox = Hive.box<UserDetails>('userDetails');
-        await companiesBox.add(newCompany);
-        emit(CompanyAdded());
       } else {
         emit(AddingCompany());
-        FirebaseFirestore firestore = FirebaseFirestore.instance;
-        User? user = FirebaseAuth.instance.currentUser;
-        CollectionReference usersCollection = firestore.collection('users');
-        DocumentReference userDocRef = usersCollection.doc(user?.uid);
-        await userDocRef.collection('companies').add({
-          'ownerUid': user?.uid,
-          'ownerName': event.companyDetailsMap['owner_name'] ?? '',
-          'name': event.companyDetailsMap['company_name'] ?? '',
-          'einNumber': event.companyDetailsMap['einNumber'] ?? '',
-          'logoUrl': await RetrieveImageFromFirebase()
-              .getImage(event.companyDetailsMap['logoUrl']),
-          'address': event.companyDetailsMap['address'] ?? '',
-          'createdAt': FieldValue.serverTimestamp(),
-          'contact': event.companyDetailsMap['contact_number'] ?? '',
-          'licenseNo': event.companyDetailsMap['license_no'] ?? ''
-        });
-        CollectionReference companiesRef = userDocRef.collection('companies');
-        QuerySnapshot snapshot = await companiesRef.get();
-        for (var doc in snapshot.docs) {
-          await CustomerCache.setCompanyId(doc.id);
-          await CustomerCache.userAddress(doc['address']);
-          await CustomerCache.userContact(doc['contact']);
-          await CustomerCache.companyGstNo(doc['einNumber']);
-          await CustomerCache.setCompanyLicenseNo(doc['licenseNo']);
+        DocumentReference userDocRef = firebaseServices.usersRef;
+        DocumentReference createdCompanyId = await userDocRef
+            .collection(FirestoreCollection.companies.collectionName)
+            .add(event.companyDetailsMap.toMap());
+        if (createdCompanyId.id.isNotEmpty) {
+          await saveToLocalCache(createdCompanyId.id, event);
+          emit(CompanyAdded());
+        } else {
+          emit(CompanyNotAdded(errorMessage: 'Something went wrong'));
         }
-        emit(CompanyAdded());
       }
     } catch (e) {
       emit(CompanyNotAdded(errorMessage: 'Cannot add company: $e'));
     }
+  }
+
+  saveToLocalCache(String createdCompanyId, AddCompany event) async {
+    await CompanyCache.setCompanyId(createdCompanyId);
+    await CompanyCache.setUserAddress(event.companyDetailsMap.address!);
+    await CompanyCache.setUserContact(event.companyDetailsMap.contactNumber);
+    await CompanyCache.setCompanyGstNo(event.companyDetailsMap.einNumber!);
+    await CompanyCache.setCompanyLicenseNo(event.companyDetailsMap.licenseNo!);
+    await CompanyCache.setCurrency(event.companyDetailsMap.currency!);
+    await CompanyCache.setIndustry(event.companyDetailsMap.industryName!);
+    await CompanyCache.setCompanyLogoUrl(event.companyDetailsMap.logoUrl!);
   }
 }

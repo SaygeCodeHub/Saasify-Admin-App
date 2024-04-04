@@ -6,4 +6,6 @@ class AuthenticateUser extends AuthenticationEvent {
   AuthenticateUser({required this.authenticationMap});
 }
 
+class CheckActiveSession extends AuthenticationEvent {}
+
 class LogOutOfSession extends AuthenticationEvent {}

@@ -4,14 +4,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/authentication/authentication_event.dart';
 import 'package:saasify/bloc/authentication/authentication_state.dart';
-
-import '../../cache/cache.dart';
+import 'package:saasify/cache/company_cache.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../cache/user_cache.dart';
+import '../../services/firebase_services_two.dart';
+import '../../services/service_locator.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
+  final firebaseServices = getIt<FirebaseServices>();
+  final sharedPreferences = getIt<SharedPreferences>();
+
   AuthenticationBloc() : super(AuthenticationInitial()) {
     on<AuthenticateUser>(_authenticateUser);
     on<LogOutOfSession>(_logOutOfSession);
+    on<CheckActiveSession>(_checkActiveSession);
+  }
+  FutureOr<void> _checkActiveSession(
+      CheckActiveSession event, Emitter<AuthenticationState> emit) async {
+    bool isLoggedIn = await UserCache.getUserLoggedIn();
+    if (isLoggedIn) {
+      String? companyId = await CompanyCache.getCompanyId();
+      if (companyId != null || companyId!.isNotEmpty) {
+        emit(UserAuthenticated());
+      } else {
+        emit(UserAuthenticatedWithoutCompany());
+      }
+    } else {
+      emit(InActiveSession());
+    }
   }
 
   FutureOr<void> _logOutOfSession(
@@ -20,7 +41,7 @@ class AuthenticationBloc
 
     try {
       await FirebaseAuth.instance.signOut();
-      CustomerCache().clearSharedPreferences();
+      sharedPreferences.clear();
       emit(LoggedOutOfSession());
     } catch (error) {
       emit(LoggingOutFailed());
@@ -41,7 +62,7 @@ class AuthenticationBloc
       }
       if (user != null && user.uid.isNotEmpty) {
         await _updateUserData(user, event.authenticationMap);
-        await _cacheUserData(user);
+        await saveToLocalCache(user);
         if (await checkUserCompanies(user.uid)) {
           emit(UserAuthenticated());
         } else {
@@ -93,7 +114,7 @@ class AuthenticationBloc
     }, SetOptions(merge: true));
   }
 
-  Future<void> _cacheUserData(User user) async {
+  Future<void> saveToLocalCache(User user) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     final usersRef = await firestore.collection('users').doc(user.uid).get();
     String userName = await usersRef.get('name') ?? '';
@@ -103,13 +124,13 @@ class AuthenticationBloc
         .collection('companies')
         .get();
     for (var item in companyRef.docs) {
-      await CustomerCache.setCompanyId(item.id);
+      await CompanyCache.setCompanyId(item.id);
     }
-    await CustomerCache.setUserLoggedIn(true);
-    await CustomerCache.setUserId(user.uid);
-    await CustomerCache.setUserName(userName);
-    await CustomerCache.setUserEmail(user.email ?? '');
-    await CustomerCache.setUserCreatedAt(DateTime.now().toString());
+    await UserCache.setUserLoggedIn(true);
+    await UserCache.setUserId(user.uid);
+    await UserCache.setUsername(userName);
+    await UserCache.setUserEmail(user.email ?? '');
+    await UserCache.setUserCreatedAt(DateTime.now());
   }
 
   String _handleFirebaseAuthError(FirebaseAuthException e) {

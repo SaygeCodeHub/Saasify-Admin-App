@@ -15,12 +15,10 @@ class RetrieveImageFromFirebase {
       final fileName = imagePath.split('/').last; // Extract filename
 
       try {
-        print('inside try----');
         final ref = imagesRef.child(fileName);
         final downloadUrl = await ref.getDownloadURL(); // Check if file exists
-        image = downloadUrl; // Use existing download URL
+        image = downloadUrl;
       } catch (e) {
-        print('inside catch----');
         final uploadTask = (kIsWeb)
             ? imagesRef.putString(imagePath)
             : imagesRef.putFile(File(imagePath));

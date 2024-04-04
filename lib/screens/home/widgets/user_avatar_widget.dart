@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
-
-import '../../../cache/cache.dart';
+import '../../../cache/user_cache.dart';
 
 class UserAvatarWidget extends StatelessWidget {
   const UserAvatarWidget({super.key});
@@ -21,7 +20,7 @@ class UserAvatarWidget extends StatelessWidget {
         ),
         const SizedBox(width: spacingXSmall),
         Text(
-          '${CustomerCache.getUserName()}',
+          '${UserCache.getUsername()}',
           style: Theme.of(context).textTheme.moduleHeadingTextStyle,
         ),
       ],

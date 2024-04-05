@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/pos/pos_bloc.dart';
 import 'package:saasify/bloc/pos/pos_event.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/models/cart_model.dart';
+import 'package:saasify/models/pos_model.dart';
+import 'package:saasify/services/service_locator.dart';
 
 import '../../configs/app_colors.dart';
 import '../../configs/app_spacing.dart';
@@ -11,14 +12,11 @@ import 'number_pad.dart';
 
 class SelectPaymentMethod extends StatefulWidget {
   final double totalAmount;
-  final Map<String, dynamic> billDetailsMap;
   final List<PosModel> posDataList;
+  final BillDetails billDetails = getIt<BillDetails>();
 
-  const SelectPaymentMethod(
-      {super.key,
-      required this.totalAmount,
-      required this.billDetailsMap,
-      required this.posDataList});
+  SelectPaymentMethod(
+      {super.key, required this.totalAmount, required this.posDataList});
 
   @override
   State<SelectPaymentMethod> createState() => _SelectPaymentMethodState();
@@ -105,9 +103,7 @@ class _SelectPaymentMethodState extends State<SelectPaymentMethod> {
                       const Spacer(),
                       ElevatedButton(
                           onPressed: () {
-                            context
-                                    .read<PosBloc>()
-                                    .billDetailsMap['payment_method'] =
+                            widget.billDetails.selectedPaymentMethod =
                                 selectedPaymentMethod;
                             context.read<PosBloc>().add(
                                 GeneratePdf(posDataList: widget.posDataList));

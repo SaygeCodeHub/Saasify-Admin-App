@@ -6,7 +6,7 @@ import 'package:saasify/bloc/pos/pos_event.dart';
 import 'package:saasify/configs/app_colors.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/models/cart_model.dart';
+import 'package:saasify/models/pos_model.dart';
 
 class AddToCartSection extends StatelessWidget {
   final List<PosModel> posDataList;
@@ -32,15 +32,14 @@ class AddToCartSection extends StatelessWidget {
                       child: SizedBox.square(
                         dimension: 70,
                         child: CachedNetworkImage(
-                          imageUrl: posDataList[index].image,
-                          placeholder: (context, url) =>
-                              const Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        ),
+                            imageUrl: posDataList[index].image,
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover),
                       ),
                     ),
                     const SizedBox(width: spacingSmall),

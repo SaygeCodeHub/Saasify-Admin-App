@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../configs/app_spacing.dart';
-import '../../models/cart_model.dart';
+import '../../models/pos_model.dart';
 import '../../models/category/product_categories.dart';
 import '../../models/product/products.dart';
 import 'cart_screen.dart';
@@ -37,7 +37,7 @@ class _BillingScreenState extends State<BillingScreen> {
       } else {
         filteredProducts = productsBox.values
             .where((product) =>
-                product.name.toLowerCase().contains(query.toLowerCase()))
+                product.name!.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -100,7 +100,7 @@ class _BillingScreenState extends State<BillingScreen> {
                   valueListenable: productsBox.listenable(),
                   builder: (context, box, _) {
                     final filteredProducts = box.values.where((product) {
-                      return product.category == _selectedCategory;
+                      return product.categoryId == _selectedCategory;
                     }).toList();
                     return GridView.extent(
                       maxCrossAxisExtent: MediaQuery.of(context).size.width / 2,

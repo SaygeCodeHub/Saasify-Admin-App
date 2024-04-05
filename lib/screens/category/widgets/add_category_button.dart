@@ -39,10 +39,7 @@ class AddCategoryButton extends StatelessWidget {
                 builder: (context) {
                   return CustomDialogs().showAlertDialog(
                       context, state.errorMessage,
-                      onPressed: () => Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen())));
+                      onPressed: () => Navigator.pop(context));
                 });
           }
         },

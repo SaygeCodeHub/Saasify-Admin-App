@@ -3,38 +3,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
+import 'package:saasify/enums/product_by_quantity_enum.dart';
+import 'package:saasify/enums/product_sold_by_enum.dart';
 import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/models/product/product_variant.dart';
+import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/widgets/image_picker_widget.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
+import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/responsive_form.dart';
 
 class AddProductSection extends StatefulWidget {
   final List<ProductCategories> categories;
-  final Map soldByMap;
-  static String image = '';
-  final Map productMap;
 
-  const AddProductSection(
-      {super.key,
-      required this.categories,
-      required this.soldByMap,
-      required this.productMap});
+  static String image = '';
+
+  const AddProductSection({super.key, required this.categories});
 
   @override
   State<AddProductSection> createState() => _AddProductSectionState();
 }
 
 class _AddProductSectionState extends State<AddProductSection> {
-  final soldByList = ['Each', 'Quantity'];
-  final quantity = ['kg', 'ltr', 'gm'];
+  Products products = getIt<Products>();
+  ProductVariant productVariant = getIt<ProductVariant>();
 
   @override
   Widget build(BuildContext context) {
+    products.unit = '';
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: spacingStandard),
       ImagePickerWidget(
           onImagePicked: (String imagePath) {
-            widget.productMap['image'] = imagePath;
+            products.imageUrl = imagePath;
           },
           label: 'Product Display Image'),
       const SizedBox(height: spacingStandard),
@@ -53,7 +54,7 @@ class _AddProductSectionState extends State<AddProductSection> {
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
-                widget.productMap['category_id'] = newValue!;
+                products.categoryId = newValue!;
               });
             },
           ),
@@ -69,14 +70,14 @@ class _AddProductSectionState extends State<AddProductSection> {
             return null;
           },
           onTextFieldChanged: (String? value) {
-            widget.productMap['name'] = value;
+            products.name = value;
           },
         ),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.description),
             label: 'Description',
             onTextFieldChanged: (String? value) {
-              widget.productMap['description'] = value;
+              products.description = value;
             }),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,26 +87,24 @@ class _AddProductSectionState extends State<AddProductSection> {
             const SizedBox(height: spacingSmall),
             DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
-                value: widget.soldByMap['selected_value'],
+                value: ProductSoldByEnum.each.soldBy,
                 hint: const Text("Select an item"),
-                items: soldByList.map((soldBy) {
+                items: ProductSoldByEnum.values.map((value) {
                   return DropdownMenuItem<String>(
-                    value: soldBy.toString(),
-                    child: Text(soldBy.toString()),
+                    value: value.soldBy.toString(),
+                    child: Text(value.soldBy.toString()),
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
                   setState(() {
-                    widget.soldByMap['selected_value'] = newValue!;
-                    widget.productMap['sold_by'] =
-                        widget.soldByMap['selected_value'];
+                    products.soldBy = newValue!;
                   });
                 },
               ),
             ),
           ],
         ),
-        if (widget.soldByMap['selected_value'] == 'Each')
+        if (products.soldBy == 'Each')
           LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.ad_units_outlined),
             label: 'Quantity',
@@ -118,10 +117,10 @@ class _AddProductSectionState extends State<AddProductSection> {
             },
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              widget.productMap['quantity'] = value;
+              productVariant.quantityAvailable = int.parse(value!);
             },
           ),
-        if (widget.soldByMap['selected_value'] == 'Quantity')
+        if (products.soldBy == 'Quantity')
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -130,26 +129,25 @@ class _AddProductSectionState extends State<AddProductSection> {
               const SizedBox(height: spacingSmall),
               DropdownButtonHideUnderline(
                 child: DropdownButtonFormField<String>(
-                  value: widget.soldByMap['selected_quantity'],
+                  value: ProductByQuantityEnum.kg.quantity,
                   hint: const Text("Select an item"),
-                  items: quantity.map((soldBy) {
+                  items: ProductByQuantityEnum.values.map((soldBy) {
+                    products.unit = ProductByQuantityEnum.kg.quantity;
                     return DropdownMenuItem<String>(
-                      value: soldBy.toString(),
-                      child: Text(soldBy.toString()),
+                      value: soldBy.quantity.toString(),
+                      child: Text(soldBy.quantity.toString()),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      widget.soldByMap['selected_quantity'] = newValue!;
-                      widget.soldByMap['unit'] =
-                          widget.soldByMap['selected_quantity'];
+                      products.unit = newValue!;
                     });
                   },
                 ),
               ),
             ],
           ),
-        if (widget.soldByMap['selected_value'] == 'Quantity')
+        if (products.soldBy == 'Quantity')
           LabelAndTextFieldWidget(
               prefixIcon: const Icon(Icons.ad_units_outlined),
               label: 'Quantity',
@@ -162,7 +160,7 @@ class _AddProductSectionState extends State<AddProductSection> {
               },
               keyboardType: TextInputType.number,
               onTextFieldChanged: (String? value) {
-                widget.productMap['quantity'] = value;
+                productVariant.quantityAvailable = int.parse(value ?? '0');
               }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.price_change_rounded),
@@ -176,28 +174,28 @@ class _AddProductSectionState extends State<AddProductSection> {
             },
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              widget.productMap['price'] = double.tryParse(value!);
+              productVariant.price = double.parse(value ?? '0.0');
             }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.supervisor_account),
             label: 'Supplier',
             onTextFieldChanged: (String? value) {
-              widget.productMap['supplier'] = value;
+              products.supplier = value;
             }),
-        if (widget.soldByMap['selected_quantity'] == 'None')
+        if (products.soldBy == 'None')
           LabelAndTextFieldWidget(
               prefixIcon: const Icon(Icons.ad_units_outlined),
               label: 'Tax',
               keyboardType: TextInputType.number,
               onTextFieldChanged: (String? value) {
-                widget.productMap['tax'] = value;
+                products.tax = double.parse(value ?? '0.0');
               }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.local_shipping),
             label: 'Minimum Stock Level',
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              widget.productMap['stock_level'] = value;
+              products.minStockLevel = int.parse(value ?? '0');
             })
       ])
     ]);

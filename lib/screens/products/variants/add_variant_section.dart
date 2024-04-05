@@ -4,26 +4,27 @@ import 'package:saasify/configs/app_colors.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/enums/product_by_quantity_enum.dart';
+import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
-import 'package:saasify/screens/products/variants/add_variant_screen.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
+import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/responsive_form.dart';
 
 class AddVariantSection extends StatelessWidget {
-  final Map variantMap;
   final Products products;
 
-  const AddVariantSection(
-      {super.key, required this.variantMap, required this.products});
+  AddVariantSection({super.key, required this.products});
+
+  final ProductVariant productVariant = getIt<ProductVariant>();
 
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: spacingStandard),
       ListTile(
-          leading: (products.imageUrl.isNotEmpty)
+          leading: (products.imageUrl!.isNotEmpty)
               ? CachedNetworkImage(
-                  imageUrl: products.imageUrl,
+                  imageUrl: products.imageUrl ?? '',
                   placeholder: (context, url) =>
                       const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => ClipOval(
@@ -35,19 +36,18 @@ class AddVariantSection extends StatelessWidget {
                   fit: BoxFit.fitHeight)
               : const Icon(Icons.image, size: 40),
           title: Text(
-            products.category,
+            products.categoryId!,
             style: Theme.of(context)
                 .textTheme
                 .fieldLabelTextStyle
                 .copyWith(fontSize: 17),
           ),
-          subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(products.name),
-                Text(products.description),
-                Text(products.soldBy)
-              ])),
+          subtitle:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(products.name ?? ''),
+            Text(products.description ?? ''),
+            Text(products.soldBy ?? '')
+          ])),
       const SizedBox(height: spacingSmall),
       const Divider(),
       const SizedBox(height: spacingSmall),
@@ -58,19 +58,18 @@ class AddVariantSection extends StatelessWidget {
             label: 'Quantity',
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              variantMap['quantity'] = value;
+              productVariant.quantityAvailable = int.parse(value ?? '0');
             },
           ),
-        if (products.soldBy == 'Quantity' && products.unit.isNotEmpty)
-          SoldByQuantityDropdown(
-              soldByMap: AddVariantScreen.soldByMap, products: products),
+        if (products.soldBy == 'Quantity' && products.unit != null)
+          SoldByQuantityDropdown(products: products),
         if (products.soldBy == 'Quantity')
           LabelAndTextFieldWidget(
               prefixIcon: const Icon(Icons.ad_units_outlined),
               label: 'Quantity',
               keyboardType: TextInputType.number,
               onTextFieldChanged: (String? value) {
-                variantMap['quantity'] = value;
+                productVariant.quantityAvailable = int.parse(value ?? '0');
               }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.price_change_rounded),
@@ -84,28 +83,18 @@ class AddVariantSection extends StatelessWidget {
             },
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              variantMap['price'] = value;
+              productVariant.price = double.parse(value ?? '0.0');
             }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.supervisor_account),
             label: 'Supplier',
-            onTextFieldChanged: (String? value) {
-              variantMap['supplier'] = value;
-            }),
-        if (products.unit == 'None')
-          LabelAndTextFieldWidget(
-              prefixIcon: const Icon(Icons.ad_units_outlined),
-              label: 'Tax',
-              keyboardType: TextInputType.number,
-              onTextFieldChanged: (String? value) {
-                variantMap['tax'] = value;
-              }),
+            onTextFieldChanged: (String? value) {}),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.local_shipping),
             label: 'Minimum Stock Level',
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              variantMap['stock_level'] = value;
+              productVariant.quantityAvailable = int.parse(value ?? '0');
             })
       ])
     ]);
@@ -113,11 +102,9 @@ class AddVariantSection extends StatelessWidget {
 }
 
 class SoldByQuantityDropdown extends StatefulWidget {
-  final Map soldByMap;
   final Products products;
 
-  const SoldByQuantityDropdown(
-      {super.key, required this.soldByMap, required this.products});
+  const SoldByQuantityDropdown({super.key, required this.products});
 
   @override
   State<SoldByQuantityDropdown> createState() => _SoldByQuantityDropdownState();
@@ -144,9 +131,7 @@ class _SoldByQuantityDropdownState extends State<SoldByQuantityDropdown> {
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
-                widget.soldByMap['selected_quantity'] = newValue!;
-                widget.soldByMap['unit'] =
-                    widget.soldByMap['selected_quantity'];
+                widget.products.unit = newValue;
               });
             },
           ),

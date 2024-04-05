@@ -6,11 +6,14 @@ import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
+import 'package:saasify/enums/product_sold_by_enum.dart';
+import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
 import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/products/add_product_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
+import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/error_display.dart';
 import 'package:saasify/utils/progress_bar.dart';
 import '../../bloc/product/product_event.dart';
@@ -22,14 +25,13 @@ class AddProductScreen extends StatelessWidget {
 
   static List<ProductCategories> categories = [];
   final formKey = GlobalKey<FormState>();
-  static Map soldByMap = {'selected_value': 'Each', 'selected_quantity': 'kg'};
-  final Map productMap = {};
+  final Products products = getIt<Products>();
 
   @override
   Widget build(BuildContext context) {
-    productMap.clear();
     context.read<CategoryBloc>().add(FetchCategoriesWithProducts());
     context.read<ImagePickerBloc>().imagePath = '';
+    products.soldBy = ProductSoldByEnum.each.soldBy;
     return SkeletonScreen(
         appBarTitle: 'Add Product',
         bodyContent: Form(
@@ -102,42 +104,19 @@ class AddProductScreen extends StatelessWidget {
                   buttonTitle: 'Add Product',
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      if (productMap['category_id'] == null &&
-                          productMap['sold_by'] == null) {
-                        productMap['category_id'] =
-                            context.read<CategoryBloc>().selectedCategory;
-                        productMap['sold_by'] = soldByMap['selected_value'];
-                        (productMap['sold_by'] == 'Quantity')
-                            ? productMap['unit'] =
-                                soldByMap['selected_quantity']
-                            : '';
-                        context.read<ProductBloc>().add(AddProduct(
-                            categories: categories, productMap: productMap));
-                      } else if (productMap['category_id'] == null) {
-                        productMap['category_id'] =
-                            context.read<CategoryBloc>().selectedCategory;
-                        context.read<ProductBloc>().add(AddProduct(
-                            categories: categories, productMap: productMap));
-                      } else if (productMap['sold_by'] == null) {
-                        productMap['sold_by'] = soldByMap['selected_value'];
-                        (productMap['sold_by'] == 'Quantity')
-                            ? productMap['unit'] =
-                                soldByMap['selected_quantity']
-                            : '';
-                        context.read<CategoryBloc>().selectedCategory;
-                        context.read<ProductBloc>().add(AddProduct(
-                            categories: categories, productMap: productMap));
-                      } else {
-                        context.read<ProductBloc>().add(AddProduct(
-                            categories: categories, productMap: productMap));
-                      }
+                      products.categoryId!.isEmpty
+                          ? products.categoryId =
+                              context.read<CategoryBloc>().selectedCategory
+                          : products.categoryId;
+                      context
+                          .read<ProductBloc>()
+                          .add(AddProduct(categories: categories));
                     }
                   }))
         ]);
   }
 
   Widget _buildForm(BuildContext context, String imagePath) {
-    return AddProductSection(
-        categories: categories, soldByMap: soldByMap, productMap: productMap);
+    return AddProductSection(categories: categories);
   }
 }

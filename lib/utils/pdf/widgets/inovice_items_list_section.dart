@@ -1,8 +1,9 @@
 import 'package:pdf/widgets.dart' as pw;
 import 'package:saasify/configs/app_spacing.dart';
+import 'package:saasify/models/pos_model.dart';
 
 class InvoiceItemsListSection extends pw.StatelessWidget {
-  List<Map<String, dynamic>> items;
+  List<PosModel> items;
 
   InvoiceItemsListSection({required this.items});
 
@@ -43,7 +44,7 @@ class InvoiceItemsListSection extends pw.StatelessWidget {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Column(children: [pw.Text(item['item'])]),
+              pw.Column(children: [pw.Text(item.name)]),
               pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -51,19 +52,21 @@ class InvoiceItemsListSection extends pw.StatelessWidget {
                     pw.Column(
                       mainAxisAlignment: pw.MainAxisAlignment.start,
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [pw.Text(item['qty'].toString())],
+                      children: [pw.Text(item.quantity.toString())],
                     ),
                     pw.SizedBox(width: spacingXXXLarge),
                     pw.Column(
                       mainAxisAlignment: pw.MainAxisAlignment.start,
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [pw.Text(item['price'].toString())],
+                      children: [pw.Text(item.variantCost.toString())],
                     ),
                     pw.SizedBox(width: spacingXXXLarge),
                     pw.Column(
                       mainAxisAlignment: pw.MainAxisAlignment.start,
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [pw.Text((item['amount'] ?? ''))],
+                      children: [
+                        pw.Text((item.count * item.variantCost).toString())
+                      ],
                     )
                   ])
             ]),

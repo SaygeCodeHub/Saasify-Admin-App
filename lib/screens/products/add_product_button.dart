@@ -31,7 +31,7 @@ class AddProductButton extends StatelessWidget {
             final product = Products(
                 productId: '0',
                 name: productMap['name'],
-                category: context.read<CategoryBloc>().selectedCategory,
+                categoryId: context.read<CategoryBloc>().selectedCategory,
                 description: productMap['description'],
                 imageUrl: '',
                 supplier: productMap['supplier'],
@@ -69,8 +69,9 @@ class AddProductButton extends StatelessWidget {
         } else {
           if (formKey.currentState!.validate()) {
             if (context.read<CategoryBloc>().selectedCategory.isNotEmpty) {
-              context.read<ProductBloc>().add(
-                  AddProduct(categories: categories, productMap: productMap));
+              context
+                  .read<ProductBloc>()
+                  .add(AddProduct(categories: categories));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Select a category!')));

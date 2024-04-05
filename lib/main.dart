@@ -16,7 +16,6 @@ import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/userProfile/user_company_setup_screen.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'bloc/authentication/authentication_event.dart';
-import 'cache/cache.dart';
 import 'configs/app_theme.dart';
 import 'firebase_options.dart';
 
@@ -26,7 +25,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await CustomerCache.init();
   runApp(const MyApp());
 }
 

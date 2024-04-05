@@ -1,4 +1,4 @@
-const double kBoardTileRedius = 5;
+const double kBoardTileRadius = 5;
 const double kBoardTilePadding = 10;
 const double kBoardstatuspadingh = 12;
 const double kBoardStatuspadingv = 40;
@@ -9,3 +9,6 @@ const double kBoardSearchBtnWidth = 300;
 const double kBoardUtilityBtnw = 20;
 const double kBillImageWidth = 100;
 const double kBillImageHeight = 75;
+const double kProductCategoryCardRadius = 10;
+const double kProductCategoryCircleAvatarRadius = 50;
+const double kProductCategoryCircleAvatarTogether = 80;

@@ -19,7 +19,7 @@ class ProductsAdapter extends TypeAdapter<Products> {
     return Products(
         productId: fields[0] as String,
         name: fields[1] as String,
-        category: fields[2] as String,
+        categoryId: fields[2] as String,
         tax: fields[3] as double,
         supplier: fields[4] as String,
         minStockLevel: fields[5] as int,
@@ -40,7 +40,7 @@ class ProductsAdapter extends TypeAdapter<Products> {
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.category)
+      ..write(obj.categoryId)
       ..writeByte(3)
       ..write(obj.tax)
       ..writeByte(4)

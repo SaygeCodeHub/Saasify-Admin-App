@@ -3,22 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/bloc/product/product_state.dart';
+import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/products/product_detail.dart';
 import 'package:saasify/screens/products/variants/add_variant_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
+import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/progress_bar.dart';
 
 class AddVariantScreen extends StatelessWidget {
   final Map dataMap;
+  final ProductVariant productVariant = getIt<ProductVariant>();
 
   AddVariantScreen({super.key, required this.dataMap});
 
   final formKey = GlobalKey<FormState>();
-  final Map variantMap = {};
-  static Map soldByMap = {'selected_value': 'Each', 'selected_quantity': 'kg'};
 
   @override
   Widget build(BuildContext context) {
@@ -82,17 +83,16 @@ class AddVariantScreen extends StatelessWidget {
               buttonTitle: 'Add Variant',
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  variantMap['category_id'] = dataMap['category_id'];
-                  variantMap['product_id'] = dataMap['product_id'];
+                  productVariant.productId = dataMap['product_id'];
                   context
                       .read<ProductBloc>()
-                      .add(AddVariant(variantMap: variantMap));
+                      .add(AddVariant(categoryId: dataMap['category_id']));
                 }
               })
         ]);
   }
 
   Widget _buildForm(BuildContext context, Products products) {
-    return AddVariantSection(variantMap: variantMap, products: products);
+    return AddVariantSection(products: products);
   }
 }

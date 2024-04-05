@@ -6,15 +6,19 @@ import 'package:saasify/bloc/pos/pos_event.dart';
 import 'package:saasify/configs/app_colors.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/models/cart_model.dart';
+import 'package:saasify/models/pos_model.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
+import 'package:saasify/services/service_locator.dart';
 
 class CartBillingSection extends StatelessWidget {
   final List<PosModel> posDataList;
-  const CartBillingSection({super.key, required this.posDataList});
+  final BillDetails billDetails = getIt<BillDetails>();
+  CartBillingSection({super.key, required this.posDataList});
 
   @override
   Widget build(BuildContext context) {
+    billDetails.taxPercentage = 0.0;
+    billDetails.discountPercentage = 0.0;
     return Card(
       elevation: 0,
       color: AppColors.grey,
@@ -31,10 +35,7 @@ class CartBillingSection extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('Net Amount: ',
                 style: Theme.of(context).textTheme.descriptionTextStyle),
-            Text(context
-                .read<PosBloc>()
-                .billDetailsMap['net_amount']
-                .toStringAsFixed(2)),
+            Text(billDetails.netAmount!.toStringAsFixed(2)),
           ]),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Row(
@@ -57,8 +58,7 @@ class CartBillingSection extends StatelessWidget {
                                     const SizedBox(height: spacingSmall),
                                     LabelAndTextFieldWidget(
                                       onTextFieldChanged: (value) {
-                                        context.read<PosBloc>().billDetailsMap[
-                                                'discount_percentage'] =
+                                        billDetails.discountPercentage =
                                             double.parse(value!);
                                       },
                                     ),
@@ -82,10 +82,7 @@ class CartBillingSection extends StatelessWidget {
                         const Icon(Icons.edit, size: 15, color: AppColors.blue))
               ],
             ),
-            Text(context
-                .read<PosBloc>()
-                .billDetailsMap['discount_amount']
-                .toStringAsFixed(2)),
+            Text(billDetails.discount!.toStringAsFixed(2)),
           ]),
           const SizedBox(
             width: double.maxFinite,
@@ -98,10 +95,7 @@ class CartBillingSection extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('Sub Total: ',
                 style: Theme.of(context).textTheme.descriptionTextStyle),
-            Text(context
-                .read<PosBloc>()
-                .billDetailsMap['sub_total']
-                .toStringAsFixed(2)),
+            Text(billDetails.subTotal!.toStringAsFixed(2)),
           ]),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Row(
@@ -126,8 +120,7 @@ class CartBillingSection extends StatelessWidget {
                                         labelText: '',
                                       ),
                                       onChanged: (value) {
-                                        context.read<PosBloc>().billDetailsMap[
-                                                'tax_percentage'] =
+                                        billDetails.taxPercentage =
                                             double.parse(value);
                                       },
                                     ),
@@ -151,10 +144,7 @@ class CartBillingSection extends StatelessWidget {
                         const Icon(Icons.edit, size: 15, color: AppColors.blue))
               ],
             ),
-            Text(context
-                .read<PosBloc>()
-                .billDetailsMap['tax']
-                .toStringAsFixed(2)),
+            Text(billDetails.tax!.toStringAsFixed(2)),
           ]),
           const SizedBox(
             width: double.maxFinite,
@@ -167,10 +157,7 @@ class CartBillingSection extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('Grand Total: ',
                 style: Theme.of(context).textTheme.descriptionTextStyle),
-            Text(context
-                .read<PosBloc>()
-                .billDetailsMap['grand_total']
-                .toStringAsFixed(2)),
+            Text(billDetails.grandTotal!.toStringAsFixed(2)),
           ])
         ]),
       ),

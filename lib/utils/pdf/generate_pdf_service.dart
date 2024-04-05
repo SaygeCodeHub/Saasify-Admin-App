@@ -2,6 +2,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:saasify/configs/app_spacing.dart';
+import 'package:saasify/models/pos_model.dart';
 import 'package:saasify/models/pdf/billing_details_info_model.dart';
 import 'package:saasify/models/pdf/business_info_model.dart';
 import 'package:saasify/models/pdf/customer_info_model.dart';
@@ -15,7 +16,7 @@ Future<void> generatePdf({
   required BusinessInfoModel businessInfoModel,
   required CustomerInfoModel customerInfoModel,
   required BillingInfoModel billingInfoModel,
-  required List<Map<String, dynamic>> items,
+  required List<PosModel> items,
 }) async {
   final pdf = pw.Document();
   pdf.addPage(

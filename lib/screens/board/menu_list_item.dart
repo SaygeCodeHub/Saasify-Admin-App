@@ -17,7 +17,7 @@ class MenuListItem extends StatelessWidget {
       padding: const EdgeInsets.all(spacingSmallest),
       child: Material(
         elevation: 3,
-        borderRadius: BorderRadius.circular(kBoardTileRedius),
+        borderRadius: BorderRadius.circular(kBoardTileRadius),
         child: Padding(
           padding: const EdgeInsets.all(kBoardTilePadding),
           child: Column(

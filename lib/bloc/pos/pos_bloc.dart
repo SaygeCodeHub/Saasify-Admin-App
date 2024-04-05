@@ -1,18 +1,25 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/pos/pos_event.dart';
 import 'package:saasify/bloc/pos/pos_states.dart';
-import 'package:saasify/cache/cache.dart';
-import 'package:saasify/models/cart_model.dart';
+import 'package:saasify/cache/company_cache.dart';
+import 'package:saasify/cache/user_cache.dart';
+import 'package:saasify/enums/firestore_collections_enum.dart';
+import 'package:saasify/models/pos_model.dart';
+import 'package:saasify/models/orders/orders_model.dart';
 import 'package:saasify/models/pdf/billing_details_info_model.dart';
 import 'package:saasify/models/pdf/business_info_model.dart';
 import 'package:saasify/models/pdf/customer_info_model.dart';
-import 'package:saasify/utils/firestore_services.dart';
+import 'package:saasify/services/firebase_services_two.dart';
+import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/pdf/generate_pdf_service.dart';
 
 class PosBloc extends Bloc<PosEvent, PosState> {
   PosState get initialState => PosInitial();
+  final BillDetails billDetails = getIt<BillDetails>();
+  final firebaseService = getIt<FirebaseServices>();
 
   PosBloc() : super(PosInitial()) {
     on<AddToCart>(_addToCart);
@@ -24,7 +31,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<PlaceOrder>(_placeOrder);
   }
 
-  Map<String, dynamic> billDetailsMap = {};
   bool showCart = false;
 
   FutureOr<void> _addToCart(AddToCart event, Emitter<PosState> emit) {
@@ -66,6 +72,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       }
       if (event.posDataList.isEmpty) {
         showCart = false;
+        billDetails.toJson().clear();
       }
     }
     add(CalculateBill(posDataList: event.posDataList));
@@ -82,20 +89,20 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     }
 
     netAmount = totalCost;
-    double discountPercent = billDetailsMap['discount_percentage'] ?? 0.0;
+    double discountPercent = billDetails.discountPercentage ?? 0.0;
     double discountAmount = (netAmount * discountPercent) / 100;
     double subTotal = netAmount - discountAmount;
 
-    double taxPercent = billDetailsMap['tax_percentage'] ?? 0.0;
+    double taxPercent = billDetails.taxPercentage ?? 0.0;
     double taxes = (subTotal * taxPercent) / 100;
 
     double grandTotal = subTotal + taxes;
 
-    billDetailsMap['net_amount'] = netAmount;
-    billDetailsMap['discount_amount'] = discountAmount;
-    billDetailsMap['sub_total'] = subTotal;
-    billDetailsMap['tax'] = taxes;
-    billDetailsMap['grand_total'] = grandTotal;
+    billDetails.netAmount = netAmount;
+    billDetails.discount = discountAmount;
+    billDetails.subTotal = subTotal;
+    billDetails.tax = taxes;
+    billDetails.grandTotal = grandTotal;
     emit(PosDataFetched(posDataList: event.posDataList));
   }
 
@@ -106,79 +113,65 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   }
 
   FutureOr<void> _generatePdf(GeneratePdf event, Emitter<PosState> emit) async {
-    List<Map<String, dynamic>> posData = [];
-    for (var item in event.posDataList) {
-      double amount = (item.count * item.variantCost);
-      posData.add({
-        'item': item.name,
-        'qty': item.count.toString(),
-        'price': item.variantCost.toStringAsFixed(2),
-        'amount': amount.toString(),
-        'variant_id': item.variantId
-      });
-    }
     generatePdf(
         businessInfoModel: BusinessInfoModel(
-            CustomerCache.getUserContact() ?? '',
-            CustomerCache.getCompanyLicenseNo() ?? '',
-            CustomerCache.getCompanyGstNo() ?? '',
-            CustomerCache.getUserAddress() ?? ''),
+            await CompanyCache.getUserContact() ?? '',
+            await CompanyCache.getCompanyLicenseNo() ?? '',
+            await CompanyCache.getCompanyGstNo() ?? '',
+            await CompanyCache.getUserAddress() ?? ''),
         customerInfoModel: CustomerInfoModel(
-            CustomerCache.getUserName() ?? '',
-            CustomerCache.getUserContact() ?? '',
-            '0',
-            CustomerCache.getUserAddress() ?? ''),
+            name: await UserCache.getUsername() ?? '',
+            customerContact: await CompanyCache.getUserContact() ?? '',
+            customerAddress: await CompanyCache.getUserAddress() ?? '',
+            loyaltyPoints: '0'),
         billingInfoModel: BillingInfoModel(
-            CustomerCache.getUserName() ?? '',
+            await UserCache.getUsername() ?? '',
             DateTime.now().toString(),
             '1766',
-            billDetailsMap['payment_method'],
+            billDetails.selectedPaymentMethod,
             23,
-            billDetailsMap['sub_total'],
-            billDetailsMap['discount_amount'] ?? 0,
-            billDetailsMap['tax_percentage'] ?? 0,
-            billDetailsMap['tax_percentage'] ?? 0,
-            billDetailsMap['grand_total']),
-        items: posData);
-    add(PlaceOrder(billDetailsMap: billDetailsMap, items: posData));
+            billDetails.subTotal,
+            billDetails.discount ?? 0,
+            billDetails.taxPercentage ?? 0,
+            billDetails.taxPercentage ?? 0,
+            billDetails.grandTotal),
+        items: event.posDataList);
+    add(PlaceOrder(items: event.posDataList));
   }
 
   FutureOr<void> _placeOrder(PlaceOrder event, Emitter<PosState> emit) async {
-    try {
-      emit(PlacingOrder());
-      Map<String, dynamic> orderData = {
-        'customerInfo': {
-          'name': CustomerCache.getUserName() ?? '',
-          'contact': CustomerCache.getUserContact() ?? '',
-          'address': CustomerCache.getUserAddress() ?? '',
-          'loyalty_points': 0
-        },
-        'billingInfo': {
-          'customerName': CustomerCache.getUserName() ?? '',
-          'date': DateTime.now().toString(),
-          'invoiceNumber': '1766',
-          'paymentMethod': event.billDetailsMap['payment_method'],
-          'subTotal': event.billDetailsMap['sub_total'],
-          'discountAmount': event.billDetailsMap['discount_amount'] ?? 0,
-          'sgst': event.billDetailsMap['tax_percentage'] ?? 0,
-          'cgst': event.billDetailsMap['tax_percentage'] ?? 0,
-          'grandTotal': event.billDetailsMap['grand_total'],
-        },
-        'items': event.items
-      };
-      if (orderData.isNotEmpty) {
-        await FirebaseService()
-            .getModulesCollectionRef(CustomerCache.getUserCompany() ?? '')
-            .doc('pos')
-            .collection('orders')
-            .add(orderData);
-        emit(OrderPlaced(successMessage: 'Order placed successfully!'));
-      } else {
-        emit(OrderNotPlaced(
-            errorMessage: 'Could not place order. Please try again!'));
-      }
-    } catch (e) {
-      emit(OrderNotPlaced(errorMessage: 'Error: ${e.toString()}'));
+    // try {
+    emit(PlacingOrder());
+    List<Map<String, dynamic>> orderItemList =
+        event.items.map((item) => item.toJson()).toList();
+    Orders order = Orders(
+        customerInfo: CustomerInfoModel(
+            name: await UserCache.getUsername() ?? '',
+            customerContact: await CompanyCache.getUserContact() ?? '',
+            customerAddress: await CompanyCache.getUserAddress() ?? ''),
+        billingInfo: BillingInfo(
+            customerName: await UserCache.getUsername() ?? '',
+            date: DateTime.now().toString(),
+            invoiceNumber: '1766',
+            paymentMethod: billDetails.selectedPaymentMethod.toString(),
+            subTotal: billDetails.subTotal ?? 0.0,
+            grandTotal: billDetails.grandTotal ?? 0.0,
+            sgst: billDetails.taxPercentage ?? 0.0,
+            cgst: billDetails.taxPercentage ?? 0.0,
+            discountAmount: billDetails.discount ?? 0.0),
+        items: orderItemList);
+    DocumentReference orderRef = await firebaseService
+        .getCompaniesDocRef()
+        .collection(FirestoreCollection.orders.collectionName)
+        .add(order.toJson());
+    if (orderRef.id.isNotEmpty) {
+      emit(OrderPlaced(successMessage: 'Order placed successfully!'));
+    } else {
+      emit(OrderNotPlaced(
+          errorMessage: 'Could not place order. Please try again!'));
     }
+    // } catch (e) {
+    //   emit(OrderNotPlaced(errorMessage: 'Error: ${e.toString()}'));
+    // }
   }
 }

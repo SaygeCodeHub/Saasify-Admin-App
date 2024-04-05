@@ -19,7 +19,10 @@ class SettingsScreen extends StatelessWidget {
                   'G779AZ69777301',
                   'Vievkanand Nagar, Nagpur - 440015'),
               customerInfoModel: const CustomerInfoModel(
-                  'Joey Tribbiani', '9786247171', '27', ''),
+                  name: 'Joey Tribbiani',
+                  customerContact: '9786247171',
+                  loyaltyPoints: '27',
+                  customerAddress: ''),
               billingInfoModel: BillingInfoModel(
                   'Gunther',
                   DateTime.now().toString(),
@@ -31,9 +34,7 @@ class SettingsScreen extends StatelessWidget {
                   1.80,
                   1.80,
                   903),
-              items: [
-                {'name': 'Jeans', 'qty': 25, 'price': 45.00, 'amount': 1125.00},
-              ]);
+              items: []);
         },
         icon: const Icon(Icons.settings, color: AppColors.darkBlue));
   }

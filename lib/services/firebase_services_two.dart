@@ -44,4 +44,13 @@ class FirebaseServices {
   CollectionReference getProductsCollectionRef(String categoryId) =>
       getCategoriesDocRef(categoryId)
           .collection(FirestoreCollection.products.collectionName);
+
+  DocumentReference<Object?> getProductDocRef(
+          String categoryId, String productId) =>
+      getProductsCollectionRef(categoryId).doc(productId);
+
+  CollectionReference getVariantsCollectionRef(
+          String categoryId, String productId) =>
+      getProductDocRef(categoryId, productId)
+          .collection(FirestoreCollection.variants.collectionName);
 }

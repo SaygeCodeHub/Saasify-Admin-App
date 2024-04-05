@@ -46,7 +46,7 @@ class ProductDetails extends StatelessWidget {
                             leading: CachedNetworkImage(
                                 width: 70,
                                 height: 150,
-                                imageUrl: state.products.imageUrl,
+                                imageUrl: state.products.imageUrl ?? '',
                                 placeholder: (context, url) => const Center(
                                     child: CircularProgressIndicator()),
                                 errorWidget: (context, url, error) => Container(
@@ -59,7 +59,7 @@ class ProductDetails extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: spacingXXSmall),
-                                Text('Category: ${state.products.category}'),
+                                Text('Category: ${state.products.categoryId}'),
                                 Text(
                                     'Description: ${state.products.description}'),
                                 Text('Supplier: ${state.products.supplier}'),
@@ -100,7 +100,7 @@ class ProductDetails extends StatelessWidget {
                       child: GridView.builder(
                     physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: state.products.variants.length,
+                    itemCount: state.products.variants?.length,
                     itemBuilder: (context, index) {
                       return Card(
                         child: ListTile(
@@ -109,7 +109,7 @@ class ProductDetails extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                  'Quantity: ${state.products.variants[index].variantName}'),
+                                  'Quantity: ${state.products.variants?[index].variantName}'),
                               InkWell(
                                   onTap: () {},
                                   child: const Icon(Icons.edit,
@@ -121,9 +121,9 @@ class ProductDetails extends StatelessWidget {
                             children: [
                               const SizedBox(height: spacingXXSmall),
                               Text(
-                                  '₹ ${state.products.variants[index].price.toString()}'),
+                                  '₹ ${state.products.variants?[index].price.toString()}'),
                               Text(
-                                  'Stock: ${state.products.variants[index].quantityAvailable.toString()}')
+                                  'Stock: ${state.products.variants?[index].quantityAvailable.toString()}')
                             ],
                           ),
                         ),

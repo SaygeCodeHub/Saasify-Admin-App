@@ -10,11 +10,8 @@ import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/services/firebase_services_two.dart';
 import 'package:saasify/services/service_locator.dart';
-import 'package:saasify/utils/firestore_services.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
-
-import '../../cache/cache.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryState get initialState => CategoryInitial();
@@ -112,7 +109,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       Products product = Products(
         productId: productDoc.id,
         name: productData['name'] ?? '',
-        category: productData['category'] ?? '',
+        categoryId: productData['category'] ?? '',
         description: productData['description'] ?? '',
         soldBy: productData['soldBy'] ?? '',
         unit: productData['unit'] ?? '',
@@ -121,11 +118,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         imageUrl: productData['imageUrl'] ?? '',
       );
       List<ProductVariant> variants = [];
-      QuerySnapshot variantSnapshot = await FirebaseService()
-          .getProductsCollectionRef(
-              CustomerCache.getUserCompany() ?? '', categoryId)
-          .doc(productDoc.id)
-          .collection('variants')
+      QuerySnapshot variantSnapshot = await firebaseService
+          .getVariantsCollectionRef(categoryId, productDoc.id)
           .where('productId', isEqualTo: productDoc.id)
           .get();
       for (var variantDoc in variantSnapshot.docs) {
@@ -135,8 +129,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
             variantId: variantDoc.id,
             productId: productDoc.id,
             variantName: variantData['variantName'],
-            price: variantData['price'] ?? 0.0,
-            cost: variantData['price'] ?? 0.0,
+            price: double.parse(variantData['price'].toString()),
+            cost: double.parse(variantData['price'].toString()),
             quantityAvailable: variantData['quantityAvailable'] ?? 0,
             isActive: true);
         variants.add(variant);
@@ -151,7 +145,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       FetchProductsForSelectedCategory event,
       Emitter<CategoryState> emit) async {
     for (var item in event.categories) {
-      item.products!.clear();
+      item.products?.clear();
       if (selectedCategory == item.categoryId) {
         item.products = await fetchProductsByCategory(selectedCategory);
         emit(CategoriesWithProductsFetched(categories: event.categories));

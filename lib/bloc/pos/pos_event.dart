@@ -1,4 +1,4 @@
-import 'package:saasify/models/cart_model.dart';
+import 'package:saasify/models/pos_model.dart';
 
 abstract class PosEvent {}
 
@@ -44,8 +44,7 @@ class GeneratePdf extends PosEvent {
 }
 
 class PlaceOrder extends PosEvent {
-  final Map billDetailsMap;
-  final List<Map<String, dynamic>> items;
+  final List<PosModel> items;
 
-  PlaceOrder({required this.billDetailsMap, required this.items});
+  PlaceOrder({required this.items});
 }

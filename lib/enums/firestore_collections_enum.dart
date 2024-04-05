@@ -4,7 +4,9 @@ enum FirestoreCollection {
   pos,
   modules,
   categories,
-  products
+  products,
+  variants,
+  orders
 }
 
 extension FirestoreCollectionExtension on FirestoreCollection {
@@ -22,6 +24,10 @@ extension FirestoreCollectionExtension on FirestoreCollection {
         return "categories";
       case FirestoreCollection.products:
         return "products";
+      case FirestoreCollection.variants:
+        return "variants";
+      case FirestoreCollection.orders:
+        return "orders";
       default:
         return "";
     }

@@ -1,4 +1,4 @@
-import 'package:saasify/models/cart_model.dart';
+import 'package:saasify/models/pos_model.dart';
 
 abstract class PosState {}
 

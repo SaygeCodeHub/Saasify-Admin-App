@@ -5,7 +5,7 @@ import 'package:saasify/screens/billing/select_payment_method.dart';
 
 import '../../configs/app_colors.dart';
 import '../../configs/app_spacing.dart';
-import '../../models/cart_model.dart';
+import '../../models/pos_model.dart';
 import 'billing_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -504,7 +504,6 @@ class _CartScreenState extends State<CartScreen> {
                                   billDetailsMap['cart_items'] = widget.cart;
                                   return SelectPaymentMethod(
                                     totalAmount: billDetailsMap['grand_total'],
-                                    billDetailsMap: billDetailsMap,
                                     posDataList: const [],
                                   );
                                 });

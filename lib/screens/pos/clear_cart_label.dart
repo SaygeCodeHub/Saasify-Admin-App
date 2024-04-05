@@ -4,7 +4,7 @@ import 'package:saasify/bloc/pos/pos_bloc.dart';
 import 'package:saasify/bloc/pos/pos_event.dart';
 import 'package:saasify/configs/app_colors.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/models/cart_model.dart';
+import 'package:saasify/models/pos_model.dart';
 
 class ClearCartLabel extends StatelessWidget {
   final List<PosModel> posDataList;

@@ -19,8 +19,9 @@ class AppColors {
   static const Color red = Color(0xFFF64209);
   static const Color warningYellow = Color(0xFFEED202);
   static const Color lightestYellow = Color(0xFFFFFFED);
-  static const Color ghostwhite = Color(0xFFF6F5FD);
+  static const Color ghostWhite = Color(0xFFF6F5FD);
   static const Color honeydew = Color(0xFFD9EADA);
-  static const Color flowlwewhitw = Color(0xFFFFF9F1);
-  static const Color antiwhite = Color(0xFFF3F4F6);
+  static const Color flowWhite = Color(0xFFFFF9F1);
+  static const Color antiWhite = Color(0xFFF3F4F6);
+  static const Color lightestGrey = Color(0xEEEEEEFF);
 }

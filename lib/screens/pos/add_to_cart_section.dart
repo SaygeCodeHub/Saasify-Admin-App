@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/pos/pos_bloc.dart';
 import 'package:saasify/bloc/pos/pos_event.dart';
 import 'package:saasify/configs/app_colors.dart';
+import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/pos_model.dart';
@@ -30,15 +31,15 @@ class AddToCartSection extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: SizedBox.square(
-                        dimension: 70,
+                        dimension: kCartNetworkImageSizedBoxDimension,
                         child: CachedNetworkImage(
                             imageUrl: posDataList[index].image,
                             placeholder: (context, url) => const Center(
                                 child: CircularProgressIndicator()),
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
-                            width: 80,
-                            height: 80,
+                            width: kCartNetworkImageTogether,
+                            height: kCartNetworkImageTogether,
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -64,8 +65,8 @@ class AddToCartSection extends StatelessWidget {
                                   Stack(
                                     children: [
                                       Container(
-                                        width: 80,
-                                        height: 27,
+                                        width: kCartCountContainerWidth,
+                                        height: kCartCountContainerHeight,
                                         decoration: BoxDecoration(
                                             color: AppColors.lighterGrey,
                                             border: Border.all(
@@ -88,8 +89,8 @@ class AddToCartSection extends StatelessWidget {
                                                         index));
                                           },
                                           child: Container(
-                                            height: 27,
-                                            width: 27,
+                                            height: kCartCountTogether,
+                                            width: kCartCountTogether,
                                             decoration: BoxDecoration(
                                                 boxShadow: [
                                                   BoxShadow(
@@ -107,7 +108,8 @@ class AddToCartSection extends StatelessWidget {
                                                 borderRadius:
                                                     BorderRadius.circular(25)),
                                             child: const Icon(Icons.remove,
-                                                size: 15),
+                                                size:
+                                                    kCartRemoveAndAddIconSize),
                                           ),
                                         ),
                                       ),
@@ -122,8 +124,8 @@ class AddToCartSection extends StatelessWidget {
                                                         index));
                                           },
                                           child: Container(
-                                            height: 27,
-                                            width: 27,
+                                            height: kCartCountTogether,
+                                            width: kCartCountTogether,
                                             decoration: BoxDecoration(
                                                 boxShadow: [
                                                   BoxShadow(
@@ -141,7 +143,7 @@ class AddToCartSection extends StatelessWidget {
                                                 borderRadius:
                                                     BorderRadius.circular(25)),
                                             child: const Icon(Icons.add,
-                                                size: 15,
+                                                size: kCartRemoveAndAddIconSize,
                                                 color: AppColors.blue),
                                           ),
                                         ),

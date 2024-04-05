@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/pos/pos_bloc.dart';
 import 'package:saasify/bloc/pos/pos_event.dart';
 import 'package:saasify/configs/app_colors.dart';
+import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/pos_model.dart';
@@ -13,6 +14,7 @@ import 'package:saasify/services/service_locator.dart';
 class CartBillingSection extends StatelessWidget {
   final List<PosModel> posDataList;
   final BillDetails billDetails = getIt<BillDetails>();
+
   CartBillingSection({super.key, required this.posDataList});
 
   @override
@@ -25,7 +27,7 @@ class CartBillingSection extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: spacingStandard, vertical: spacingStandard),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: spacingLarge),
           Text("Bill Details",
               style:
                   Theme.of(context).textTheme.generalSectionHeadingTextStyle),
@@ -48,7 +50,7 @@ class CartBillingSection extends StatelessWidget {
                           builder: (context) {
                             return AlertDialog(
                               content: SizedBox(
-                                width: 200,
+                                width: kBillDiscountAndTaxFieldHeight,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -76,8 +78,9 @@ class CartBillingSection extends StatelessWidget {
                           });
                     },
                     padding: EdgeInsets.zero,
-                    icon:
-                        const Icon(Icons.edit, size: 15, color: AppColors.blue))
+                    icon: const Icon(Icons.edit,
+                        size: kBillDiscountAndTaxIconSize,
+                        color: AppColors.blue))
               ],
             ),
             Text(billDetails.discount!.toStringAsFixed(2)),
@@ -107,7 +110,7 @@ class CartBillingSection extends StatelessWidget {
                           builder: (context) {
                             return AlertDialog(
                               content: SizedBox(
-                                width: 200,
+                                width: kBillDiscountAndTaxFieldHeight,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -138,8 +141,9 @@ class CartBillingSection extends StatelessWidget {
                           });
                     },
                     padding: EdgeInsets.zero,
-                    icon:
-                        const Icon(Icons.edit, size: 15, color: AppColors.blue))
+                    icon: const Icon(Icons.edit,
+                        size: kBillDiscountAndTaxIconSize,
+                        color: AppColors.blue))
               ],
             ),
             Text(billDetails.tax!.toStringAsFixed(2)),

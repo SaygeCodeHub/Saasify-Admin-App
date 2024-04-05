@@ -58,8 +58,8 @@ class FeatureCardWidget extends StatelessWidget {
 }
 
 List<Color> cardColors = [
-  AppColors.ghostwhite,
+  AppColors.ghostWhite,
   AppColors.honeydew,
-  AppColors.flowlwewhitw,
-  AppColors.antiwhite
+  AppColors.flowWhite,
+  AppColors.antiWhite
 ];

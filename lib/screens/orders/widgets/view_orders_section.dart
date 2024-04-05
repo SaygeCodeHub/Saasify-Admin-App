@@ -50,7 +50,7 @@ class ViewOrdersSection extends StatelessWidget {
             crossAxisCount: 5,
             mainAxisSpacing: 10.0,
             crossAxisSpacing: 15,
-            childAspectRatio: 2),
+            childAspectRatio: 1.75),
       ),
     );
   }

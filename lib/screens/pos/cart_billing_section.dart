@@ -17,8 +17,6 @@ class CartBillingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    billDetails.taxPercentage = 0.0;
-    billDetails.discountPercentage = 0.0;
     return Card(
       elevation: 0,
       color: AppColors.grey,

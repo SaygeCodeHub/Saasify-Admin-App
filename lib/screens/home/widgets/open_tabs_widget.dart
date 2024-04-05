@@ -21,10 +21,8 @@ class OpenTabsWidget extends StatelessWidget {
                       shape: BoxShape.circle, color: Color(0xFFe9eaec)),
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const PosScreen()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => PosScreen()));
                     },
                     child: const Center(
                       child: Icon(

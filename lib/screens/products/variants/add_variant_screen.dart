@@ -5,7 +5,7 @@ import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
-import 'package:saasify/screens/products/product_detail.dart';
+import 'package:saasify/screens/products/product_details_screen.dart';
 import 'package:saasify/screens/products/variants/add_variant_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
@@ -16,10 +16,9 @@ import 'package:saasify/utils/progress_bar.dart';
 class AddVariantScreen extends StatelessWidget {
   final Map dataMap;
   final ProductVariant productVariant = getIt<ProductVariant>();
+  final formKey = GlobalKey<FormState>();
 
   AddVariantScreen({super.key, required this.dataMap});
-
-  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +48,7 @@ class AddVariantScreen extends StatelessWidget {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProductDetails(
+                                  builder: (context) => ProductDetailsScreen(
                                       categoryId: dataMap['category_id'],
                                       productId: dataMap['product_id'])));
                         });

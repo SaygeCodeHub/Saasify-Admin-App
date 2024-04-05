@@ -7,7 +7,7 @@ import 'package:saasify/configs/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:saasify/models/pos_model.dart';
 import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/screens/products/product_detail.dart';
+import 'package:saasify/screens/products/product_details_screen.dart';
 
 import '../../configs/app_spacing.dart';
 
@@ -45,7 +45,7 @@ class ProductCardWidget extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ProductDetails(
+                            builder: (context) => ProductDetailsScreen(
                                 categoryId: list[i].categoryId,
                                 productId: list[i].products[index].productId)));
                   }

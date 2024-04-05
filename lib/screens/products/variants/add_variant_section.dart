@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_colors.dart';
+import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/enums/product_by_quantity_enum.dart';
@@ -30,11 +31,12 @@ class AddVariantSection extends StatelessWidget {
                   errorWidget: (context, url, error) => ClipOval(
                         child: Container(
                             color: AppColors.lighterGrey,
-                            height: 50,
-                            child: const Icon(Icons.image, size: 20)),
+                            height: kNetworkImageContainerHeight,
+                            child: const Icon(Icons.image,
+                                size: kNetworkImageIconSize)),
                       ),
                   fit: BoxFit.fitHeight)
-              : const Icon(Icons.image, size: 40),
+              : const Icon(Icons.image, size: kNetworkImageIconSize + 20),
           title: Text(
             products.categoryId!,
             style: Theme.of(context)

@@ -16,3 +16,4 @@ const double kNetworkImageHeight = 150;
 const double kNetworkImageWidth = 70;
 const double kNetworkImageContainerHeight = 50;
 const double kNetworkImageIconSize = 20;
+const double kEditVariantIconSize = 16;

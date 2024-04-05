@@ -28,4 +28,14 @@ class AddCustomerModel extends HiveObject {
     required this.dob,
     required this.loyaltyPoints,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'email': email,
+      'conatct': contact,
+      'dob': dob,
+      'loyaltyPoints': loyaltyPoints
+    };
+  }
 }

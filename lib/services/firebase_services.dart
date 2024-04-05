@@ -29,6 +29,16 @@ class FirebaseServices {
   CollectionReference getModulesCollectionRef() => getCompaniesDocRef()
       .collection(FirestoreCollection.modules.collectionName);
 
+  CollectionReference getCustomersCollectionRef() => getCompaniesDocRef()
+      .collection(FirestoreCollection.customers.collectionName);
+
+  CollectionReference getSuppliersCollectionRef() => getCompaniesDocRef()
+      .collection(FirestoreCollection.suppliers.collectionName);
+
+  CollectionReference getCouponAndDiscountsCollectionRef() =>
+      getCompaniesDocRef()
+          .collection(FirestoreCollection.coupons.collectionName);
+
   CollectionReference getOrdersCollectionRef() => getCompaniesDocRef()
       .collection(FirestoreCollection.orders.collectionName);
 

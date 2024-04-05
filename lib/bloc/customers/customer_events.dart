@@ -1,4 +1,4 @@
-import '../../models/customer/add_customer_model.dart'; // Import path might differ
+import 'package:saasify/models/customer/add_customer_model.dart';
 
 abstract class CustomerEvent {}
 

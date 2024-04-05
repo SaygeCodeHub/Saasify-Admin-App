@@ -14,12 +14,9 @@ import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
 
 class AddSupplierScreen extends StatelessWidget {
-  AddSupplierScreen({super.key});
-
   final formKey = GlobalKey<FormState>();
-  final TextEditingController customerNameController = TextEditingController();
-  final TextEditingController contactController = TextEditingController();
-  final TextEditingController emailAddressController = TextEditingController();
+
+  AddSupplierScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,19 +35,26 @@ class AddSupplierScreen extends StatelessWidget {
                       prefixIcon: const Icon(Icons.person),
                       label: 'Supplier Name',
                       isRequired: true,
-                      textFieldController: customerNameController),
+                      onTextFieldChanged: (String? value) {
+                        context.read<SupplierBloc>().addSupplierMap['name'] =
+                            value;
+                      }),
                   LabelAndTextFieldWidget(
-                    prefixIcon: const Icon(Icons.email),
-                    label: 'Email Address',
-                    isRequired: false,
-                    textFieldController: emailAddressController,
-                  ),
+                      prefixIcon: const Icon(Icons.email),
+                      label: 'Email Address',
+                      isRequired: false,
+                      onTextFieldChanged: (String? value) {
+                        context.read<SupplierBloc>().addSupplierMap['email'] =
+                            value;
+                      }),
                   LabelAndTextFieldWidget(
-                    prefixIcon: const Icon(Icons.call),
-                    label: 'Mobile Number',
-                    isRequired: true,
-                    textFieldController: contactController,
-                  ),
+                      prefixIcon: const Icon(Icons.call),
+                      label: 'Mobile Number',
+                      isRequired: true,
+                      onTextFieldChanged: (String? value) {
+                        context.read<SupplierBloc>().addSupplierMap['contact'] =
+                            value;
+                      }),
                 ])
               ],
             )),
@@ -92,10 +96,16 @@ class AddSupplierScreen extends StatelessWidget {
           onPressed: () async {
             if (formKey.currentState!.validate()) {
               context.read<SupplierBloc>().add(AddSupplier(
-                  addSupplierData: AddSupplierModel(
-                      name: customerNameController.text,
-                      email: emailAddressController.text,
-                      contact: contactController.text)));
+                  addSupplierModel: AddSupplierModel(
+                      name: context.read<SupplierBloc>().addSupplierMap['name'],
+                      email: context
+                              .read<SupplierBloc>()
+                              .addSupplierMap['email'] ??
+                          '',
+                      contact: context
+                              .read<SupplierBloc>()
+                              .addSupplierMap['contact'] ??
+                          '')));
             }
           },
         ),

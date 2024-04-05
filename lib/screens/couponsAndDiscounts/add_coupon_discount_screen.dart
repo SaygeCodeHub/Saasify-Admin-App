@@ -26,11 +26,8 @@ class AddCouponDiscountScreen extends StatefulWidget {
 
 class _AddCouponDiscountScreenState extends State<AddCouponDiscountScreen> {
   final formKey = GlobalKey<FormState>();
-  final couponCodeNameController = TextEditingController();
-  final couponValueController = TextEditingController();
-  final validityController = TextEditingController();
-  final maximumAmountController = TextEditingController();
   String? _selectedOption = 'Flat Amount';
+  final TextEditingController validityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +55,11 @@ class _AddCouponDiscountScreenState extends State<AddCouponDiscountScreen> {
         prefixIcon: const Icon(Icons.discount),
         label: 'Coupon Code',
         isRequired: true,
-        textFieldController: couponCodeNameController,
+        onTextFieldChanged: (String? value) {
+          context
+              .read<CouponsAndDiscountsBloc>()
+              .couponsAndDiscountsMap['couponCode'] = value;
+        },
       ),
       CustomDatePickerWidget(
           label: 'Valid Till', dateController: validityController),
@@ -70,20 +71,26 @@ class _AddCouponDiscountScreenState extends State<AddCouponDiscountScreen> {
             setState(() => _selectedOption = newValue),
       ),
       LabelAndTextFieldWidget(
-        prefixIcon: _selectedOption == 'Flat Amount'
-            ? const Icon(Icons.currency_rupee_outlined)
-            : const Icon(Icons.percent),
-        label: _selectedOption == 'Flat Amount' ? 'Amount' : 'Percentage',
-        isRequired: true,
-        textFieldController: couponValueController,
-      ),
+          prefixIcon: _selectedOption == 'Flat Amount'
+              ? const Icon(Icons.currency_rupee_outlined)
+              : const Icon(Icons.percent),
+          label: _selectedOption == 'Flat Amount' ? 'Amount' : 'Percentage',
+          isRequired: true,
+          onTextFieldChanged: (String? value) {
+            context
+                .read<CouponsAndDiscountsBloc>()
+                .couponsAndDiscountsMap['amount'] = value;
+          }),
       if (_selectedOption != 'Flat Amount')
         LabelAndTextFieldWidget(
-          prefixIcon: const Icon(Icons.discount),
-          label: 'Maximum Amount',
-          isRequired: true,
-          textFieldController: maximumAmountController,
-        ),
+            prefixIcon: const Icon(Icons.discount),
+            label: 'Maximum Amount',
+            isRequired: true,
+            onTextFieldChanged: (String? value) {
+              context
+                  .read<CouponsAndDiscountsBloc>()
+                  .couponsAndDiscountsMap['maximumAmount'] = value;
+            }),
     ];
   }
 
@@ -130,9 +137,17 @@ class _AddCouponDiscountScreenState extends State<AddCouponDiscountScreen> {
           DateFormat('dd/MM/yyyy').parseStrict(validityController.text);
       context.read<CouponsAndDiscountsBloc>().add(AddCoupon(
             addCouponMap: CouponsAndDiscountsModel(
-              couponCode: couponCodeNameController.text,
-              amount: double.tryParse(couponValueController.text),
-              maximumAmount: double.tryParse(maximumAmountController.text),
+              couponCode: context
+                  .read<CouponsAndDiscountsBloc>()
+                  .couponsAndDiscountsMap['couponCode'],
+              amount: double.tryParse(context
+                      .read<CouponsAndDiscountsBloc>()
+                      .couponsAndDiscountsMap['amount'] ??
+                  '0.0'),
+              maximumAmount: double.tryParse(context
+                      .read<CouponsAndDiscountsBloc>()
+                      .couponsAndDiscountsMap['maximumAmount'] ??
+                  '0.0'),
               couponType: _selectedOption,
               validTill: couponValidityDate,
             ),

@@ -10,6 +10,7 @@ import 'package:saasify/services/service_locator.dart';
 class SupplierBloc extends Bloc<SupplierEvent, SupplierState> {
   SupplierState get initialState => SupplierInitial();
   final firebaseService = getIt<FirebaseServices>();
+  Map<String, dynamic> addSupplierMap = {};
 
   SupplierBloc() : super(SupplierInitial()) {
     on<AddSupplier>(_addSupplier);
@@ -20,10 +21,8 @@ class SupplierBloc extends Bloc<SupplierEvent, SupplierState> {
     try {
       emit(AddingSupplier());
       DocumentReference supplierRef = await firebaseService
-          .getModulesCollectionRef()
-          .doc('supplier document')
-          .collection('suppliers')
-          .add(event.addSupplierData.toMap());
+          .getSuppliersCollectionRef()
+          .add(event.addSupplierModel.toMap());
       if (supplierRef.id.isNotEmpty) {
         emit(SupplierAdded(successMessage: 'Supplier added successfully!'));
       } else {

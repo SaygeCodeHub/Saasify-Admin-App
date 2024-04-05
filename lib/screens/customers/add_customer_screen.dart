@@ -16,13 +16,10 @@ import '../widgets/skeleton_screen.dart';
 import '../widgets/buttons/primary_button.dart';
 
 class AddCustomerScreen extends StatelessWidget {
-  AddCustomerScreen({super.key});
-
   final formKey = GlobalKey<FormState>();
-  final TextEditingController customerNameController = TextEditingController();
-  final TextEditingController contactController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
-  final TextEditingController emailAddressController = TextEditingController();
+
+  AddCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +35,33 @@ class AddCustomerScreen extends StatelessWidget {
                 const SizedBox(height: spacingLarge),
                 ResponsiveForm(formWidgets: [
                   LabelAndTextFieldWidget(
-                      prefixIcon: const Icon(Icons.person),
-                      label: 'Customer Name',
-                      isRequired: true,
-                      textFieldController: customerNameController),
+                    prefixIcon: const Icon(Icons.person),
+                    label: 'Customer Name',
+                    isRequired: true,
+                    onTextFieldChanged: (String? value) {
+                      context.read<CustomerBloc>().addCustomerMap['name'] =
+                          value!;
+                    },
+                  ),
                   CustomDatePickerWidget(
                       label: 'Date of Birth', dateController: dobController),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.email),
                     label: 'Email Address',
                     isRequired: false,
-                    textFieldController: emailAddressController,
+                    onTextFieldChanged: (String? value) {
+                      context.read<CustomerBloc>().addCustomerMap['email'] =
+                          value!;
+                    },
                   ),
                   LabelAndTextFieldWidget(
                     prefixIcon: const Icon(Icons.call),
                     label: 'Mobile Number',
                     isRequired: true,
-                    textFieldController: contactController,
+                    onTextFieldChanged: (String? value) {
+                      context.read<CustomerBloc>().addCustomerMap['contact'] =
+                          value!;
+                    },
                   ),
                 ])
               ],
@@ -100,9 +107,15 @@ class AddCustomerScreen extends StatelessWidget {
               final DateTime dob = formatter.parseStrict(dobController.text);
               context.read<CustomerBloc>().add(AddCustomer(
                   customerModel: AddCustomerModel(
-                      name: customerNameController.text,
-                      email: emailAddressController.text,
-                      contact: contactController.text,
+                      name: context.read<CustomerBloc>().addCustomerMap['name'],
+                      email: context
+                              .read<CustomerBloc>()
+                              .addCustomerMap['email'] ??
+                          '',
+                      contact: context
+                              .read<CustomerBloc>()
+                              .addCustomerMap['contact'] ??
+                          '',
                       dob: dob,
                       loyaltyPoints: 0)));
             }

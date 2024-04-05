@@ -140,38 +140,38 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   }
 
   FutureOr<void> _placeOrder(PlaceOrder event, Emitter<PosState> emit) async {
-    // try {
-    emit(PlacingOrder());
-    List<Map<String, dynamic>> orderItemList =
-        event.items.map((item) => item.toJson()).toList();
-    Orders order = Orders(
-        customerInfo: CustomerInfoModel(
-            name: await UserCache.getUsername() ?? '',
-            customerContact: await CompanyCache.getUserContact() ?? '',
-            customerAddress: await CompanyCache.getUserAddress() ?? ''),
-        billingInfo: BillingInfo(
-            customerName: await UserCache.getUsername() ?? '',
-            date: DateTime.now().toString(),
-            invoiceNumber: '1766',
-            paymentMethod: billDetails.selectedPaymentMethod.toString(),
-            subTotal: billDetails.subTotal ?? 0.0,
-            grandTotal: billDetails.grandTotal ?? 0.0,
-            sgst: billDetails.taxPercentage ?? 0.0,
-            cgst: billDetails.taxPercentage ?? 0.0,
-            discountAmount: billDetails.discount ?? 0.0),
-        items: orderItemList);
-    DocumentReference orderRef = await firebaseService
-        .getCompaniesDocRef()
-        .collection(FirestoreCollection.orders.collectionName)
-        .add(order.toJson());
-    if (orderRef.id.isNotEmpty) {
-      emit(OrderPlaced(successMessage: 'Order placed successfully!'));
-    } else {
-      emit(OrderNotPlaced(
-          errorMessage: 'Could not place order. Please try again!'));
+    try {
+      emit(PlacingOrder());
+      List<Map<String, dynamic>> orderItemList =
+          event.items.map((item) => item.toJson()).toList();
+      Orders order = Orders(
+          customerInfo: CustomerInfoModel(
+              name: await UserCache.getUsername() ?? '',
+              customerContact: await CompanyCache.getUserContact() ?? '',
+              customerAddress: await CompanyCache.getUserAddress() ?? ''),
+          billingInfo: BillingInfo(
+              customerName: await UserCache.getUsername() ?? '',
+              date: DateTime.now().toString(),
+              invoiceNumber: '1766',
+              paymentMethod: billDetails.selectedPaymentMethod.toString(),
+              subTotal: billDetails.subTotal ?? 0.0,
+              grandTotal: billDetails.grandTotal ?? 0.0,
+              sgst: billDetails.taxPercentage ?? 0.0,
+              cgst: billDetails.taxPercentage ?? 0.0,
+              discountAmount: billDetails.discount ?? 0.0),
+          items: orderItemList);
+      DocumentReference orderRef = await firebaseService
+          .getCompaniesDocRef()
+          .collection(FirestoreCollection.orders.collectionName)
+          .add(order.toJson());
+      if (orderRef.id.isNotEmpty) {
+        emit(OrderPlaced(successMessage: 'Order placed successfully!'));
+      } else {
+        emit(OrderNotPlaced(
+            errorMessage: 'Could not place order. Please try again!'));
+      }
+    } catch (e) {
+      emit(OrderNotPlaced(errorMessage: 'Error: ${e.toString()}'));
     }
-    // } catch (e) {
-    //   emit(OrderNotPlaced(errorMessage: 'Error: ${e.toString()}'));
-    // }
   }
 }

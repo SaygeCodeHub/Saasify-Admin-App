@@ -6,7 +6,10 @@ enum FirestoreCollection {
   categories,
   products,
   variants,
-  orders
+  orders,
+  customers,
+  suppliers,
+  coupons
 }
 
 extension FirestoreCollectionExtension on FirestoreCollection {
@@ -28,6 +31,12 @@ extension FirestoreCollectionExtension on FirestoreCollection {
         return "variants";
       case FirestoreCollection.orders:
         return "orders";
+      case FirestoreCollection.customers:
+        return "customers";
+      case FirestoreCollection.suppliers:
+        return "suppliers";
+      case FirestoreCollection.coupons:
+        return "coupons";
       default:
         return "";
     }

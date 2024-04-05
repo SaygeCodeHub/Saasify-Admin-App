@@ -3,7 +3,7 @@ import 'package:saasify/models/feature_model.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
 import 'package:saasify/screens/category/view_category_screen.dart';
 import 'package:saasify/screens/customers/add_customer_screen.dart';
-import 'package:saasify/screens/orders/view_orders.dart';
+import 'package:saasify/screens/orders/view_orders_screen.dart';
 import 'package:saasify/screens/products/add_product_screen.dart';
 import 'package:saasify/screens/products/view_product_screen.dart';
 import 'package:saasify/screens/suppliers/add_supplier_screen.dart';
@@ -38,5 +38,7 @@ List<FeatureCardModel> features = [
       label: 'Add Coupons',
       screen: const AddCouponDiscountScreen()),
   FeatureCardModel(
-      icon: Icons.people, label: 'View Orders', screen: const ViewOrders())
+      icon: Icons.people,
+      label: 'View Orders',
+      screen: const ViewOrdersScreen())
 ];

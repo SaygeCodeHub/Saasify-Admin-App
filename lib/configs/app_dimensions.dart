@@ -12,3 +12,7 @@ const double kBillImageHeight = 75;
 const double kProductCategoryCardRadius = 10;
 const double kProductCategoryCircleAvatarRadius = 50;
 const double kProductCategoryCircleAvatarTogether = 80;
+const double kNetworkImageHeight = 150;
+const double kNetworkImageWidth = 70;
+const double kNetworkImageContainerHeight = 50;
+const double kNetworkImageIconSize = 20;

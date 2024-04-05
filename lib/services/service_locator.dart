@@ -8,7 +8,7 @@ import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../cache/user_cache.dart';
-import 'firebase_services_two.dart';
+import 'firebase_services.dart';
 
 final GetIt getIt = GetIt.instance;
 

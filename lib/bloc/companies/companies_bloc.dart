@@ -7,7 +7,7 @@ import 'package:saasify/enums/firestore_collections_enum.dart';
 import 'package:saasify/utils/global.dart';
 import '../../cache/company_cache.dart';
 import '../../models/companies/company.dart';
-import '../../services/firebase_services_two.dart';
+import '../../services/firebase_services.dart';
 import '../../services/service_locator.dart';
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/suppliers/supplier_event.dart';
 import 'package:saasify/bloc/suppliers/supplier_state.dart';
-import 'package:saasify/services/firebase_services_two.dart';
+import 'package:saasify/services/firebase_services.dart';
 import 'package:saasify/services/service_locator.dart';
 
 class SupplierBloc extends Bloc<SupplierEvent, SupplierState> {

@@ -8,7 +8,7 @@ import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
-import 'package:saasify/services/firebase_services_two.dart';
+import 'package:saasify/services/firebase_services.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/global.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';

@@ -7,7 +7,7 @@ import 'package:saasify/bloc/authentication/authentication_state.dart';
 import 'package:saasify/cache/company_cache.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../cache/user_cache.dart';
-import '../../services/firebase_services_two.dart';
+import '../../services/firebase_services.dart';
 import '../../services/service_locator.dart';
 
 class AuthenticationBloc

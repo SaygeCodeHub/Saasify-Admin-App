@@ -29,6 +29,9 @@ class FirebaseServices {
   CollectionReference getModulesCollectionRef() => getCompaniesDocRef()
       .collection(FirestoreCollection.modules.collectionName);
 
+  CollectionReference getOrdersCollectionRef() => getCompaniesDocRef()
+      .collection(FirestoreCollection.orders.collectionName);
+
   CollectionReference getCategoriesCollectionRef() => getCompaniesDocRef()
       .collection(FirestoreCollection.modules.collectionName)
       .doc(FirestoreCollection.pos.collectionName)

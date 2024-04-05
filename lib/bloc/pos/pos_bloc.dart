@@ -12,7 +12,7 @@ import 'package:saasify/models/orders/orders_model.dart';
 import 'package:saasify/models/pdf/billing_details_info_model.dart';
 import 'package:saasify/models/pdf/business_info_model.dart';
 import 'package:saasify/models/pdf/customer_info_model.dart';
-import 'package:saasify/services/firebase_services_two.dart';
+import 'package:saasify/services/firebase_services.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/pdf/generate_pdf_service.dart';
 

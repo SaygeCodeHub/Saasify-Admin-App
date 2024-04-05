@@ -27,7 +27,7 @@ class AuthenticationBloc
     if (isLoggedIn) {
       String? companyId = CompanyCache.getCompanyId();
       if (companyId != null || companyId!.isNotEmpty) {
-        emit(UserAuthenticated());
+        emit(UserAuthenticated(userName: await UserCache.getUsername() ?? ''));
       } else {
         emit(UserAuthenticatedWithoutCompany());
       }
@@ -65,7 +65,8 @@ class AuthenticationBloc
         await _updateUserData(user, event.authenticationMap);
         await saveToLocalCache(user);
         if (await checkUserCompanies(user.uid)) {
-          emit(UserAuthenticated());
+          emit(
+              UserAuthenticated(userName: await UserCache.getUsername() ?? ''));
         } else {
           emit(UserAuthenticatedWithoutCompany());
         }

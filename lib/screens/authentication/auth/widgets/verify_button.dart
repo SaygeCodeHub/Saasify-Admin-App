@@ -29,8 +29,10 @@ class VerifyButton extends StatelessWidget {
           ProgressBar.show(context);
         } else if (state is UserAuthenticated) {
           ProgressBar.dismiss(context);
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomeScreen(userName: state.userName)));
         } else if (state is UserAuthenticatedWithoutCompany) {
           ProgressBar.dismiss(context);
           Navigator.pushReplacement(

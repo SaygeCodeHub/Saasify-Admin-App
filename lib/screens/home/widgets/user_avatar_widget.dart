@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
-import '../../../cache/user_cache.dart';
 
 class UserAvatarWidget extends StatelessWidget {
-  const UserAvatarWidget({super.key});
+  final String userName;
+  const UserAvatarWidget({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class UserAvatarWidget extends StatelessWidget {
         ),
         const SizedBox(width: spacingXSmall),
         Text(
-          '${UserCache.getUsername()}',
+          userName,
           style: Theme.of(context).textTheme.moduleHeadingTextStyle,
         ),
       ],

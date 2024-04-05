@@ -4,7 +4,11 @@ class AuthenticationInitial extends AuthenticationState {}
 
 class AuthenticatingUser extends AuthenticationState {}
 
-class UserAuthenticated extends AuthenticationState {}
+class UserAuthenticated extends AuthenticationState {
+  final String userName;
+
+  UserAuthenticated({required this.userName});
+}
 
 class UserAuthenticatedWithoutCompany extends AuthenticationState {}
 

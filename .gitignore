@@ -32,6 +32,12 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Flutter & Dart
+**/*.lock
+**/*.bin
+**/*.probe
+**/*.properties
+
 
 
 # Symbolication related

@@ -11,7 +11,9 @@ import 'package:saasify/models/product/products.dart';
 import 'package:saasify/services/firebase_services.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/global.dart';
+import 'package:saasify/services/hive_box_service.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
+import 'package:saasify/utils/unique_id.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryState get initialState => CategoryInitial();
@@ -29,36 +31,59 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   FutureOr<void> _addCategory(
       AddCategory event, Emitter<CategoryState> emit) async {
     try {
-      if (kIsOfflineModule) {
-        final categoriesBox = Hive.box<ProductCategories>('categories');
-        await categoriesBox.add(productCategories).whenComplete(() {
-          emit(CategoryAdded(successMessage: 'Category added successfully'));
-        });
-      } else {
-        emit(AddingCategory());
-        productCategories.imagePath = await RetrieveImageFromFirebase()
-            .getImage(productCategories.imagePath ?? '');
-        final categoriesRef = firebaseService.getCategoriesCollectionRef();
-        QuerySnapshot categorySnapshot = await categoriesRef
-            .where('name', isEqualTo: productCategories.name)
-            .get();
-        if (categorySnapshot.docs.isNotEmpty) {
+      String categoryId = IDUtil.generateUUID();
+      productCategories.categoryId = categoryId;
+      await HiveBoxService.categoryBox
+          .add(productCategories)
+          .whenComplete(() async {
+        try {
+          if (!kIsOfflineModule) {
+            emit(AddingCategory());
+            productCategories.imagePath = await RetrieveImageFromFirebase()
+                .getImage(productCategories.imagePath ?? '');
+            final categoriesRef = firebaseService.getCategoriesCollectionRef();
+            QuerySnapshot categorySnapshot = await categoriesRef
+                .where('name', isEqualTo: productCategories.name)
+                .get();
+            if (categorySnapshot.docs.isNotEmpty) {
+              emit(CategoryNotAdded(
+                  errorMessage:
+                      'Category already exists. Please add another category!'));
+            } else {
+              await categoriesRef
+                  .doc(productCategories.categoryId)
+                  .set(productCategories.toMap());
+              if (productCategories.categoryId!.isNotEmpty) {
+                emit(CategoryAdded(
+                    successMessage: 'Category added successfully'));
+              } else {
+                emit(CategoryNotAdded(
+                    errorMessage: 'Could not add category. Please try again!'));
+              }
+            }
+          } else {
+            if (HiveBoxService.categoryBox.isNotEmpty) {
+              emit(
+                  CategoryAdded(successMessage: 'Category added successfully'));
+            } else {
+              emit(CategoryNotAdded(
+                  errorMessage: 'Could not add category. Please try again!'));
+            }
+          }
+        } catch (e) {
           emit(CategoryNotAdded(
               errorMessage:
-                  'Category already exists. Please add another category!'));
-        } else {
-          DocumentReference categoryDocRef =
-              await categoriesRef.add(productCategories.toMap());
-          if (categoryDocRef.id.isNotEmpty) {
-            emit(CategoryAdded(successMessage: 'Category added successfully'));
-          } else {
-            emit(CategoryNotAdded(
-                errorMessage: 'Could not add category. Please try again!'));
-          }
+                  'An error occurred while adding the category. Please try again!'));
         }
-      }
+      });
     } catch (e) {
-      emit(CategoryNotAdded(errorMessage: 'Error adding category: $e'));
+      if (e is HiveError) {
+        emit(CategoryNotAdded(
+            errorMessage:
+                'An error occurred while adding the category. Please try again!'));
+      } else {
+        rethrow;
+      }
     }
   }
 
@@ -69,7 +94,10 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       if (kIsOfflineModule) {
         categories = Hive.box<ProductCategories>('categories').values.toList();
         if (categories.isNotEmpty) {
-          emit(CategoriesWithProductsFetched(categories: categories));
+          selectedCategory = categories.last.categoryId.toString();
+          if (selectedCategory.isNotEmpty) {
+            emit(CategoriesWithProductsFetched(categories: categories));
+          }
         }
       } else {
         emit(FetchingCategoriesWithProducts());

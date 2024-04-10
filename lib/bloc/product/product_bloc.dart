@@ -10,7 +10,9 @@ import 'package:saasify/models/product/products.dart';
 import 'package:saasify/services/firebase_services.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/global.dart';
+import 'package:saasify/services/hive_box_service.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
+import 'package:saasify/utils/unique_id.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductState get initialState => ProductInitial();
@@ -27,42 +29,63 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   FutureOr<void> _addProduct(
       AddProduct event, Emitter<ProductState> emit) async {
     try {
-      if (kIsOfflineModule) {
-        final productsBox = Hive.box<Products>('products');
-        productsBox.add(products);
-      } else {
-        emit(AddingProduct());
-        await _addProductToFirebase(emit);
-      }
+      String productId = IDUtil.generateUUID();
+      products.productId = productId;
+      await HiveBoxService.productsBox.add(products).whenComplete(() async {
+        try {
+          if (!kIsOfflineModule) {
+            emit(AddingProduct());
+            (products.imageUrl != null)
+                ? products.imageUrl = await RetrieveImageFromFirebase()
+                    .getImage(products.imageUrl.toString())
+                : '';
+            await firebaseService
+                .getProductsCollectionRef(products.categoryId.toString())
+                .doc(products.productId)
+                .set({
+              ...products.toMap(),
+              'dateAdded': FieldValue.serverTimestamp()
+            }).then((value) async {
+              productVariant.productId = products.productId;
+              productVariant.variantName =
+                  productVariant.quantityAvailable.toString();
+              String variantId = IDUtil.generateUUID();
+              productVariant.variantId = variantId;
+              CollectionReference variantsRef =
+                  firebaseService.getVariantsCollectionRef(
+                      products.categoryId.toString(),
+                      products.productId.toString());
+              await variantsRef.doc(variantId).set(productVariant.toMap());
+              if (productVariant.variantId!.isNotEmpty) {
+                emit(
+                    ProductAdded(successMessage: 'Product added successfully'));
+              } else {
+                emit(ProductNotAdded(
+                    errorMessage: 'Could not add the product.'));
+              }
+            });
+          } else {
+            if (HiveBoxService.productsBox.isNotEmpty) {
+              emit(ProductAdded(successMessage: 'Product added successfully'));
+            } else {
+              emit(ProductNotAdded(errorMessage: 'Could not add the product.'));
+            }
+          }
+        } catch (e) {
+          emit(ProductNotAdded(
+              errorMessage:
+                  'An error occurred while adding the product. Please try again!'));
+        }
+      });
     } catch (error) {
-      emit(ProductNotAdded(errorMessage: 'Error adding product: $error'));
-    }
-  }
-
-  Future<void> _addProductToFirebase(Emitter<ProductState> emit) async {
-    (products.imageUrl != null)
-        ? products.imageUrl = await RetrieveImageFromFirebase()
-            .getImage(products.imageUrl.toString())
-        : '';
-    await firebaseService
-        .getProductsCollectionRef(products.categoryId.toString())
-        .add({
-      ...products.toMap(),
-      'dateAdded': FieldValue.serverTimestamp()
-    }).then((DocumentReference productDocRef) async {
-      productVariant.productId = productDocRef.id;
-      productVariant.variantName = productVariant.quantityAvailable.toString();
-      CollectionReference variantsRef =
-          firebaseService.getVariantsCollectionRef(
-              products.categoryId.toString(), productDocRef.id);
-      DocumentReference variantRef =
-          await variantsRef.add(productVariant.toMap());
-      if (variantRef.id.isNotEmpty) {
-        emit(ProductAdded(successMessage: 'Product added successfully'));
+      if (error is HiveError) {
+        emit(ProductNotAdded(
+            errorMessage:
+                'An error occurred while adding the product. Please try again!'));
       } else {
-        emit(ProductNotAdded(errorMessage: 'Could not add the product.'));
+        rethrow;
       }
-    });
+    }
   }
 
   FutureOr<void> _fetchProductForVariant(
@@ -120,18 +143,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   FutureOr<void> _addVariant(
       AddVariant event, Emitter<ProductState> emit) async {
     try {
-      if (kIsOfflineModule) {
+      emit(AddingVariant());
+      DocumentReference variantRef = await firebaseService
+          .getVariantsCollectionRef(
+              event.categoryId, productVariant.productId.toString())
+          .add(productVariant.toMap());
+      if (variantRef.id.isEmpty) {
+        emit(VariantNotAdded(errorMessage: 'Could not add Variant'));
       } else {
-        emit(AddingVariant());
-        DocumentReference variantRef = await firebaseService
-            .getVariantsCollectionRef(
-                event.categoryId, productVariant.productId.toString())
-            .add(productVariant.toMap());
-        if (variantRef.id.isEmpty) {
-          emit(VariantNotAdded(errorMessage: 'Could not add Variant'));
-        } else {
-          emit(VariantAdded(successMessage: 'Variant added successfully.'));
-        }
+        emit(VariantAdded(successMessage: 'Variant added successfully.'));
       }
     } catch (e) {
       emit(VariantNotAdded(

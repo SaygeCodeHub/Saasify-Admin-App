@@ -12,6 +12,7 @@ import 'package:saasify/bloc/orders/orders_bloc.dart';
 import 'package:saasify/bloc/pos/pos_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/suppliers/supplier_bloc.dart';
+import 'package:saasify/configs/hive_setup.dart';
 import 'package:saasify/screens/authentication/auth/authentication_screen.dart';
 import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/userProfile/user_company_setup_screen.dart';
@@ -23,6 +24,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
+  setupHive();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

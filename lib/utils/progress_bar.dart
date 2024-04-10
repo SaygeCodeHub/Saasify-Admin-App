@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_colors.dart';
+import 'package:saasify/utils/global.dart';
 
 class ProgressBar {
   static void show(BuildContext context) {
@@ -23,6 +24,6 @@ class ProgressBar {
   }
 
   static void dismiss(BuildContext context) {
-    Navigator.of(context).pop();
+    (kIsOfflineModule) ? null : Navigator.of(context).pop();
   }
 }

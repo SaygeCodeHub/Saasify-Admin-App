@@ -9,7 +9,7 @@ part of 'coupons_and_discounts.dart';
 class CouponsAndDiscountsModelAdapter
     extends TypeAdapter<CouponsAndDiscountsModel> {
   @override
-  final int typeId = 1;
+  final int typeId = 5;
 
   @override
   CouponsAndDiscountsModel read(BinaryReader reader) {

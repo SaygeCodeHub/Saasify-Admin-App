@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import '../../configs/hive_type_ids.dart';
 part 'coupons_and_discounts.g.dart';
 
-@HiveType(typeId: HiveTypeIds.productCategories)
+@HiveType(typeId: HiveTypeIds.coupons)
 class CouponsAndDiscountsModel {
   @HiveField(0)
   final String couponCode;

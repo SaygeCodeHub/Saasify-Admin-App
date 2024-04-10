@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/authentication/authentication_event.dart';
 import 'package:saasify/bloc/authentication/authentication_state.dart';
 import 'package:saasify/cache/company_cache.dart';
+import 'package:saasify/enums/firestore_collections_enum.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../cache/user_cache.dart';
 import '../../services/firebase_services.dart';
@@ -14,6 +15,7 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final firebaseServices = getIt<FirebaseServices>();
   final sharedPreferences = getIt<SharedPreferences>();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   AuthenticationBloc() : super(AuthenticationInitial()) {
     on<AuthenticateUser>(_authenticateUser);
@@ -84,9 +86,8 @@ class AuthenticationBloc
   }
 
   Future<bool> checkUserCompanies(String userUid) async {
-    final FirebaseFirestore db = FirebaseFirestore.instance;
     final QuerySnapshot companiesSnapshot =
-        await db.collection('users').doc(userUid).collection('companies').get();
+        await firebaseServices.getCompaniesCollectionRef().get();
     return companiesSnapshot.docs.isNotEmpty;
   }
 
@@ -103,10 +104,12 @@ class AuthenticationBloc
   }
 
   Future<void> _updateUserData(User user, Map<dynamic, dynamic> authMap) async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
     String userName = '';
     if (authMap['is_sign_in']) {
-      final usersRef = await firestore.collection('users').doc(user.uid).get();
+      final usersRef = await firestore
+          .collection(FirestoreCollection.users.collectionName)
+          .doc(user.uid)
+          .get();
       userName = await usersRef.get('name') ?? '';
     }
     await firestore.collection('users').doc(user.uid).set({
@@ -117,13 +120,15 @@ class AuthenticationBloc
   }
 
   Future<void> saveToLocalCache(User user) async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final usersRef = await firestore.collection('users').doc(user.uid).get();
+    final usersRef = await firestore
+        .collection(FirestoreCollection.users.collectionName)
+        .doc(user.uid)
+        .get();
     String userName = await usersRef.get('name') ?? '';
     final companyRef = await firestore
-        .collection('users')
+        .collection(FirestoreCollection.users.collectionName)
         .doc(user.uid)
-        .collection('companies')
+        .collection(FirestoreCollection.companies.collectionName)
         .get();
     for (var item in companyRef.docs) {
       await CompanyCache.setCompanyId(item.id);

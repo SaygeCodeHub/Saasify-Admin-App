@@ -29,11 +29,31 @@ class ViewCategoryScreen extends StatelessWidget {
                     horizontal: spacingLarge),
                 child: const Center(child: CircularProgressIndicator()));
           } else if (state is CategoriesWithProductsFetched) {
-            return ViewCategorySection(categories: state.categories);
+            if (state.categories.isNotEmpty) {
+              return ViewCategorySection(categories: state.categories);
+            } else {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.width * 0.13),
+                child: Center(
+                  child: ErrorDisplay(
+                    pageNotFound: true,
+                    text: 'No category found!',
+                    buttonText: 'Add Category',
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddCategoryScreen()));
+                    },
+                  ),
+                ),
+              );
+            }
           } else if (state is CategoriesWithProductsNotFetched) {
             return Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.width * 0.2),
+                  vertical: MediaQuery.of(context).size.width * 0.13),
               child: Center(
                 child: ErrorDisplay(
                   text: state.errorMessage,

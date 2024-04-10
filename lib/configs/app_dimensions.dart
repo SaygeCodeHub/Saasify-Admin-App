@@ -26,3 +26,6 @@ const double kCartCountContainerHeight = 27;
 const double kCartCountContainerWidth = 80;
 const double kCartCountTogether = 27;
 const double kCartRemoveAndAddIconSize = 15;
+const double kLabelDropdownVerticalPadding = 13;
+const double kLabelDropdownHorizontalPadding = 10;
+const double kLabelDropdownBorderRadius = 5;

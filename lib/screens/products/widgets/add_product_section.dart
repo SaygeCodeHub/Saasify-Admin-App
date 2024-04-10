@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
+import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/enums/product_by_quantity_enum.dart';
@@ -10,6 +11,7 @@ import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/widgets/image_picker_widget.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
+import 'package:saasify/screens/widgets/label_dropdown_widget.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/responsive_form.dart';
 
@@ -39,25 +41,41 @@ class _AddProductSectionState extends State<AddProductSection> {
           },
           label: 'Product Display Image'),
       const SizedBox(height: spacingStandard),
-      Text('Category', style: Theme.of(context).textTheme.fieldLabelTextStyle),
-      const SizedBox(height: spacingSmall),
       ResponsiveForm(formWidgets: [
-        DropdownButtonHideUnderline(
-          child: DropdownButtonFormField<String>(
-            value: context.read<CategoryBloc>().selectedCategory,
-            hint: const Text("Select an item"),
-            items: widget.categories.map((category) {
-              return DropdownMenuItem<String>(
-                value: category.categoryId,
-                child: Text(category.name!),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                products.categoryId = newValue!;
-              });
-            },
-          ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Category',
+                style: Theme.of(context).textTheme.fieldLabelTextStyle),
+            const SizedBox(height: spacingSmall),
+            DropdownButtonHideUnderline(
+              child: DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: kLabelDropdownVerticalPadding,
+                      horizontal: kLabelDropdownHorizontalPadding),
+                  border: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(kLabelDropdownBorderRadius),
+                  ),
+                ),
+                value: context.read<CategoryBloc>().selectedCategory,
+                hint: const Text("Select an item"),
+                items: widget.categories.map((category) {
+                  return DropdownMenuItem<String>(
+                    value: category.categoryId,
+                    child: Text(category.name!),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    products.categoryId = newValue!;
+                  });
+                },
+              ),
+            ),
+          ],
         ),
         LabelAndTextFieldWidget(
           prefixIcon: const Icon(Icons.drive_file_rename_outline),
@@ -79,30 +97,20 @@ class _AddProductSectionState extends State<AddProductSection> {
             onTextFieldChanged: (String? value) {
               products.description = value;
             }),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Sold By',
-                style: Theme.of(context).textTheme.fieldLabelTextStyle),
-            const SizedBox(height: spacingSmall),
-            DropdownButtonHideUnderline(
-              child: DropdownButtonFormField<String>(
-                value: ProductSoldByEnum.each.soldBy,
-                hint: const Text("Select an item"),
-                items: ProductSoldByEnum.values.map((value) {
-                  return DropdownMenuItem<String>(
-                    value: value.soldBy.toString(),
-                    child: Text(value.soldBy.toString()),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    products.soldBy = newValue!;
-                  });
-                },
-              ),
-            ),
-          ],
+        LabelDropdownWidget<ProductSoldByEnum>(
+          label: 'Select Sold By',
+          initialValue: ProductSoldByEnum.each,
+          items: ProductSoldByEnum.values.map((soldBy) {
+            return DropdownMenuItem<ProductSoldByEnum>(
+              value: soldBy,
+              child: Text("${soldBy.name} "),
+            );
+          }).toList(),
+          onChanged: (ProductSoldByEnum? newValue) {
+            setState(() {
+              products.soldBy = newValue?.soldBy;
+            });
+          },
         ),
         if (products.soldBy == 'Each')
           LabelAndTextFieldWidget(
@@ -121,31 +129,21 @@ class _AddProductSectionState extends State<AddProductSection> {
             },
           ),
         if (products.soldBy == 'Quantity')
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Select Quantity',
-                  style: Theme.of(context).textTheme.fieldLabelTextStyle),
-              const SizedBox(height: spacingSmall),
-              DropdownButtonHideUnderline(
-                child: DropdownButtonFormField<String>(
-                  value: ProductByQuantityEnum.kg.quantity,
-                  hint: const Text("Select an item"),
-                  items: ProductByQuantityEnum.values.map((soldBy) {
-                    products.unit = ProductByQuantityEnum.kg.quantity;
-                    return DropdownMenuItem<String>(
-                      value: soldBy.quantity.toString(),
-                      child: Text(soldBy.quantity.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      products.unit = newValue!;
-                    });
-                  },
-                ),
-              ),
-            ],
+          LabelDropdownWidget<ProductByQuantityEnum>(
+            label: 'Select Quantity',
+            initialValue: ProductByQuantityEnum.kg,
+            items: ProductByQuantityEnum.values.map((byQuantity) {
+              return DropdownMenuItem<ProductByQuantityEnum>(
+                value: byQuantity,
+                child: Text("${byQuantity.name} "),
+              );
+            }).toList(),
+            onChanged: (ProductByQuantityEnum? newValue) {
+              setState(() {
+                productVariant.quantityAvailable =
+                    int.parse(newValue!.quantity);
+              });
+            },
           ),
         if (products.soldBy == 'Quantity')
           LabelAndTextFieldWidget(

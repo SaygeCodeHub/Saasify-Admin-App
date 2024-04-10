@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_theme.dart';
 
 import '../../configs/app_spacing.dart';
@@ -12,17 +13,17 @@ class LabelDropdownWidget<T> extends StatefulWidget {
   final EdgeInsetsGeometry contentPadding;
   final double borderRadius;
 
-  const LabelDropdownWidget({
-    super.key,
-    required this.label,
-    this.initialValue,
-    required this.items,
-    required this.onChanged,
-    this.labelStyle,
-    this.contentPadding =
-        const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
-    this.borderRadius = 5.0,
-  });
+  const LabelDropdownWidget(
+      {super.key,
+      required this.label,
+      this.initialValue,
+      required this.items,
+      required this.onChanged,
+      this.labelStyle,
+      this.contentPadding = const EdgeInsets.symmetric(
+          vertical: kLabelDropdownVerticalPadding,
+          horizontal: kLabelDropdownHorizontalPadding),
+      this.borderRadius = kLabelDropdownBorderRadius});
 
   @override
   LabelDropdownWidgetState<T> createState() => LabelDropdownWidgetState<T>();

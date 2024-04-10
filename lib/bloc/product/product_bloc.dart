@@ -24,9 +24,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<AddVariant>(_addVariant);
   }
 
-  bool showCart = false;
-  Map<String, dynamic> billDetailsMap = {};
-
   FutureOr<void> _addProduct(
       AddProduct event, Emitter<ProductState> emit) async {
     try {

@@ -24,20 +24,40 @@ class ViewOrdersScreen extends StatelessWidget {
             if (state.ordersList.isNotEmpty) {
               return ViewOrdersSection(ordersList: state.ordersList);
             } else {
-              return const Center(child: Text('No data found!'));
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.sizeOf(context).width * 0.13),
+                child: Center(
+                  child: ErrorDisplay(
+                      pageNotFound: true,
+                      text: 'No orders found!',
+                      buttonText: 'Add Category',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomeScreen()));
+                      }),
+                ),
+              );
             }
           } else if (state is OrdersNotFetched) {
-            return Center(
-              child: ErrorDisplay(
-                  text: state.errorMessage,
-                  buttonText: 'Could not fetch orders. Please try again!',
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
-                  }),
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.sizeOf(context).width * 0.13),
+              child: Center(
+                child: ErrorDisplay(
+                    text: state.errorMessage,
+                    buttonText: 'Add Category',
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomeScreen()));
+                    }),
+              ),
             );
           } else {
             return const SizedBox.shrink();

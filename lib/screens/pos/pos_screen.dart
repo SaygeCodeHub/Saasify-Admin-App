@@ -25,15 +25,9 @@ class PosScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 7,
-              child: CategoryFilteredProducts(),
-            ),
+            Expanded(flex: 7, child: CategoryFilteredProducts()),
             VerticalDivider(),
-            Expanded(
-              flex: 3,
-              child: CartSection(),
-            )
+            Expanded(flex: 3, child: CartSection())
           ],
         ),
         bottomBarButtons: []);

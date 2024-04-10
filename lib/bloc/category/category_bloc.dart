@@ -83,14 +83,19 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
               categoryId: doc.id);
           categories.add(category);
         }
-        selectedCategory = querySnapshot.docs.first.id;
-        if (selectedCategory.isNotEmpty) {
-          categories
-                  .where((element) => element.categoryId == selectedCategory)
-                  .first
-                  .products =
-              await fetchProductsByCategory(selectedCategory).whenComplete(() =>
-                  emit(CategoriesWithProductsFetched(categories: categories)));
+        if (querySnapshot.docs.isNotEmpty) {
+          selectedCategory = querySnapshot.docs.first.id;
+          if (selectedCategory.isNotEmpty) {
+            categories
+                    .where((element) => element.categoryId == selectedCategory)
+                    .first
+                    .products =
+                await fetchProductsByCategory(selectedCategory).whenComplete(
+                    () => emit(
+                        CategoriesWithProductsFetched(categories: categories)));
+          }
+        } else {
+          emit(CategoriesWithProductsFetched(categories: categories));
         }
       }
     } catch (e) {

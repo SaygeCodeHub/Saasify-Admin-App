@@ -9,7 +9,6 @@ import 'package:saasify/services/service_locator.dart';
 
 class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final firebaseService = getIt<FirebaseServices>();
-  List ordersList = [];
 
   OrdersBloc() : super(OrdersInitial()) {
     on<FetchOrders>(_fetchOrders);
@@ -17,6 +16,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
   FutureOr<void> _fetchOrders(
       FetchOrders event, Emitter<OrdersState> emit) async {
+    List ordersList = [];
     try {
       emit(FetchingOrders());
       QuerySnapshot ordersSnapshot =

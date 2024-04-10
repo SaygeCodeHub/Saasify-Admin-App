@@ -117,27 +117,35 @@ class _SoldByQuantityDropdownState extends State<SoldByQuantityDropdown> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text('Select Quantity',
             style: Theme.of(context).textTheme.fieldLabelTextStyle),
         const SizedBox(height: spacingSmall),
         DropdownButtonHideUnderline(
-          child: DropdownButtonFormField<String>(
-            value: widget.products.unit,
-            hint: const Text("Select an item"),
-            items: ProductByQuantityEnum.values.map((soldBy) {
-              return DropdownMenuItem<String>(
-                value: soldBy.quantity.toString(),
-                child: Text(soldBy.quantity.toString()),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                widget.products.unit = newValue;
-              });
-            },
+            child: DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: kLabelDropdownVerticalPadding,
+                horizontal: kLabelDropdownHorizontalPadding),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(kLabelDropdownBorderRadius),
+            ),
           ),
-        ),
+          value: widget.products.unit,
+          hint: const Text("Select an item"),
+          items: ProductByQuantityEnum.values.map((soldBy) {
+            return DropdownMenuItem<String>(
+              value: soldBy.quantity.toString(),
+              child: Text(soldBy.quantity.toString()),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              widget.products.unit = newValue;
+            });
+          },
+        )),
       ],
     );
   }

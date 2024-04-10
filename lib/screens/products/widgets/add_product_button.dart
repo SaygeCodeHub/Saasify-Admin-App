@@ -53,16 +53,18 @@ class AddProductButton extends StatelessWidget {
         },
         child: PrimaryButton(
             buttonTitle: 'Add Product',
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                products.categoryId!.isEmpty
-                    ? products.categoryId =
-                        context.read<CategoryBloc>().selectedCategory
-                    : products.categoryId;
-                context
-                    .read<ProductBloc>()
-                    .add(AddProduct(categories: categories));
-              }
-            }));
+            onPressed: (categories.isNotEmpty)
+                ? () {
+                    if (formKey.currentState!.validate()) {
+                      products.categoryId!.isEmpty
+                          ? products.categoryId =
+                              context.read<CategoryBloc>().selectedCategory
+                          : products.categoryId;
+                      context
+                          .read<ProductBloc>()
+                          .add(AddProduct(categories: categories));
+                    }
+                  }
+                : null));
   }
 }

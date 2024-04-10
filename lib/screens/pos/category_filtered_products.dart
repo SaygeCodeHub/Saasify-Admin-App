@@ -28,63 +28,83 @@ class CategoryFilteredProducts extends StatelessWidget {
                     horizontal: spacingLarge),
                 child: const Center(child: CircularProgressIndicator()));
           } else if (state is CategoriesWithProductsFetched) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text('Categories',
-                    style: Theme.of(context).textTheme.fieldLabelTextStyle),
-                const SizedBox(height: spacingSmall),
-                Wrap(
-                  spacing: spacingXSmall,
-                  runSpacing: spacingXXSmall,
-                  children: state.categories.map((label) {
-                    bool isSelected = label.categoryId.toString() ==
-                        context.read<CategoryBloc>().selectedCategory;
-                    return InkWell(
-                      onTap: () {
-                        context.read<CategoryBloc>().selectedCategory =
-                            label.categoryId.toString();
-                        context.read<CategoryBloc>().add(
-                            FetchProductsForSelectedCategory(
-                                categories: state.categories));
-                      },
-                      child: Chip(
-                        label: Text(
-                          label.name!,
-                          style: TextStyle(
-                            color:
-                                isSelected ? AppColors.white : AppColors.black,
+            if (state.categories.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('Categories',
+                      style: Theme.of(context).textTheme.fieldLabelTextStyle),
+                  const SizedBox(height: spacingSmall),
+                  Wrap(
+                    spacing: spacingXSmall,
+                    runSpacing: spacingXXSmall,
+                    children: state.categories.map((label) {
+                      bool isSelected = label.categoryId.toString() ==
+                          context.read<CategoryBloc>().selectedCategory;
+                      return InkWell(
+                        onTap: () {
+                          context.read<CategoryBloc>().selectedCategory =
+                              label.categoryId.toString();
+                          context.read<CategoryBloc>().add(
+                              FetchProductsForSelectedCategory(
+                                  categories: state.categories));
+                        },
+                        child: Chip(
+                          label: Text(
+                            label.name!,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? AppColors.white
+                                  : AppColors.black,
+                            ),
+                          ),
+                          backgroundColor:
+                              isSelected ? AppColors.blue : Colors.grey[200],
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(kCategoryChipRadius),
+                            side: const BorderSide(
+                                color: AppColors.lighterGrey, width: 1),
                           ),
                         ),
-                        backgroundColor:
-                            isSelected ? AppColors.blue : Colors.grey[200],
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(kCategoryChipRadius),
-                          side: const BorderSide(
-                              color: AppColors.lighterGrey, width: 1),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
+                  const Divider(),
+                  const SizedBox(height: spacingSmall),
+                  Text(
+                    'Product',
+                    style: Theme.of(context).textTheme.fieldLabelTextStyle,
+                  ),
+                  const SizedBox(height: spacingXHuge),
+                  SingleChildScrollView(
+                      child: ProductCardWidget(
+                          list: state.categories, isFromCart: true)),
+                ],
+              );
+            } else {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.sizeOf(context).width * 0.13),
+                child: Center(
+                  child: ErrorDisplay(
+                      pageNotFound: true,
+                      text: 'No category found!',
+                      buttonText: 'Add Category',
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddCategoryScreen()));
+                      }),
                 ),
-                const Divider(),
-                const SizedBox(height: spacingSmall),
-                Text(
-                  'Product',
-                  style: Theme.of(context).textTheme.fieldLabelTextStyle,
-                ),
-                const SizedBox(height: spacingXHuge),
-                SingleChildScrollView(
-                    child: ProductCardWidget(
-                        list: state.categories, isFromCart: true)),
-              ],
-            );
+              );
+            }
           } else if (state is CategoriesWithProductsNotFetched) {
             return Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.sizeOf(context).width * 0.1),
+                  vertical: MediaQuery.sizeOf(context).width * 0.13),
               child: Center(
                 child: ErrorDisplay(
                     text: state.errorMessage,

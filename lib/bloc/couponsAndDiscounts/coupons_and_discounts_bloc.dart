@@ -16,8 +16,6 @@ class CouponsAndDiscountsBloc
     on<AddCoupon>(_addCoupon);
   }
 
-  String selectedCategory = '';
-
   FutureOr<void> _addCoupon(
       AddCoupon event, Emitter<CouponsAndDiscountsStates> emit) async {
     emit(AddingCoupon());

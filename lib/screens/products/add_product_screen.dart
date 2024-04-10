@@ -36,14 +36,34 @@ class AddProductScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is CategoriesWithProductsFetched) {
                 categories = state.categories;
-                return SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: _buildForm(context, state.imagePath));
+                if (categories.isNotEmpty) {
+                  return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: _buildForm(context, state.imagePath));
+                } else {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.sizeOf(context).width * 0.13),
+                    child: Center(
+                      child: ErrorDisplay(
+                        pageNotFound: true,
+                        text: 'No category found!',
+                        buttonText: 'Add Category',
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddCategoryScreen()));
+                        },
+                      ),
+                    ),
+                  );
+                }
               } else if (state is CategoriesWithProductsNotFetched) {
                 return SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.sizeOf(context).width * 0.2),
+                        vertical: MediaQuery.sizeOf(context).width * 0.13),
                     child: Center(
                       child: ErrorDisplay(
                         text: state.errorMessage,

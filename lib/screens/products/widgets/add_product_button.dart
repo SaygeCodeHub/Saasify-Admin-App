@@ -45,7 +45,7 @@ class AddProductButton extends StatelessWidget {
             showDialog(
                 context: context,
                 builder: (context) {
-                  return CustomDialogs().showSuccessDialog(
+                  return CustomDialogs().showAlertDialog(
                       context, state.errorMessage,
                       onPressed: () => Navigator.pop(context));
                 });
@@ -53,18 +53,16 @@ class AddProductButton extends StatelessWidget {
         },
         child: PrimaryButton(
             buttonTitle: 'Add Product',
-            onPressed: (categories.isNotEmpty)
-                ? () {
-                    if (formKey.currentState!.validate()) {
-                      products.categoryId!.isEmpty
-                          ? products.categoryId =
-                              context.read<CategoryBloc>().selectedCategory
-                          : products.categoryId;
-                      context
-                          .read<ProductBloc>()
-                          .add(AddProduct(categories: categories));
-                    }
-                  }
-                : null));
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                products.categoryId!.isEmpty
+                    ? products.categoryId =
+                        context.read<CategoryBloc>().selectedCategory
+                    : products.categoryId;
+                context
+                    .read<ProductBloc>()
+                    .add(AddProduct(categories: categories));
+              }
+            }));
   }
 }

@@ -5,8 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:saasify/services/firebase_services.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/global.dart';
-
-import '../../models/customer/add_customer_model.dart';
+import 'package:saasify/services/hive_box_service.dart';
 import 'customer_events.dart';
 import 'customer_states.dart';
 
@@ -21,32 +20,41 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
 
   FutureOr<void> _addCustomer(
       AddCustomer event, Emitter<CustomerState> emit) async {
-    emit(CustomerAdding());
     try {
-      if (kIsOfflineModule) {
-        await _addToHive(event.customerModel);
-      } else {
-        await _addToFirestore(event, emit);
-      }
+      await HiveBoxService.customersBox
+          .add(event.customerModel)
+          .whenComplete(() async {
+        try {
+          if (!kIsOfflineModule) {
+            emit(CustomerAdding());
+            DocumentReference customerRef = await firebaseService
+                .getCustomersCollectionRef()
+                .add(event.customerModel.toMap());
+            if (customerRef.id.isNotEmpty) {
+              emit(CustomerAddedSuccessfully());
+            } else {
+              emit(CustomerAddingError(
+                  'Failed to add customer. Please try again.'));
+            }
+          } else {
+            if (HiveBoxService.customersBox.isNotEmpty) {
+              emit(CustomerAddedSuccessfully());
+            } else {
+              emit(CustomerAddingError(
+                  'Failed to add customer. Please try again.'));
+            }
+          }
+        } catch (e) {
+          emit(
+              CustomerAddingError('Failed to add customer. Please try again.'));
+        }
+      });
     } catch (e) {
-      emit(CustomerAddingError('Failed to add customer. Please try again.'));
-    }
-  }
-
-  Future<void> _addToHive(AddCustomerModel customerModel) async {
-    final box = await Hive.openBox<AddCustomerModel>('customers');
-    await box.add(customerModel);
-  }
-
-  Future<void> _addToFirestore(
-      AddCustomer event, Emitter<CustomerState> emit) async {
-    DocumentReference customerRef = await firebaseService
-        .getCustomersCollectionRef()
-        .add(event.customerModel.toMap());
-    if (customerRef.id.isNotEmpty) {
-      emit(CustomerAddedSuccessfully());
-    } else {
-      emit(CustomerAddingError('Failed to add customer. Please try again.'));
+      if (e is HiveError) {
+        emit(CustomerAddingError('Failed to add customer. Please try again.'));
+      } else {
+        rethrow;
+      }
     }
   }
 }

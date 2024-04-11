@@ -17,10 +17,9 @@ class ProductCategoriesAdapter extends TypeAdapter<ProductCategories> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ProductCategories(
-      name: fields[0] as String,
+      name: fields[0] as String?,
       imagePath: fields[1] as String?,
       categoryId: fields[2] as String?,
-      products: fields[3] as List<Products>,
     );
   }
 

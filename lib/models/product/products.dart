@@ -48,7 +48,8 @@ class Products {
     this.soldBy = '',
     this.unit = '',
   })  : dateAdded = dateAdded ?? DateTime.now(),
-        variants = variants ?? [];
+        variants = variants ?? [],
+        isActive = false;
 
   Map<String, dynamic> toMap() {
     return {

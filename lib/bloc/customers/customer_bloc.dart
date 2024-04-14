@@ -25,7 +25,7 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
           .add(event.customerModel)
           .whenComplete(() async {
         try {
-          if (!kIsOfflineModule) {
+          if (!kIsCloudVersion) {
             emit(CustomerAdding());
             DocumentReference customerRef = await firebaseService
                 .getCustomersCollectionRef()

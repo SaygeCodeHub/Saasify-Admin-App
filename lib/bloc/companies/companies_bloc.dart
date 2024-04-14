@@ -23,7 +23,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   FutureOr<void> _addCompany(
       AddCompany event, Emitter<CompaniesState> emit) async {
     try {
-      if (kIsOfflineModule) {
+      if (kIsCloudVersion) {
       } else {
         emit(AddingCompany());
         DocumentReference userDocRef = firebaseServices.usersRef;

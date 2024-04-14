@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
-import 'package:saasify/models/category/product_categories.dart';
 import 'package:saasify/screens/category/widgets/add_category_button.dart';
-import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/responsive_form.dart';
 import '../../configs/app_spacing.dart';
 import '../widgets/skeleton_screen.dart';
@@ -14,7 +13,6 @@ class AddCategoryScreen extends StatelessWidget {
   AddCategoryScreen({super.key});
 
   final formKey = GlobalKey<FormState>();
-  static ProductCategories productCategories = getIt<ProductCategories>();
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +27,12 @@ class AddCategoryScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ImagePickerWidget(
-                  label: 'Category Display Image',
+                  label: 'Display Image',
                   initialImage: '',
                   onImagePicked: (String imagePath) {
-                    productCategories.imagePath = imagePath;
+                    context
+                        .read<CategoryBloc>()
+                        .categoryInputData['imagePath'] = imagePath;
                   },
                 ),
                 const SizedBox(height: spacingHuge),
@@ -48,7 +48,8 @@ class AddCategoryScreen extends StatelessWidget {
                       return null;
                     },
                     onTextFieldChanged: (String? value) {
-                      productCategories.name = value!;
+                      context.read<CategoryBloc>().categoryInputData['name'] =
+                          value!;
                     },
                   )
                 ])

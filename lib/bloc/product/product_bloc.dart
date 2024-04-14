@@ -33,7 +33,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       products.productId = productId;
       await HiveBoxService.productsBox.add(products).whenComplete(() async {
         try {
-          if (!kIsOfflineModule) {
+          if (!kIsCloudVersion) {
             emit(AddingProduct());
             (products.imageUrl != null)
                 ? products.imageUrl = await RetrieveImageFromFirebase()
@@ -91,7 +91,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   FutureOr<void> _fetchProductForVariant(
       FetchProduct event, Emitter<ProductState> emit) async {
     try {
-      if (kIsOfflineModule) {
+      if (kIsCloudVersion) {
       } else {
         emit(FetchingProduct());
         DocumentSnapshot getCategory =

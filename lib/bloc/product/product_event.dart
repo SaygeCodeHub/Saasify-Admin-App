@@ -1,9 +1,9 @@
-import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/models/category/categories_model.dart';
 
 abstract class ProductEvent {}
 
 class AddProduct extends ProductEvent {
-  final List<ProductCategories> categories;
+  final List<CategoriesModel> categories;
 
   AddProduct({required this.categories});
 }
@@ -12,7 +12,7 @@ class FetchProducts extends ProductEvent {}
 
 class SelectCategory extends ProductEvent {
   final String categoryId;
-  final List<ProductCategories> categories;
+  final List<CategoriesModel> categories;
 
   SelectCategory({required this.categoryId, required this.categories});
 }

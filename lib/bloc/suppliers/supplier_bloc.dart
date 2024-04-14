@@ -26,7 +26,7 @@ class SupplierBloc extends Bloc<SupplierEvent, SupplierState> {
           .add(event.addSupplierModel)
           .whenComplete(() async {
         try {
-          if (!kIsOfflineModule) {
+          if (!kIsCloudVersion) {
             emit(AddingSupplier());
             DocumentReference supplierRef = await firebaseService
                 .getSuppliersCollectionRef()

@@ -6,7 +6,7 @@ import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/enums/product_by_quantity_enum.dart';
 import 'package:saasify/enums/product_sold_by_enum.dart';
-import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/models/category/categories_model.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/widgets/image_picker_widget.dart';
@@ -16,7 +16,7 @@ import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/responsive_form.dart';
 
 class AddProductSection extends StatefulWidget {
-  final List<ProductCategories> categories;
+  final List<CategoriesModel> categories;
 
   static String image = '';
 

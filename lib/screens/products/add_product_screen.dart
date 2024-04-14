@@ -11,13 +11,13 @@ import 'package:saasify/screens/products/widgets/add_product_button.dart';
 import 'package:saasify/screens/products/widgets/add_product_section.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/error_display.dart';
-import '../../models/category/product_categories.dart';
+import '../../models/category/categories_model.dart';
 import '../widgets/skeleton_screen.dart';
 
 class AddProductScreen extends StatelessWidget {
   AddProductScreen({super.key});
 
-  static List<ProductCategories> categories = [];
+  static List<CategoriesModel> categories = [];
   final formKey = GlobalKey<FormState>();
   final Products products = getIt<Products>();
 

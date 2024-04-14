@@ -24,6 +24,6 @@ class ProgressBar {
   }
 
   static void dismiss(BuildContext context) {
-    (kIsOfflineModule) ? null : Navigator.of(context).pop();
+    (kIsCloudVersion) ? null : Navigator.of(context).pop();
   }
 }

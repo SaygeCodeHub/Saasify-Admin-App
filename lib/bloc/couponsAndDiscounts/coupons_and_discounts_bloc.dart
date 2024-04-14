@@ -24,7 +24,7 @@ class CouponsAndDiscountsBloc
     try {
       HiveBoxService.couponsBox.add(event.addCouponMap).whenComplete(() async {
         try {
-          if (!kIsOfflineModule) {
+          if (!kIsCloudVersion) {
             emit(AddingCoupon());
             DocumentReference couponsRef = await firebaseService
                 .getCouponAndDiscountsCollectionRef()

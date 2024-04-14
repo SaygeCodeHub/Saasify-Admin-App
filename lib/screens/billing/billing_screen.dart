@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/pos_model.dart';
-import '../../models/category/product_categories.dart';
+import '../../models/category/categories_model.dart';
 import '../../models/product/products.dart';
 import 'cart_screen.dart';
 
@@ -15,7 +15,7 @@ class BillingScreen extends StatefulWidget {
 
 class _BillingScreenState extends State<BillingScreen> {
   late String _selectedCategory;
-  late List<ProductCategories> _categories;
+  late List<CategoriesModel> _categories;
   List<PosModel> cart = [];
   Map<String, dynamic> cartDetailsMap = {};
   final productsBox = Hive.box<Products>('products');
@@ -45,7 +45,7 @@ class _BillingScreenState extends State<BillingScreen> {
 
   @override
   void initState() {
-    _categories = Hive.box<ProductCategories>('categories').values.toList();
+    _categories = Hive.box<CategoriesModel>('categories').values.toList();
     _selectedCategory = _categories.isNotEmpty ? _categories.first.name! : '';
     filteredProducts = productsBox.values.toList();
     super.initState();

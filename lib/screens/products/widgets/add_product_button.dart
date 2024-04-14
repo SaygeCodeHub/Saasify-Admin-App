@@ -4,7 +4,7 @@ import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/bloc/product/product_state.dart';
-import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/models/category/categories_model.dart';
 import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/home/home_screen.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
@@ -14,7 +14,7 @@ import 'package:saasify/utils/progress_bar.dart';
 
 class AddProductButton extends StatelessWidget {
   final GlobalKey<FormState> formKey;
-  final List<ProductCategories> categories;
+  final List<CategoriesModel> categories;
   final Products products = getIt<Products>();
 
   AddProductButton(

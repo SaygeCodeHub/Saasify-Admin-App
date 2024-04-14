@@ -1,4 +1,4 @@
-import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/models/category/categories_model.dart';
 
 abstract class CategoryState {}
 
@@ -21,7 +21,7 @@ class CategoryNotAdded extends CategoryState {
 class FetchingCategoriesWithProducts extends CategoryState {}
 
 class CategoriesWithProductsFetched extends CategoryState {
-  final List<ProductCategories> categories;
+  final List<CategoriesModel> categories;
   final String imagePath;
 
   CategoriesWithProductsFetched(

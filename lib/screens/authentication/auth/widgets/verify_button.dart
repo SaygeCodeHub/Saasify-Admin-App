@@ -23,23 +23,43 @@ class VerifyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthenticationBloc, AuthenticationState>(
+    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        return PrimaryButton(
+          buttonTitle: (!isNewUser) ? 'Sign in' : 'Register',
+          onPressed: () {
+            if (formKey.currentState!.validate()) {
+              authenticationMap['is_sign_in'] = !isNewUser;
+              context
+                  .read<AuthenticationBloc>()
+                  .add(AuthenticateUser(authenticationMap: authenticationMap));
+            }
+          },
+        );
+      },
       listener: (context, state) {
         if (state is AuthenticatingUser) {
+          print('AuthenticatingUser');
+
           ProgressBar.show(context);
         } else if (state is UserAuthenticated) {
+          print('UserAuthenticated');
+
           ProgressBar.dismiss(context);
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => HomeScreen(userName: state.userName)));
         } else if (state is UserAuthenticatedWithoutCompany) {
+          print('UserAuthenticatedWithoutCompany');
+
           ProgressBar.dismiss(context);
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => UserCompanySetupScreen()));
         } else if (state is UserNotAuthenticated) {
+          print('UserNotAuthenticated');
           ProgressBar.dismiss(context);
           showDialog(
               context: context,
@@ -50,17 +70,6 @@ class VerifyButton extends StatelessWidget {
               });
         }
       },
-      child: PrimaryButton(
-        buttonTitle: (!isNewUser) ? 'Sign in' : 'Register',
-        onPressed: () {
-          if (formKey.currentState!.validate()) {
-            authenticationMap['is_sign_in'] = !isNewUser;
-            context
-                .read<AuthenticationBloc>()
-                .add(AuthenticateUser(authenticationMap: authenticationMap));
-          }
-        },
-      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/enums/hive_boxes_enum.dart';
-import 'package:saasify/models/category/product_categories.dart';
+import 'package:saasify/models/category/categories_model.dart';
 import 'package:saasify/models/couponsAndDiscounts/coupons_and_discounts.dart';
 import 'package:saasify/models/customer/add_customer_model.dart';
 import 'package:saasify/models/product/products.dart';
@@ -8,7 +8,7 @@ import 'package:saasify/models/supplier/add_supplier_model.dart';
 
 class HiveBoxService {
   static final categoryBox =
-      Hive.box<ProductCategories>(HiveBoxes.categories.boxName);
+      Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
 
   static final productsBox = Hive.box<Products>(HiveBoxes.products.boxName);
 

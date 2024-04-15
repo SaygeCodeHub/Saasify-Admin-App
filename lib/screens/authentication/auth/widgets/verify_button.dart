@@ -25,6 +25,7 @@ class VerifyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
+        print('state-->$state');
         if (state is AuthenticatingUser) {
           ProgressBar.show(context);
         } else if (state is UserAuthenticated) {
@@ -40,6 +41,7 @@ class VerifyButton extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => UserCompanySetupScreen()));
         } else if (state is UserNotAuthenticated) {
+          print('not authenticated----->');
           ProgressBar.dismiss(context);
           showDialog(
               context: context,

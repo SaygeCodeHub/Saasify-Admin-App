@@ -26,8 +26,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       if (kIsOfflineModule) {
       } else {
         emit(AddingCompany());
-        DocumentReference userDocRef = firebaseServices.usersRef;
-        DocumentReference createdCompanyId = await userDocRef
+        DocumentReference createdCompanyId = await firebaseServices.usersRef
             .collection(FirestoreCollection.companies.collectionName)
             .add(event.companyDetailsMap.toMap());
         if (createdCompanyId.id.isNotEmpty) {

@@ -41,7 +41,6 @@ class AuthenticationBloc
   FutureOr<void> _logOutOfSession(
       LogOutOfSession event, Emitter<AuthenticationState> emit) async {
     emit(LoggingOutOfSession());
-
     try {
       await FirebaseAuth.instance.signOut();
       sharedPreferences.clear();
@@ -77,7 +76,7 @@ class AuthenticationBloc
             errorMessage: 'User not found after authentication.'));
       }
     } on FirebaseAuthException catch (e) {
-      emit(UserNotAuthenticated(errorMessage: _handleFirebaseAuthError(e)));
+      emit(UserNotAuthenticated(errorMessage: e.toString()));
     } catch (e) {
       emit(UserNotAuthenticated(
           errorMessage:
@@ -141,6 +140,7 @@ class AuthenticationBloc
   }
 
   String _handleFirebaseAuthError(FirebaseAuthException e) {
+    print('insdide method----->${e.code}');
     switch (e.code) {
       case 'user-not-found':
         return 'No user found for that email.';
@@ -148,6 +148,10 @@ class AuthenticationBloc
         return 'Wrong password provided for that user.';
       case 'email-already-in-use':
         return 'The account already exists for that email.';
+      case 'too-many-requests':
+        return 'There are too many requests for this email';
+      case 'invalid-credential':
+        return 'The credentials entered are invalid';
       default:
         return 'An error occurred: ${e.message}';
     }

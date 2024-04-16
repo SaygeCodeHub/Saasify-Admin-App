@@ -55,6 +55,10 @@ class SaveCompanyButton extends StatelessWidget {
                         .read<CompaniesBloc>()
                         .companyDetailsMap['currency']
                         .toString(),
+                    currencySymbol: context
+                        .read<CompaniesBloc>()
+                        .companyDetailsMap['currencySymbol']
+                        .toString(),
                     logoUrl: logoUrl,
                     address: context
                         .read<CompaniesBloc>()

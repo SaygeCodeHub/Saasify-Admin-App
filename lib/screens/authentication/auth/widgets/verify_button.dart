@@ -39,11 +39,9 @@ class VerifyButton extends StatelessWidget {
       },
       listener: (context, state) {
         if (state is AuthenticatingUser) {
-          print('AuthenticatingUser');
 
           ProgressBar.show(context);
         } else if (state is UserAuthenticated) {
-          print('UserAuthenticated');
 
           ProgressBar.dismiss(context);
           Navigator.pushReplacement(
@@ -51,7 +49,6 @@ class VerifyButton extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => HomeScreen(userName: state.userName)));
         } else if (state is UserAuthenticatedWithoutCompany) {
-          print('UserAuthenticatedWithoutCompany');
 
           ProgressBar.dismiss(context);
           Navigator.pushReplacement(
@@ -59,7 +56,6 @@ class VerifyButton extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => UserCompanySetupScreen()));
         } else if (state is UserNotAuthenticated) {
-          print('UserNotAuthenticated');
           ProgressBar.dismiss(context);
           showDialog(
               context: context,

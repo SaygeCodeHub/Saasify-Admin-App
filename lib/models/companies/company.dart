@@ -22,6 +22,8 @@ class Company extends HiveObject {
   final String? industryName;
   @HiveField(8)
   late final DateTime createdAt;
+  @HiveField(9)
+  final String? currencySymbol;
 
   Company(
       {required this.companyName,
@@ -31,6 +33,7 @@ class Company extends HiveObject {
       required this.contactNumber,
       this.licenseNo,
       this.currency,
+      this.currencySymbol,
       this.industryName,
       required this.createdAt});
 

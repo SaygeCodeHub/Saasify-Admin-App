@@ -32,28 +32,28 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   FutureOr<void> _addCategory(
       AddCategory event, Emitter<CategoryState> emit) async {
-    // try {
-    emit(AddingCategory());
-    event.categoriesModel.categoryId = IDUtil.generateUUID();
-    if (!await isCategoryNamePresent(event.categoriesModel.name!)) {
-      await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
-        await box.add(event.categoriesModel);
-      });
-      emit(CategoryAdded(successMessage: 'Category added successfully'));
-      if (kIsCloudVersion) {
-        // bool isUploadedToCloud =
-        //     await _addCategoryToCloud(5, categoriesModel);
-        // if (isUploadedToCloud) {
-        //   await _updateLocalAndRemoteFlags(categoriesModel);
-        // }
+    try {
+      emit(AddingCategory());
+      event.categoriesModel.categoryId = IDUtil.generateUUID();
+      if (!await isCategoryNamePresent(event.categoriesModel.name!)) {
+        await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
+          await box.add(event.categoriesModel);
+        });
+        emit(CategoryAdded(successMessage: 'Category added successfully'));
+        if (kIsCloudVersion) {
+          bool isUploadedToCloud =
+              await _addCategoryToCloud(5, event.categoriesModel);
+          if (isUploadedToCloud) {
+            await _updateLocalAndRemoteFlags(event.categoriesModel);
+          }
+        }
+      } else {
+        emit(CategoryNotAdded(errorMessage: 'Category already exists.'));
       }
-    } else {
-      emit(CategoryNotAdded(errorMessage: 'Category already exists.'));
+    } catch (e) {
+      emit(CategoryNotAdded(
+          errorMessage: 'Could not add category. Please try again!'));
     }
-    // } catch (e) {
-    //   emit(CategoryNotAdded(
-    //       errorMessage: 'Could not add category. Please try again!'));
-    // }
   }
 
   Future<bool> isCategoryNamePresent(String categoryName) async {
@@ -101,7 +101,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
       await box.put(categoriesModel.categoryId, categoriesModel);
     });
-    print('Local and remote flags updated successfully');
   }
 
   FutureOr<void> _fetchCategoriesWithProducts(

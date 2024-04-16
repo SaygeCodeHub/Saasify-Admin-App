@@ -49,7 +49,7 @@ class UserCompanySetupScreen extends StatelessWidget {
                     onChanged: (Industry? newValue) {
                       context
                           .read<CompaniesBloc>()
-                          .companyDetailsMap['industryName'] = newValue!;
+                          .companyDetailsMap['industryName'] = newValue!.name;
                     },
                   ),
                   LabelAndTextFieldWidget(
@@ -95,17 +95,21 @@ class UserCompanySetupScreen extends StatelessWidget {
                   ),
                   LabelDropdownWidget<Currency>(
                     label: 'Currency',
-                    initialValue: Currency.euro,
+                    initialValue: Currency.indianRupee,
                     items: Currency.values.map((currency) {
                       return DropdownMenuItem<Currency>(
                         value: currency,
-                        child: Text("${currency.symbol} - ${currency.name}"),
+                        child: Text("${currency.symbol} - ${currency.code}"),
                       );
                     }).toList(),
                     onChanged: (Currency? newValue) {
                       context
                           .read<CompaniesBloc>()
-                          .companyDetailsMap['currency'] = newValue!;
+                          .companyDetailsMap['currency'] = newValue!.code;
+                      context
+                              .read<CompaniesBloc>()
+                              .companyDetailsMap['currencySymbol'] =
+                          newValue.symbol;
                     },
                   ),
                   LabelAndTextFieldWidget(

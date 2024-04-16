@@ -24,6 +24,7 @@ class CompanyAdapter extends TypeAdapter<Company> {
       contactNumber: fields[4] as String,
       licenseNo: fields[5] as String?,
       currency: fields[6] as String?,
+      currencySymbol: fields[9] as String?,
       industryName: fields[7] as String?,
       createdAt: fields[8] as DateTime,
     );
@@ -32,7 +33,7 @@ class CompanyAdapter extends TypeAdapter<Company> {
   @override
   void write(BinaryWriter writer, Company obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.companyName)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class CompanyAdapter extends TypeAdapter<Company> {
       ..writeByte(7)
       ..write(obj.industryName)
       ..writeByte(8)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(9)
+      ..write(obj.currencySymbol);
   }
 
   @override

@@ -8,6 +8,7 @@ class CompanyCache {
   static const _companyGstNoKey = 'companyGstNo';
   static const _companyLicenseNoKey = 'companyLicenseNo';
   static const _currencyKey = 'currency';
+  static const _currencySymbolKey = 'currencySymbol';
   static const _industryKey = 'industry';
   static const _companyLogoUrlKey = 'companyLogoUrl';
 
@@ -70,6 +71,16 @@ class CompanyCache {
   static Future<String?> getCurrency() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_currencyKey);
+  }
+
+  static Future<void> setCurrencySymbol(String currencySymbol) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_currencySymbolKey, currencySymbol);
+  }
+
+  static Future<String?> getCurrencySymbol() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_currencySymbolKey);
   }
 
   static Future<void> setIndustry(String industry) async {

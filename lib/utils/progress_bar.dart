@@ -12,9 +12,7 @@ class ProgressBar {
               child: SizedBox(
                   height: 40.0,
                   width: 40.0,
-                  child: CircularProgressIndicator(
-                    color: AppColors.errorRed,
-                  )));
+                  child: CircularProgressIndicator()));
         });
   }
 

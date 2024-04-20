@@ -13,8 +13,8 @@ import '../../services/service_locator.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final firebaseServices = getIt<FirebaseServices>();
-  final sharedPreferences = getIt<SharedPreferences>();
+  final FirebaseServices firebaseServices = getIt<FirebaseServices>();
+  final SharedPreferences sharedPreferences = getIt<SharedPreferences>();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   AuthenticationBloc() : super(AuthenticationInitial()) {
@@ -23,12 +23,12 @@ class AuthenticationBloc
     on<CheckActiveSession>(_checkActiveSession);
   }
 
-  FutureOr<void> _checkActiveSession(
+  Future<void> _checkActiveSession(
       CheckActiveSession event, Emitter<AuthenticationState> emit) async {
     bool isLoggedIn = await UserCache.getUserLoggedIn();
     if (isLoggedIn) {
       String? companyId = CompanyCache.getCompanyId();
-      if (companyId != null || companyId!.isNotEmpty) {
+      if (companyId != null && companyId.isNotEmpty) {
         emit(UserAuthenticated(userName: await UserCache.getUsername() ?? ''));
       } else {
         emit(UserAuthenticatedWithoutCompany());
@@ -38,20 +38,20 @@ class AuthenticationBloc
     }
   }
 
-  FutureOr<void> _logOutOfSession(
+  Future<void> _logOutOfSession(
       LogOutOfSession event, Emitter<AuthenticationState> emit) async {
     emit(LoggingOutOfSession());
-
     try {
       await FirebaseAuth.instance.signOut();
-      sharedPreferences.clear();
+      await sharedPreferences.clear();
       emit(LoggedOutOfSession());
     } catch (error) {
-      emit(LoggingOutFailed());
+      emit(LoggingOutFailed(
+          errorMessage: 'Failed to log out: ${error.toString()}'));
     }
   }
 
-  FutureOr<void> _authenticateUser(
+  Future<void> _authenticateUser(
       AuthenticateUser event, Emitter<AuthenticationState> emit) async {
     emit(AuthenticatingUser());
     try {
@@ -63,10 +63,12 @@ class AuthenticationBloc
         user = await _signUp(event.authenticationMap['email'],
             event.authenticationMap['password']);
       }
+
       if (user != null && user.uid.isNotEmpty) {
         await _updateUserData(user, event.authenticationMap);
-        await saveToLocalCache(user);
-        if (await checkUserCompanies(user.uid)) {
+        await _saveToLocalCache(user);
+
+        if (await _checkUserCompanies(user.uid)) {
           emit(
               UserAuthenticated(userName: await UserCache.getUsername() ?? ''));
         } else {
@@ -85,7 +87,7 @@ class AuthenticationBloc
     }
   }
 
-  Future<bool> checkUserCompanies(String userUid) async {
+  Future<bool> _checkUserCompanies(String userUid) async {
     final QuerySnapshot companiesSnapshot =
         await firebaseServices.getCompaniesCollectionRef().get();
     return companiesSnapshot.docs.isNotEmpty;
@@ -105,12 +107,17 @@ class AuthenticationBloc
 
   Future<void> _updateUserData(User user, Map<dynamic, dynamic> authMap) async {
     String userName = '';
-    if (authMap['is_sign_in']) {
-      final usersRef = await firestore
+    if (authMap['is_sign_in'] == true) {
+      final userDocRef = firestore
           .collection(FirestoreCollection.users.collectionName)
-          .doc(user.uid)
-          .get();
-      userName = await usersRef.get('name') ?? '';
+          .doc(user.uid);
+      final userDocSnapshot = await userDocRef.get();
+
+      if (userDocSnapshot.exists) {
+        userName = userDocSnapshot.get('name') ?? '';
+      } else {
+        userName = 'DefaultUserName';
+      }
     }
     await firestore.collection('users').doc(user.uid).set({
       'name': authMap['name'] ?? userName,
@@ -119,20 +126,23 @@ class AuthenticationBloc
     }, SetOptions(merge: true));
   }
 
-  Future<void> saveToLocalCache(User user) async {
-    final usersRef = await firestore
+  Future<void> _saveToLocalCache(User user) async {
+    final DocumentSnapshot userDoc = await firestore
         .collection(FirestoreCollection.users.collectionName)
         .doc(user.uid)
         .get();
-    String userName = await usersRef.get('name') ?? '';
-    final companyRef = await firestore
+    String userName = userDoc.get('name') ?? '';
+
+    final QuerySnapshot companyRef = await firestore
         .collection(FirestoreCollection.users.collectionName)
         .doc(user.uid)
         .collection(FirestoreCollection.companies.collectionName)
         .get();
+
     for (var item in companyRef.docs) {
       await CompanyCache.setCompanyId(item.id);
     }
+
     await UserCache.setUserLoggedIn(true);
     await UserCache.setUserId(user.uid);
     await UserCache.setUsername(userName);

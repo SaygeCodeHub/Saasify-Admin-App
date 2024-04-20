@@ -12,17 +12,13 @@ class ProgressBar {
               child: SizedBox(
                   height: 40.0,
                   width: 40.0,
-                  child: CircularProgressIndicator()));
+                  child: CircularProgressIndicator(
+                    color: AppColors.errorRed,
+                  )));
         });
   }
 
-  static Widget showLoadingWidget(BuildContext context) {
-    return const Center(
-        child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.transparent)));
-  }
-
   static void dismiss(BuildContext context) {
-    Navigator.of(context).pop();
+    Navigator.pop(context);
   }
 }

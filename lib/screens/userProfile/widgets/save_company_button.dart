@@ -19,9 +19,11 @@ class SaveCompanyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<CompaniesBloc, CompaniesState>(
       listener: (context, state) {
+        print('SaveCompanyButton state == $state');
         if (state is AddingCompany) {
           ProgressBar.show(context);
         } else if (state is CompanyAdded) {
+          ProgressBar.dismiss(context);
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const HomeScreen()));
         } else if (state is CompanyNotAdded) {

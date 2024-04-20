@@ -24,4 +24,8 @@ class LoggingOutOfSession extends AuthenticationState {}
 
 class LoggedOutOfSession extends AuthenticationState {}
 
-class LoggingOutFailed extends AuthenticationState {}
+class LoggingOutFailed extends AuthenticationState {
+  final String errorMessage;
+
+  LoggingOutFailed({required this.errorMessage});
+}

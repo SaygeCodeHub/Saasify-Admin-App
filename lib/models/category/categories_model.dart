@@ -34,8 +34,8 @@ class CategoriesModel {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image_path': imagePath,
-      'category_id': categoryId,
+      'imagePath': imagePath,
+      'categoryId': categoryId,
       'isUploadedToServer': isUploadedToServer,
       'products': products = [],
       'serverImagePath': serverImagePath
@@ -47,6 +47,8 @@ class CategoriesModel {
         categoryId: map['categoryId'] as String?,
         name: map['name'] as String?,
         imagePath: map['imagePath'] as String?,
+        isUploadedToServer: map['isUploadedToServer'] as bool?,
+        products: [],
         serverImagePath: map['serverImagePath'] as String?);
   }
 

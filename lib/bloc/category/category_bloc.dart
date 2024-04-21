@@ -115,10 +115,23 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   FutureOr<void> _fetchCategoriesWithProducts(
       FetchCategoriesWithProducts event, Emitter<CategoryState> emit) async {
     emit(FetchingCategoriesWithProducts());
+    List<CategoriesModel> categories;
     try {
-      List<CategoriesModel> categories =
-          Hive.box<CategoriesModel>('categories').values.toList();
+      categories = Hive.box<CategoriesModel>('categories').values.toList();
       if (categories.isNotEmpty) {
+        emit(CategoriesWithProductsFetched(categories: categories));
+      } else {
+        QuerySnapshot querySnapshot =
+            await firebaseService.getCategoriesCollectionRef().get();
+        var firestoreData = querySnapshot.docs
+            .map((doc) =>
+                CategoriesModel.fromMap(doc.data() as Map<String, dynamic>))
+            .toList();
+        if (HiveBoxService.categoryBox.isOpen) {
+          await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
+            await box.addAll(firestoreData);
+          });
+        }
         emit(CategoriesWithProductsFetched(categories: categories));
       }
     } catch (e) {

@@ -20,9 +20,9 @@ class CategoriesModelAdapter extends TypeAdapter<CategoriesModel> {
       name: fields[0] as String?,
       imagePath: fields[1] as String?,
       categoryId: fields[2] as String?,
+      isUploadedToServer: fields[3] as bool?,
       products: (fields[4] as List?)?.cast<Products>(),
       serverImagePath: fields[5] as String?,
-      isUploadedToServer: fields[3] as bool?,
     );
   }
 

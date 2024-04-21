@@ -1,10 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_colors.dart';
 import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/category/categories_model.dart';
+
+import '../../../utils/device_util.dart';
 
 class ViewCategorySection extends StatelessWidget {
   final List<CategoriesModel> categories;
@@ -13,55 +15,42 @@ class ViewCategorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(spacingStandard),
-        child: Wrap(spacing: spacingLarge, runSpacing: spacingSmall, children: [
-          ...List<Widget>.generate(categories.length, (index) {
-            return Stack(clipBehavior: Clip.none, children: [
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(kProductCategoryCardRadius),
-                    border: Border.all(color: AppColors.lighterGrey)),
-                width: MediaQuery.sizeOf(context).width * 0.089,
-                height: MediaQuery.sizeOf(context).height * 0.145,
-                child: Card(
-                  borderOnForeground: false,
-                  color: AppColors.lightGrey,
-                  elevation: 0.0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(height: spacingXXExcel),
-                      Text(categories[index].name!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .gridViewLabelTextStyle,
-                          textAlign: TextAlign.center)
-                    ],
-                  ),
+    return GridView.builder(
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: DeviceUtils.isMobile(context) ? 2 : 6,
+        crossAxisSpacing: spacingLarge,
+        mainAxisSpacing: spacingSmall,
+        childAspectRatio: DeviceUtils.isMobile(context) ? 0.8 : 0.73,
+      ),
+      itemCount: categories.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(kProductCategoryCardRadius),
+            border: Border.all(color: AppColors.lighterGrey),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(spacingMedium),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage:
+                      FileImage(File(categories[index].imagePath!)),
                 ),
-              ),
-              Positioned(
-                  top: -35,
-                  left: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                      radius: kProductCategoryCircleAvatarRadius,
-                      backgroundColor: Colors.white,
-                      child: ClipOval(
-                          child: CachedNetworkImage(
-                        imageUrl: categories[index].imagePath.toString(),
-                        placeholder: (context, url) =>
-                            const Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                        width: kProductCategoryCircleAvatarTogether,
-                        height: kProductCategoryCircleAvatarTogether,
-                        fit: BoxFit.cover,
-                      ))))
-            ]);
-          })
-        ]));
+                const SizedBox(height: spacingMedium),
+                Text(
+                  categories[index].name!,
+                  style: Theme.of(context).textTheme.gridViewLabelTextStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

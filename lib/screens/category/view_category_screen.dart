@@ -17,7 +17,6 @@ class ViewCategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<CategoryBloc>().add(FetchCategoriesWithProducts());
-
     return SkeletonScreen(
         appBarTitle: 'All Categories',
         bodyContent: SingleChildScrollView(child:

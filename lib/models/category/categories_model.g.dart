@@ -20,6 +20,8 @@ class CategoriesModelAdapter extends TypeAdapter<CategoriesModel> {
       name: fields[0] as String?,
       imagePath: fields[1] as String?,
       categoryId: fields[2] as String?,
+      products: (fields[4] as List?)?.cast<Products>(),
+      serverImagePath: fields[5] as String?,
       isUploadedToServer: fields[3] as bool?,
     );
   }
@@ -27,7 +29,7 @@ class CategoriesModelAdapter extends TypeAdapter<CategoriesModel> {
   @override
   void write(BinaryWriter writer, CategoriesModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -35,7 +37,11 @@ class CategoriesModelAdapter extends TypeAdapter<CategoriesModel> {
       ..writeByte(2)
       ..write(obj.categoryId)
       ..writeByte(3)
-      ..write(obj.isUploadedToServer);
+      ..write(obj.isUploadedToServer)
+      ..writeByte(4)
+      ..write(obj.products)
+      ..writeByte(5)
+      ..write(obj.serverImagePath);
   }
 
   @override

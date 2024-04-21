@@ -14,7 +14,6 @@ import 'package:saasify/utils/global.dart';
 import 'package:saasify/services/hive_box_service.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 import 'package:saasify/utils/unique_id.dart';
-
 import '../../services/safe_hive_operations.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
@@ -27,6 +26,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     on<FetchCategoriesWithProducts>(_fetchCategoriesWithProducts);
     on<FetchProductsForSelectedCategory>(_fetchProductForCategory);
   }
+
   Map<dynamic, dynamic> categoryInputData = {};
   String selectedCategory = '';
 
@@ -37,7 +37,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       event.categoriesModel.categoryId = IDUtil.generateUUID();
       if (!await isCategoryNamePresent(event.categoriesModel.name!)) {
         await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
-          await box.add(event.categoriesModel);
+          await box.put(
+              event.categoriesModel.categoryId, event.categoriesModel);
         });
         emit(CategoryAdded(successMessage: 'Category added successfully'));
         if (kIsCloudVersion) {
@@ -66,12 +67,20 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     int attempt = 0;
     while (attempt < maxRetries) {
       try {
-        categoriesModel.imagePath = await RetrieveImageFromFirebase()
-            .getImage(categoriesModel.imagePath ?? '');
+        String imagePath = categoriesModel.imagePath ?? '';
+        String serverImagePath =
+            await RetrieveImageFromFirebase().getImage(imagePath);
+        categoriesModel.serverImagePath = serverImagePath;
         final categoriesRef = firebaseService.getCategoriesCollectionRef();
         await categoriesRef
             .doc(categoriesModel.categoryId)
             .set(categoriesModel.toMap());
+        if (HiveBoxService.categoryBox.isOpen) {
+          await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
+            await box.put(categoriesModel.categoryId, categoriesModel);
+          });
+        } else {}
+
         return true;
       } catch (e) {
         if (attempt >= maxRetries - 1) rethrow;
@@ -105,42 +114,12 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   FutureOr<void> _fetchCategoriesWithProducts(
       FetchCategoriesWithProducts event, Emitter<CategoryState> emit) async {
-    List<CategoriesModel> categories = [];
+    emit(FetchingCategoriesWithProducts());
     try {
-      if (kIsCloudVersion) {
-        categories = Hive.box<CategoriesModel>('categories').values.toList();
-        if (categories.isNotEmpty) {
-          selectedCategory = categories.last.categoryId.toString();
-          if (selectedCategory.isNotEmpty) {
-            emit(CategoriesWithProductsFetched(categories: categories));
-          }
-        }
-      } else {
-        emit(FetchingCategoriesWithProducts());
-        QuerySnapshot querySnapshot =
-            await firebaseService.getCategoriesCollectionRef().get();
-        for (var doc in querySnapshot.docs) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          CategoriesModel category = CategoriesModel(
-              name: data['name'],
-              imagePath: data['image_path'] ?? '',
-              categoryId: doc.id);
-          categories.add(category);
-        }
-        if (querySnapshot.docs.isNotEmpty) {
-          selectedCategory = querySnapshot.docs.first.id;
-          if (selectedCategory.isNotEmpty) {
-            categories
-                    .where((element) => element.categoryId == selectedCategory)
-                    .first
-                    .products =
-                await fetchProductsByCategory(selectedCategory).whenComplete(
-                    () => emit(
-                        CategoriesWithProductsFetched(categories: categories)));
-          }
-        } else {
-          emit(CategoriesWithProductsFetched(categories: categories));
-        }
+      List<CategoriesModel> categories =
+          Hive.box<CategoriesModel>('categories').values.toList();
+      if (categories.isNotEmpty) {
+        emit(CategoriesWithProductsFetched(categories: categories));
       }
     } catch (e) {
       emit(CategoriesWithProductsNotFetched(

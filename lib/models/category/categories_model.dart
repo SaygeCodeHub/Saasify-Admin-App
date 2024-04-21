@@ -17,31 +17,41 @@ class CategoriesModel {
   String? categoryId;
   @HiveField(3)
   bool? isUploadedToServer;
-
+  @HiveField(4)
   List<Products>? products;
+  @HiveField(5)
+  String? serverImagePath;
 
-  CategoriesModel(
-      {this.name = '',
-      this.imagePath,
-      this.categoryId = '',
-      this.products,
-      this.isUploadedToServer = false});
+  CategoriesModel({
+    this.name = '',
+    this.imagePath,
+    this.categoryId = '',
+    this.isUploadedToServer = false,
+    this.products,
+    this.serverImagePath = '',
+  });
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'image_path': imagePath,
       'category_id': categoryId,
+      'isUploadedToServer': isUploadedToServer,
       'products': products = [],
-      'isUploadedToServer': isUploadedToServer
+      'serverImagePath': serverImagePath
     };
   }
 
   factory CategoriesModel.fromMap(Map<dynamic, dynamic> map) {
     return CategoriesModel(
-      categoryId: map['categoryId'] as String?,
-      name: map['name'] as String?,
-      imagePath: map['imagePath'] as String?,
-    );
+        categoryId: map['categoryId'] as String?,
+        name: map['name'] as String?,
+        imagePath: map['imagePath'] as String?,
+        serverImagePath: map['serverImagePath'] as String?);
+  }
+
+  @override
+  String toString() {
+    return 'CategoriesModel(name: $name, imagePath: $imagePath, categoryId: $categoryId, isUploadedToServer: $isUploadedToServer, products: $products, serverImagePath:$serverImagePath)';
   }
 }

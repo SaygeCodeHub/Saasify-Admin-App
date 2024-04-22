@@ -33,7 +33,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   }
 
   Map<dynamic, dynamic> categoryInputData = {};
-  String selectedCategory = '';
+  String? selectedCategory;
 
   FutureOr<void> _addCategory(
       AddCategory event, Emitter<CategoryState> emit) async {
@@ -236,7 +236,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     for (var item in event.categories) {
       item.products?.clear();
       if (selectedCategory == item.categoryId) {
-        item.products = await fetchProductsByCategory(selectedCategory);
+        item.products = await fetchProductsByCategory(selectedCategory!);
         emit(CategoriesWithProductsFetched(categories: event.categories));
       }
     }

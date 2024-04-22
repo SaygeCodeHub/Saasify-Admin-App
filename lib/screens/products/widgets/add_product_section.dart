@@ -40,7 +40,7 @@ class _AddProductSectionState extends State<AddProductSection> {
             products.imageUrl = imagePath;
           },
           label: 'Product Display Image'),
-      const SizedBox(height: spacingStandard),
+      const SizedBox(height: spacingHuge),
       ResponsiveForm(formWidgets: [
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -57,7 +57,7 @@ class _AddProductSectionState extends State<AddProductSection> {
                       horizontal: kLabelDropdownHorizontalPadding),
                   border: OutlineInputBorder(
                     borderRadius:
-                        BorderRadius.circular(kLabelDropdownBorderRadius),
+                    BorderRadius.circular(kLabelDropdownBorderRadius),
                   ),
                 ),
                 value: context.read<CategoryBloc>().selectedCategory,
@@ -94,11 +94,12 @@ class _AddProductSectionState extends State<AddProductSection> {
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.description),
             label: 'Description',
+            maxLines: 5,
             onTextFieldChanged: (String? value) {
               products.description = value;
             }),
         LabelDropdownWidget<ProductSoldByEnum>(
-          label: 'Select Sold By',
+          label: 'Sold By',
           initialValue: ProductSoldByEnum.each,
           items: ProductSoldByEnum.values.map((soldBy) {
             return DropdownMenuItem<ProductSoldByEnum>(
@@ -199,3 +200,4 @@ class _AddProductSectionState extends State<AddProductSection> {
     ]);
   }
 }
+

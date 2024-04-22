@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? 2
                               : MediaQuery.of(context).size.width ~/ 180,
                           childAspectRatio:
-                              DeviceUtils.isMobile(context) ? 2 : 1.1,
+                              DeviceUtils.isMobile(context) ? 1.25 : 1.1,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10),
                       itemBuilder: (context, index) {

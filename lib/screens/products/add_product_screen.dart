@@ -39,7 +39,7 @@ class AddProductScreen extends StatelessWidget {
                 if (categories.isNotEmpty) {
                   return SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      child: _buildForm(context, state.imagePath));
+                      child: AddProductSection(categories: categories));
                 } else {
                   return Padding(
                     padding: EdgeInsets.symmetric(
@@ -87,9 +87,5 @@ class AddProductScreen extends StatelessWidget {
         bottomBarButtons: [
           AddProductButton(formKey: formKey, categories: categories)
         ]);
-  }
-
-  Widget _buildForm(BuildContext context, String imagePath) {
-    return AddProductSection(categories: categories);
   }
 }

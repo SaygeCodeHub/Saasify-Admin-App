@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/models/category/categories_model.dart';
@@ -14,7 +17,9 @@ import 'package:saasify/utils/global.dart';
 import 'package:saasify/services/hive_box_service.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 import 'package:saasify/utils/unique_id.dart';
+import '../../enums/hive_boxes_enum.dart';
 import '../../services/safe_hive_operations.dart';
+import 'package:path/path.dart' as path;
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryState get initialState => CategoryInitial();
@@ -117,11 +122,14 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     emit(FetchingCategoriesWithProducts());
     List<CategoriesModel> categories;
     try {
-      categories = Hive.box<CategoriesModel>('categories').values.toList();
+      categories = Hive.box<CategoriesModel>(HiveBoxes.categories.boxName)
+          .values
+          .toList();
       if (categories.isNotEmpty) {
+        await _updateLocalImages(categories);
         emit(CategoriesWithProductsFetched(categories: categories));
       } else {
-        QuerySnapshot querySnapshot =
+        var querySnapshot =
             await firebaseService.getCategoriesCollectionRef().get();
         var firestoreData = querySnapshot.docs
             .map((doc) =>
@@ -129,14 +137,62 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
             .toList();
         if (HiveBoxService.categoryBox.isOpen) {
           await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
-            await box.addAll(firestoreData);
+            for (var category in firestoreData) {
+              if (!box.containsKey(category.categoryId)) {
+                await box.put(category.categoryId, category);
+              } else {}
+            }
+            await _updateLocalImages(firestoreData);
+            emit(CategoriesWithProductsFetched(categories: firestoreData));
           });
-        }
-        emit(CategoriesWithProductsFetched(categories: categories));
+        } else {}
       }
     } catch (e) {
       emit(CategoriesWithProductsNotFetched(
           errorMessage: 'Error fetching categories: $e'));
+    }
+  }
+
+  Future<void> _updateLocalImages(List<CategoriesModel> categories) async {
+    final directory = await getApplicationDocumentsDirectory();
+    Dio dio = Dio();
+    print(
+        'Debug: Starting image update process for ${categories.length} categories.');
+    for (var category in categories) {
+      final filename = path.basename(category.serverImagePath!);
+      final localPath = path.join(directory.path, filename);
+      File file = File(localPath);
+      print(
+          'Debug: Checking if image exists locally for category ${category.categoryId}.');
+
+      // Enhanced existence check with try-catch for additional safety
+      bool fileExists = false;
+      try {
+        fileExists = await file.exists();
+        if (fileExists && await file.length() == 0) {
+          fileExists =
+              false; // Treat empty files as non-existent for retry logic
+        }
+      } catch (e) {
+        fileExists =
+            false; // Assume file doesn't exist if there's an error checking it
+      }
+
+      if (!fileExists) {
+        try {
+          Response response = await dio.download(
+              category.serverImagePath!, localPath,
+              onReceiveProgress: (received, total) {});
+          if (response.statusCode == 200) {
+            category.imagePath = localPath;
+            await safeHiveOperation(HiveBoxService.categoryBox, (box) async {
+              await box.put(category.categoryId, category);
+            });
+          } else {}
+        } catch (e) {
+          rethrow;
+        }
+      } else {}
     }
   }
 

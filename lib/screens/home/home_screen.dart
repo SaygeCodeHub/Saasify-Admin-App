@@ -10,6 +10,7 @@ import 'package:saasify/screens/home/widgets/logout_widget.dart';
 import 'package:saasify/screens/home/widgets/open_tabs_widget.dart';
 import 'package:saasify/screens/home/widgets/settings_widget.dart';
 import 'package:saasify/screens/home/widgets/user_avatar_widget.dart';
+import 'package:saasify/utils/device_util.dart';
 import '../../utils/feature_list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -111,12 +112,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.all(spacingSmall),
                       itemCount: features.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                            MediaQuery.of(context).size.width ~/ 200,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
+                          crossAxisCount: DeviceUtils.isMobile(context) ? 2 : 4,
+                          childAspectRatio: 1,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10),
                       itemBuilder: (context, index) {
                         return FeatureCardWidget(
                           icon: features[index].icon,

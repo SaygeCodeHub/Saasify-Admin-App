@@ -25,8 +25,7 @@ class _HiveDataScreenState extends State<HiveDataScreen> {
       HiveBoxes.suppliers.boxName,
       HiveBoxes.coupons.boxName,
     ]) {
-      final box = Hive.box(boxName);
-      await box.clear();
+      await Hive.box(boxName).clear();
     }
     setState(() {});
   }
@@ -77,7 +76,15 @@ class _HiveDataScreenState extends State<HiveDataScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(  // Using FAB for clear action
-        onPressed: clearAllData,
+        onPressed: () async {
+          try {
+            var categoriesBox = Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
+            await categoriesBox.clear();
+          } catch (e) {
+            print('An error occurred while clearing Hive boxes: $e');
+          }
+
+        },
         child: Icon(Icons.delete_forever),
         tooltip: 'Clear All Data',
         backgroundColor: Colors.red,  // Red color to indicate a potentially destructive action

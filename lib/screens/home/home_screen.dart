@@ -112,8 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.all(spacingSmall),
                       itemCount: features.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: DeviceUtils.isMobile(context) ? 2 : 4,
-                          childAspectRatio: 1,
+                          crossAxisCount: DeviceUtils.isMobile(context)
+                              ? 2
+                              : MediaQuery.of(context).size.width ~/ 180,
+                          childAspectRatio:
+                              DeviceUtils.isMobile(context) ? 2 : 1.1,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10),
                       itemBuilder: (context, index) {

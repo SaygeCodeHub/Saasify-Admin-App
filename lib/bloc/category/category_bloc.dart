@@ -156,26 +156,18 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   Future<void> _updateLocalImages(List<CategoriesModel> categories) async {
     final directory = await getApplicationDocumentsDirectory();
     Dio dio = Dio();
-    print(
-        'Debug: Starting image update process for ${categories.length} categories.');
     for (var category in categories) {
       final filename = path.basename(category.serverImagePath!);
       final localPath = path.join(directory.path, filename);
       File file = File(localPath);
-      print(
-          'Debug: Checking if image exists locally for category ${category.categoryId}.');
-
-      // Enhanced existence check with try-catch for additional safety
       bool fileExists = false;
       try {
         fileExists = await file.exists();
         if (fileExists && await file.length() == 0) {
-          fileExists =
-              false; // Treat empty files as non-existent for retry logic
+          fileExists = false;
         }
       } catch (e) {
-        fileExists =
-            false; // Assume file doesn't exist if there's an error checking it
+        fileExists = false;
       }
 
       if (!fileExists) {

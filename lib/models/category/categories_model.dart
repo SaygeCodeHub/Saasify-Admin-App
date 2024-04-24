@@ -1,6 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:saasify/models/product/products.dart';
-
 import '../../configs/hive_type_ids.dart';
 
 part 'categories_model.g.dart';
@@ -11,33 +9,29 @@ class CategoriesModel {
   String? name;
 
   @HiveField(1)
-  String? imagePath;
+  String? localImagePath;
 
   @HiveField(2)
   String? categoryId;
   @HiveField(3)
   bool? isUploadedToServer;
   @HiveField(4)
-  List<Products>? products;
-  @HiveField(5)
   String? serverImagePath;
 
   CategoriesModel({
     this.name = '',
-    this.imagePath,
+    this.localImagePath,
     this.categoryId = '',
     this.isUploadedToServer = false,
-    this.products,
     this.serverImagePath = '',
   });
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'imagePath': imagePath,
+      'imagePath': localImagePath,
       'categoryId': categoryId,
       'isUploadedToServer': isUploadedToServer,
-      'products': products = [],
       'serverImagePath': serverImagePath
     };
   }
@@ -46,14 +40,13 @@ class CategoriesModel {
     return CategoriesModel(
         categoryId: map['categoryId'] as String?,
         name: map['name'] as String?,
-        imagePath: map['imagePath'] as String?,
+        localImagePath: map['imagePath'] as String?,
         isUploadedToServer: map['isUploadedToServer'] as bool?,
-        products: [],
         serverImagePath: map['serverImagePath'] as String?);
   }
 
   @override
   String toString() {
-    return 'CategoriesModel(name: $name, imagePath: $imagePath, categoryId: $categoryId, isUploadedToServer: $isUploadedToServer, products: $products, serverImagePath:$serverImagePath)';
+    return 'CategoriesModel(name: $name, imagePath: $localImagePath, categoryId: $categoryId, isUploadedToServer: $isUploadedToServer, serverImagePath:$serverImagePath)';
   }
 }

@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:saasify/cache/company_cache.dart';
 import 'package:saasify/models/pos_model.dart';
 import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/models/product/products.dart';
+import 'package:saasify/models/product/product_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../cache/user_cache.dart';
 import 'firebase_services.dart';
@@ -22,7 +22,7 @@ void setupServiceLocator() {
   });
   getIt.registerSingleton<UserCache>(UserCache());
   getIt.registerSingleton<CompanyCache>(CompanyCache());
-  getIt.registerSingleton<Products>(Products());
+  getIt.registerSingleton<ProductsModel>(ProductsModel());
   getIt.registerSingleton<BillDetails>(BillDetails());
   getIt.registerSingleton<ProductVariant>(ProductVariant());
 }

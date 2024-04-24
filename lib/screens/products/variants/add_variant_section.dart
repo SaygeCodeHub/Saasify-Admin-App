@@ -6,13 +6,13 @@ import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/enums/product_by_quantity_enum.dart';
 import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/models/product/products.dart';
+import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/responsive_form.dart';
 
 class AddVariantSection extends StatelessWidget {
-  final Products products;
+  final ProductsModel products;
 
   AddVariantSection({super.key, required this.products});
 
@@ -23,9 +23,9 @@ class AddVariantSection extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: spacingStandard),
       ListTile(
-          leading: (products.imageUrl!.isNotEmpty)
+          leading: (products.localImagePath!.isNotEmpty)
               ? CachedNetworkImage(
-                  imageUrl: products.imageUrl ?? '',
+                  imageUrl: products.localImagePath ?? '',
                   placeholder: (context, url) =>
                       const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => ClipOval(
@@ -104,7 +104,7 @@ class AddVariantSection extends StatelessWidget {
 }
 
 class SoldByQuantityDropdown extends StatefulWidget {
-  final Products products;
+  final ProductsModel products;
 
   const SoldByQuantityDropdown({super.key, required this.products});
 

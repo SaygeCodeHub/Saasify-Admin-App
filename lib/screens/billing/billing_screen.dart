@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/pos_model.dart';
 import '../../models/category/categories_model.dart';
-import '../../models/product/products.dart';
+import '../../models/product/product_model.dart';
 import 'cart_screen.dart';
 
 class BillingScreen extends StatefulWidget {
@@ -18,9 +18,9 @@ class _BillingScreenState extends State<BillingScreen> {
   late List<CategoriesModel> _categories;
   List<PosModel> cart = [];
   Map<String, dynamic> cartDetailsMap = {};
-  final productsBox = Hive.box<Products>('products');
+  final productsBox = Hive.box<ProductsModel>('products');
   final TextEditingController _searchController = TextEditingController();
-  List<Products> filteredProducts = [];
+  List<ProductsModel> filteredProducts = [];
 
   Map getAmountAndQuantity(cart) {
     Map map = {'cost': 0.00};
@@ -96,7 +96,7 @@ class _BillingScreenState extends State<BillingScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: spacingStandard, horizontal: mobileBodyPadding),
-                child: ValueListenableBuilder<Box<Products>>(
+                child: ValueListenableBuilder<Box<ProductsModel>>(
                   valueListenable: productsBox.listenable(),
                   builder: (context, box, _) {
                     final filteredProducts = box.values.where((product) {

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_colors.dart';
 import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
-import 'package:saasify/models/product/products.dart';
+import 'package:saasify/models/product/product_model.dart';
 
 class ProductDetailsSection extends StatelessWidget {
-  final Products products;
+  final ProductsModel products;
 
   const ProductDetailsSection({super.key, required this.products});
 
@@ -22,7 +22,7 @@ class ProductDetailsSection extends StatelessWidget {
               leading: CachedNetworkImage(
                   width: kNetworkImageWidth,
                   height: kNetworkImageHeight,
-                  imageUrl: products.imageUrl ?? '',
+                  imageUrl: products.localImagePath ?? '',
                   placeholder: (context, url) =>
                       const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => Container(

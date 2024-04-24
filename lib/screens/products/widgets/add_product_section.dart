@@ -8,7 +8,7 @@ import 'package:saasify/enums/product_by_quantity_enum.dart';
 import 'package:saasify/enums/product_sold_by_enum.dart';
 import 'package:saasify/models/category/categories_model.dart';
 import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/models/product/products.dart';
+import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/screens/widgets/image_picker_widget.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
 import 'package:saasify/screens/widgets/label_dropdown_widget.dart';
@@ -27,7 +27,7 @@ class AddProductSection extends StatefulWidget {
 }
 
 class _AddProductSectionState extends State<AddProductSection> {
-  Products products = getIt<Products>();
+  ProductsModel products = getIt<ProductsModel>();
   ProductVariant productVariant = getIt<ProductVariant>();
 
   @override
@@ -37,7 +37,7 @@ class _AddProductSectionState extends State<AddProductSection> {
       const SizedBox(height: spacingStandard),
       ImagePickerWidget(
           onImagePicked: (String imagePath) {
-            products.imageUrl = imagePath;
+            products.localImagePath = imagePath;
           },
           label: 'Product Display Image'),
       const SizedBox(height: spacingHuge),
@@ -57,7 +57,7 @@ class _AddProductSectionState extends State<AddProductSection> {
                       horizontal: kLabelDropdownHorizontalPadding),
                   border: OutlineInputBorder(
                     borderRadius:
-                    BorderRadius.circular(kLabelDropdownBorderRadius),
+                        BorderRadius.circular(kLabelDropdownBorderRadius),
                   ),
                 ),
                 value: context.read<CategoryBloc>().selectedCategory,
@@ -200,4 +200,3 @@ class _AddProductSectionState extends State<AddProductSection> {
     ]);
   }
 }
-

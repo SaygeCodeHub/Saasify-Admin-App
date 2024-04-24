@@ -13,30 +13,27 @@ dependencies:
   dio: ^5.4.0
   pdf: ^3.10.8
   intl: ^0.19.0
-  uuid: 
-  bloc:
-  path:
+  uuid:
+  path: ^1.9.0
   hive: ^2.2.3
   get_it: ^7.6.7
   printing: ^5.12.0
   equatable: ^2.0.5
   dotted_line: ^3.2.2
   flutter_svg: ^2.0.9
-  image_picker: ^1.0.7
+  image_picker: ^1.1.0
   flutter_bloc: ^8.1.3
   hive_flutter: ^1.1.0
-  path_provider: ^2.1.2
-  firebase_auth: ^4.16.0
-  firebase_core: ^2.25.4
+  path_provider: ^2.1.3
+  firebase_auth: ^4.19.3
+  firebase_core: ^2.30.1
   cupertino_icons: ^1.0.6
-  cloud_firestore: ^4.15.9
-  firebase_storage: ^11.6.10
+  cloud_firestore: ^4.17.1
+  firebase_storage: ^11.7.3
   connectivity_plus:
   shared_preferences: ^2.2.2
-  firebase_messaging: ^14.7.15
   firebase_crashlytics: ^3.5.1
   cached_network_image:
-  flutter_image_compress:
 
 
 

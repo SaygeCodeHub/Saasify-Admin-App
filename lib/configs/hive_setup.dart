@@ -7,7 +7,7 @@ import 'package:saasify/models/user/user_details.dart';
 import '../models/category/categories_model.dart';
 import '../models/customer/add_customer_model.dart';
 import '../models/product/product_variant.dart';
-import '../models/product/products.dart';
+import '../models/product/product_model.dart';
 
 Future<void> setupHive() async {
   final appDocumentDirectory =
@@ -17,7 +17,7 @@ Future<void> setupHive() async {
   Hive
     ..registerAdapter(UserDetailsAdapter())
     ..registerAdapter(CategoriesModelAdapter())
-    ..registerAdapter(ProductsAdapter())
+    ..registerAdapter(ProductsModelAdapter())
     ..registerAdapter(AddCustomerModelAdapter())
     ..registerAdapter(ProductVariantAdapter())
     ..registerAdapter(AddSupplierModelAdapter())
@@ -26,7 +26,7 @@ Future<void> setupHive() async {
   await Future.wait([
     Hive.openBox<UserDetails>('userDetails'),
     Hive.openBox<CategoriesModel>(HiveBoxes.categories.boxName),
-    Hive.openBox<Products>(HiveBoxes.products.boxName),
+    Hive.openBox<ProductsModel>(HiveBoxes.products.boxName),
     Hive.openBox<Map<String, dynamic>>('cartData'),
     Hive.openBox<AddCustomerModel>(HiveBoxes.customers.boxName),
     Hive.openBox<AddSupplierModel>(HiveBoxes.suppliers.boxName),

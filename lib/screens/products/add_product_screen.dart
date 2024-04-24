@@ -3,13 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_state.dart';
-import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
-import 'package:saasify/enums/product_sold_by_enum.dart';
-import 'package:saasify/models/product/products.dart';
 import 'package:saasify/screens/category/add_category_screen.dart';
 import 'package:saasify/screens/products/widgets/add_product_button.dart';
 import 'package:saasify/screens/products/widgets/add_product_section.dart';
-import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/error_display.dart';
 import '../../models/category/categories_model.dart';
 import '../widgets/skeleton_screen.dart';
@@ -19,13 +15,10 @@ class AddProductScreen extends StatelessWidget {
 
   static List<CategoriesModel> categories = [];
   final formKey = GlobalKey<FormState>();
-  final Products products = getIt<Products>();
 
   @override
   Widget build(BuildContext context) {
     context.read<CategoryBloc>().add(FetchCategoriesWithProducts());
-    context.read<ImagePickerBloc>().imagePath = '';
-    products.soldBy = ProductSoldByEnum.each.soldBy;
     return SkeletonScreen(
         appBarTitle: 'Add Product',
         bodyContent: Form(

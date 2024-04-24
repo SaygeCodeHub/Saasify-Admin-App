@@ -38,7 +38,7 @@ class ViewCategorySection extends StatelessWidget {
                 CircleAvatar(
                   radius: 50,
                   backgroundImage:
-                      FileImage(File(categories[index].imagePath!)),
+                      FileImage(File(categories[index].localImagePath!)),
                 ),
                 const SizedBox(height: spacingMedium),
                 Text(

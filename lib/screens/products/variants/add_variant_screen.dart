@@ -4,7 +4,7 @@ import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/models/product/products.dart';
+import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/screens/products/product_details_screen.dart';
 import 'package:saasify/screens/products/variants/add_variant_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
@@ -91,7 +91,7 @@ class AddVariantScreen extends StatelessWidget {
         ]);
   }
 
-  Widget _buildForm(BuildContext context, Products products) {
+  Widget _buildForm(BuildContext context, ProductsModel products) {
     return AddVariantSection(products: products);
   }
 }

@@ -35,7 +35,7 @@ class ProductCardWidget extends StatelessWidget {
                     Map dataForCartMap = {
                       'product_name': list[i].products[index].name,
                       'description': list[i].products[index].description,
-                      'image': list[i].products[index].imageUrl
+                      'image': list[i].products[index].localImagePath
                     };
                     if (list[i].products[index].variants.isNotEmpty) {
                       _showGridDialog(context, list[i].products[index].variants,
@@ -88,7 +88,7 @@ class ProductCardWidget extends StatelessWidget {
                         child: ClipOval(
                           child: CachedNetworkImage(
                             imageUrl:
-                                list[i].products[index].imageUrl.toString(),
+                                list[i].products[index].localImagePath.toString(),
                             placeholder: (context, url) => const Center(
                                 child: CircularProgressIndicator()),
                             errorWidget: (context, url, error) =>

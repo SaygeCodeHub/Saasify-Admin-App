@@ -4,12 +4,10 @@ import 'package:saasify/configs/app_colors.dart';
 import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/models/category/categories_model.dart';
-
 import '../../../utils/device_util.dart';
 
 class ViewCategorySection extends StatelessWidget {
-  final List<CategoriesModel> categories;
+  final List<dynamic> categories;
 
   const ViewCategorySection({super.key, required this.categories});
 

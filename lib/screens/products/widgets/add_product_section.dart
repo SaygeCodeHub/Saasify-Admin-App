@@ -162,20 +162,6 @@ class _AddProductSectionState extends State<AddProductSection> {
                 productVariant.quantityAvailable = int.parse(value ?? '0');
               }),
         LabelAndTextFieldWidget(
-            prefixIcon: const Icon(Icons.price_change_rounded),
-            label: 'Price',
-            isRequired: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'This field is required';
-              }
-              return null;
-            },
-            keyboardType: TextInputType.number,
-            onTextFieldChanged: (String? value) {
-              productVariant.price = double.parse(value ?? '0.0');
-            }),
-        LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.supervisor_account),
             label: 'Supplier',
             onTextFieldChanged: (String? value) {

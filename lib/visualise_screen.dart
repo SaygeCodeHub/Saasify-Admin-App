@@ -84,7 +84,7 @@ class HiveDataScreenState extends State<HiveDataScreen> {
         onPressed: () async {
           try {
             var categoriesBox =
-                Hive.box<ProductsModel>(HiveBoxes.products.boxName);
+                Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
             await categoriesBox.clear();
           } catch (e) {
             print('An error occurred while clearing Hive boxes: $e');

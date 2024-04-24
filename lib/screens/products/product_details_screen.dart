@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
-import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/screens/products/add_product_screen.dart';
@@ -20,14 +19,14 @@ class ProductDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context
-        .read<ProductBloc>()
-        .add(FetchProduct(categoryId: categoryId, productId: productId));
+    // context
+    //     .read<ProductBloc>()
+    //     .add(FetchProducts(categoryId: categoryId, productId: productId));
     return SkeletonScreen(
       appBarTitle: 'Product Details',
       bodyContent: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
-          if (state is FetchingProduct) {
+          if (state is FetchingProducts) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ProductFetched) {
             return Padding(

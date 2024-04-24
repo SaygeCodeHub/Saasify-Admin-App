@@ -22,15 +22,15 @@ class AddVariantScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<ProductBloc>().add(FetchProduct(
-        categoryId: dataMap['category_id'], productId: dataMap['product_id']));
+    // context.read<ProductBloc>().add(FetchProducts(
+    //     categoryId: dataMap['category_id'], productId: dataMap['product_id']));
     return SkeletonScreen(
         appBarTitle: 'Add Variant',
         bodyContent: Form(
             key: formKey,
             child: BlocConsumer<ProductBloc, ProductState>(
               buildWhen: (previousState, currentState) =>
-                  currentState is FetchingProduct ||
+                  currentState is FetchingProducts ||
                   currentState is ProductFetched ||
                   currentState is ProductNotFetched,
               listener: (context, state) {
@@ -65,7 +65,7 @@ class AddVariantScreen extends StatelessWidget {
                 }
               },
               builder: (context, state) {
-                if (state is FetchingProduct) {
+                if (state is FetchingProducts) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is ProductFetched) {
                   return SingleChildScrollView(

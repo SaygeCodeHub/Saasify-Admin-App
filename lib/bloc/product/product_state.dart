@@ -1,4 +1,3 @@
-import 'package:saasify/models/category/categories_model.dart';
 import 'package:saasify/models/product/product_model.dart';
 
 abstract class ProductState {}
@@ -19,19 +18,10 @@ class ProductNotAdded extends ProductState {
   ProductNotAdded({required this.errorMessage});
 }
 
-class FetchingProducts extends ProductState {}
-
 class ProductsFetched extends ProductState {
-  final List<ProductsModel> products;
-  final List<CategoriesModel> categories;
-  final String categoryId;
-  final List selectedCategories;
+  final Map<String, List<ProductsModel>> categoryWiseProducts;
 
-  ProductsFetched(
-      {required this.categories,
-      required this.products,
-      required this.categoryId,
-      required this.selectedCategories});
+  ProductsFetched({required this.categoryWiseProducts});
 }
 
 class ProductsCouldNotFetch extends ProductState {
@@ -40,7 +30,7 @@ class ProductsCouldNotFetch extends ProductState {
   ProductsCouldNotFetch({required this.errorMessage});
 }
 
-class FetchingProduct extends ProductState {}
+class FetchingProducts extends ProductState {}
 
 class ProductFetched extends ProductState {
   final ProductsModel products;

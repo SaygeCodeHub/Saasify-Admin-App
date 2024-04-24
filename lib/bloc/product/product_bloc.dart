@@ -14,7 +14,10 @@ import 'package:saasify/services/hive_box_service.dart';
 import 'package:saasify/utils/retrieve_image_from_firebase.dart';
 import 'package:saasify/utils/unique_id.dart';
 
+import '../../enums/hive_boxes_enum.dart';
+import '../../models/category/categories_model.dart';
 import '../../services/safe_hive_operations.dart';
+import '../category/category_services.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductState get initialState => ProductInitial();
@@ -23,7 +26,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   ProductBloc() : super(ProductInitial()) {
     on<AddProduct>(_addProduct);
-    on<FetchProduct>(_fetchProductForVariant);
+    on<FetchProducts>(_fetchProductsWithCategories);
     on<AddVariant>(_addVariant);
   }
 
@@ -70,8 +73,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     while (attempt < maxRetries) {
       try {
         String imagePath = productsModel.localImagePath ?? '';
-        String serverImagePath =
-            await RetrieveImageFromFirebase().uploadImageAndGetUrl(imagePath,'products');
+        String serverImagePath = await RetrieveImageFromFirebase()
+            .uploadImageAndGetUrl(imagePath, 'products');
         productsModel.serverImagePath = serverImagePath;
         final categoriesRef =
             firebaseService.getProductsCollectionRef(productsModel.categoryId!);
@@ -114,55 +117,76 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     });
   }
 
-  FutureOr<void> _fetchProductForVariant(
-      FetchProduct event, Emitter<ProductState> emit) async {
+  Future<void> _fetchProductsWithCategories(
+      FetchProducts event, Emitter<ProductState> emit) async {
+    emit(FetchingProducts());
     try {
-      if (kIsCloudVersion) {
-      } else {
-        emit(FetchingProduct());
-        DocumentSnapshot getCategory =
-            await firebaseService.getCategoriesDocRef(event.categoryId).get();
-        String categoryName = getCategory.get('name');
-        DocumentSnapshot getProduct = await firebaseService
-            .getProductDocRef(event.categoryId, event.productId)
-            .get();
-        Map<String, dynamic> getProductsData =
-            getProduct.data() as Map<String, dynamic>;
-        ProductsModel products = ProductsModel(
-            productId: event.productId,
-            name: getProductsData['name'],
-            categoryId: categoryName,
-            localImagePath: getProductsData['imageUrl'] ?? '',
-            description: getProductsData['description'] ?? '',
-            supplier: getProductsData['supplier'] ?? '',
-            minStockLevel: getProductsData['minStockLevel'] ?? 0,
-            soldBy: getProductsData['soldBy'] ?? '',
-            unit: getProductsData['unit'] ?? '');
-        CollectionReference variantsCollection = firebaseService
-            .getVariantsCollectionRef(event.categoryId, event.productId);
-        QuerySnapshot variantData = await variantsCollection.get();
-        for (var item in variantData.docs) {
-          Map<String, dynamic> variantsMap =
-              item.data() as Map<String, dynamic>;
-          ProductVariant productVariant = ProductVariant(
-              variantId: item.id,
-              productId: event.productId,
-              variantName: variantsMap['variantName'],
-              price: variantsMap['price'],
-              cost: variantsMap['price'],
-              quantityAvailable: variantsMap['quantityAvailable'],
-              isActive: true);
-          products.variants?.add(productVariant);
-
-          if (getProductsData.isNotEmpty) {
-            emit(ProductFetched(products: products));
-          } else {
-            emit(ProductNotFetched(errorMessage: 'No product found!'));
-          }
+      final categoriesBox =
+          Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
+      final productsBox = Hive.box<ProductsModel>(HiveBoxes.products.boxName);
+      if (await checkIfCategoryExists()) {
+        if (await checkIfProductExists()) {
+          Map<String, List<ProductsModel>> categoryProductsMap =
+              await fetchDataFromHive(categoriesBox, productsBox);
+          emit(ProductsFetched(categoryWiseProducts: categoryProductsMap));
+        } else {
+          fetchProductsFromServerAndSave(categoriesBox);
         }
+      } else {
+        await CategoryService()
+            .fetchAndStoreCategoriesFromFirestore(fromCategory: false);
+        add(FetchProducts());
       }
     } catch (e) {
       emit(ProductNotFetched(errorMessage: e.toString()));
+    }
+  }
+
+  Future<bool> checkIfCategoryExists() async {
+    final categoriesBox =
+        Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
+    return categoriesBox.isNotEmpty;
+  }
+
+  Future<bool> checkIfProductExists() async {
+    final productsBox = Hive.box<ProductsModel>(HiveBoxes.products.boxName);
+    return productsBox.isNotEmpty;
+  }
+
+  Future<Map<String, List<ProductsModel>>> fetchDataFromHive(
+      categoriesBox, productsBox) async {
+    Map<String, List<ProductsModel>> categoryProductsMap = {};
+    for (var category in categoriesBox.values) {
+      List<ProductsModel> products = productsBox.values
+          .where((product) => product.categoryId == category.categoryId)
+          .toList();
+      if (products.isNotEmpty) {
+        categoryProductsMap[category.name!] = products;
+      }
+    }
+    return categoryProductsMap;
+  }
+
+  fetchProductsFromServerAndSave(Box<CategoriesModel> categoriesBox) async {
+    List<ProductsModel> fetchedProductsList = [];
+
+    await Future.forEach(categoriesBox.toMap().entries, (entry) async {
+      var querySnapshot =
+          await firebaseService.getProductsCollectionRef(entry.key).get();
+      var firestoreData = querySnapshot.docs
+          .map((doc) =>
+              ProductsModel.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+      fetchedProductsList.addAll(firestoreData);
+    });
+    if (HiveBoxService.productsBox.isOpen) {
+      await safeHiveOperation(HiveBoxService.productsBox, (box) async {
+        for (var product in fetchedProductsList) {
+          if (!box.containsKey(product.productId)) {
+            await box.put(product.productId, product);
+          }
+        }
+      });
     }
   }
 

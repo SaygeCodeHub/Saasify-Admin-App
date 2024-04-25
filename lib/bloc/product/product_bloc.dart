@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/product/product_event.dart';
+import 'package:saasify/bloc/product/product_services.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/product_model.dart';
@@ -124,13 +125,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final categoriesBox =
           Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
       final productsBox = Hive.box<ProductsModel>(HiveBoxes.products.boxName);
-      if (await checkIfCategoryExists()) {
-        if (await checkIfProductExists()) {
+      if (await ProductService().checkIfCategoryExists()) {
+        if (await ProductService().checkIfProductExists()) {
           Map<String, List<ProductsModel>> categoryProductsMap =
-              await fetchDataFromHive(categoriesBox, productsBox);
+              await ProductService()
+                  .fetchDataFromHive(categoriesBox, productsBox);
           emit(ProductsFetched(categoryWiseProducts: categoryProductsMap));
         } else {
-          fetchProductsFromServerAndSave(categoriesBox);
+          ProductService().fetchProductsFromServerAndSave(categoriesBox);
         }
       } else {
         await CategoryService()
@@ -139,54 +141,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     } catch (e) {
       emit(ProductNotFetched(errorMessage: e.toString()));
-    }
-  }
-
-  Future<bool> checkIfCategoryExists() async {
-    final categoriesBox =
-        Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
-    return categoriesBox.isNotEmpty;
-  }
-
-  Future<bool> checkIfProductExists() async {
-    final productsBox = Hive.box<ProductsModel>(HiveBoxes.products.boxName);
-    return productsBox.isNotEmpty;
-  }
-
-  Future<Map<String, List<ProductsModel>>> fetchDataFromHive(
-      categoriesBox, productsBox) async {
-    Map<String, List<ProductsModel>> categoryProductsMap = {};
-    for (var category in categoriesBox.values) {
-      List<ProductsModel> products = productsBox.values
-          .where((product) => product.categoryId == category.categoryId)
-          .toList();
-      if (products.isNotEmpty) {
-        categoryProductsMap[category.name!] = products;
-      }
-    }
-    return categoryProductsMap;
-  }
-
-  fetchProductsFromServerAndSave(Box<CategoriesModel> categoriesBox) async {
-    List<ProductsModel> fetchedProductsList = [];
-
-    await Future.forEach(categoriesBox.toMap().entries, (entry) async {
-      var querySnapshot =
-          await firebaseService.getProductsCollectionRef(entry.key).get();
-      var firestoreData = querySnapshot.docs
-          .map((doc) =>
-              ProductsModel.fromMap(doc.data() as Map<String, dynamic>))
-          .toList();
-      fetchedProductsList.addAll(firestoreData);
-    });
-    if (HiveBoxService.productsBox.isOpen) {
-      await safeHiveOperation(HiveBoxService.productsBox, (box) async {
-        for (var product in fetchedProductsList) {
-          if (!box.containsKey(product.productId)) {
-            await box.put(product.productId, product);
-          }
-        }
-      });
     }
   }
 

@@ -5,7 +5,6 @@ import 'package:saasify/bloc/product/product_event.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/product_model.dart';
-import 'package:saasify/screens/products/product_details_screen.dart';
 import 'package:saasify/screens/products/variants/add_variant_section.dart';
 import 'package:saasify/screens/widgets/buttons/primary_button.dart';
 import 'package:saasify/screens/widgets/custom_dialogs.dart';
@@ -45,12 +44,12 @@ class AddVariantScreen extends StatelessWidget {
                             context, state.successMessage, onPressed: () {
                           Navigator.pop(context);
                           Navigator.pop(context);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProductDetailsScreen(
-                                      categoryId: dataMap['category_id'],
-                                      productId: dataMap['product_id'])));
+                          // Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => ProductDetailsScreen(
+                          //             categoryId: dataMap['category_id'],
+                          //             productId: dataMap['product_id'])));
                         });
                       });
                 } else if (state is VariantNotAdded) {

@@ -34,9 +34,12 @@ class ViewCategorySection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
+                  backgroundColor:AppColors.lighterGrey,
                   radius: 50,
                   backgroundImage:
                       FileImage(File(categories[index].localImagePath!)),
+                  onBackgroundImageError: (_, __) =>
+                      const AssetImage('assets/no_image.jpeg'),
                 ),
                 const SizedBox(height: spacingMedium),
                 Text(

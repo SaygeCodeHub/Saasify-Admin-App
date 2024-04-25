@@ -8,9 +8,13 @@ class AddProduct extends ProductEvent {
   AddProduct({required this.products});
 }
 
-class FetchProducts extends ProductEvent {
-  FetchProducts();
+class FetchProducts extends ProductEvent {}
+
+class FetchProductDetails extends ProductEvent {
+  final String productId;
+  FetchProductDetails({required this.productId});
 }
+
 
 class AddVariant extends ProductEvent {
   final String categoryId;

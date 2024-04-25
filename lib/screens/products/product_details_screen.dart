@@ -1,69 +1,157 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:saasify/bloc/product/product_bloc.dart';
-import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_spacing.dart';
-import 'package:saasify/screens/products/add_product_screen.dart';
-import 'package:saasify/screens/products/widgets/product_details_section.dart';
-import 'package:saasify/screens/products/widgets/product_variant_details_label.dart';
-import 'package:saasify/screens/products/widgets/product_variants_section.dart';
+import 'package:saasify/configs/app_theme.dart';
+import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
-import 'package:saasify/utils/error_display.dart';
+import '../../configs/app_colors.dart';
+import '../../configs/app_dimensions.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  final String categoryId;
-  final String productId;
+  final ProductsModel productsModel;
 
-  const ProductDetailsScreen(
-      {super.key, required this.categoryId, required this.productId});
+  const ProductDetailsScreen({super.key, required this.productsModel});
 
   @override
   Widget build(BuildContext context) {
-    // context
-    //     .read<ProductBloc>()
-    //     .add(FetchProducts(categoryId: categoryId, productId: productId));
     return SkeletonScreen(
       appBarTitle: 'Product Details',
-      bodyContent: BlocBuilder<ProductBloc, ProductState>(
-        builder: (context, state) {
-          if (state is FetchingProducts) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ProductFetched) {
-            return Padding(
-              padding: const EdgeInsets.all(spacingMedium),
+      bottomBarButtons: const [],
+      bodyContent: DefaultTabController(
+        length: 2,
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(kProductCategoryCardRadius),
+                    border: Border.all(color: AppColors.lighterGrey),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(spacingMedium),
+                    child: CircleAvatar(
+                      backgroundColor: AppColors.lighterGrey,
+                      radius: 60,
+                      backgroundImage:
+                          FileImage(File(productsModel.localImagePath!)),
+                      onBackgroundImageError: (_, __) =>
+                          const AssetImage('assets/no_image.jpeg'),
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                        onPressed: () {}, child: const Text('Edit Product')),
+                    TextButton(
+                        onPressed: () {}, child: const Text('Add Variant')),
+                    TextButton(
+                        onPressed: () {}, child: const Text('Delete Product')),
+                  ],
+                ),
+              ],
+            ),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ProductDetailsSection(products: state.products),
-                  const SizedBox(height: spacingSmall),
-                  const Divider(),
-                  const SizedBox(height: spacingSmall),
-                  ProductVariantDetailsLabel(
-                      categoryId: categoryId, productId: productId),
-                  if (state.products.variants != null &&
-                      state.products.variants!.isNotEmpty)
-                    ProductVariantsSection(
-                        variants: state.products.variants ?? [])
+                  const SizedBox(height: spacingMedium),
+                  ListTile(
+                    visualDensity: VisualDensity.compact,
+                    contentPadding: EdgeInsets.zero,
+                    horizontalTitleGap: 0.0,
+                    minVerticalPadding: 0.0,
+                    title: Text(productsModel.name!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelTextStyle
+                            .copyWith(
+                                fontWeight: FontWeight.w700, fontSize: 16),
+                        textAlign: TextAlign.start),
+                    subtitle: Text(
+                      productsModel.description ?? 'No description provided.',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelTextStyle
+                          .copyWith(fontWeight: FontWeight.w100, fontSize: 14),
+                      textAlign: TextAlign.start,
+                      maxLines: 15,
+                    ),
+                  ),
+                  const SizedBox(height: spacingXSmall),
+                  TabBar(
+                    labelStyle: Theme.of(context)
+                        .textTheme
+                        .labelTextStyle
+                        .copyWith(fontWeight: FontWeight.w100, fontSize: 14),
+                    tabs: const [
+                      Tab(text: 'Details'),
+                      Tab(text: 'Variants'),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _buildDetailList(context),
+                          ),
+                        ),
+                        const Icon(Icons.settings,
+                            size: 10, color: AppColors.darkBlue),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            );
-          } else if (state is ProductNotFetched) {
-            return ErrorDisplay(
-                text: state.errorMessage,
-                buttonText: 'Add Product',
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddProductScreen()));
-                });
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
+            ),
+          ],
+        ),
       ),
-      bottomBarButtons: const [],
+    );
+  }
+
+  List<Widget> _buildDetailList(BuildContext context) {
+    return [
+      _buildDetailRow(context, 'Tax', productsModel.tax?.toString() ?? 'N/A'),
+      _buildDetailRow(context, 'Supplier', productsModel.supplier ?? 'N/A'),
+      _buildDetailRow(context, 'Minimum Stock Level',
+          productsModel.minStockLevel?.toString() ?? 'N/A'),
+      _buildDetailRow(context, 'Sold By', productsModel.soldBy),
+      _buildDetailRow(context, 'Unit', productsModel.unit),
+      _buildDetailRow(
+          context, 'Active', productsModel.isActive == true ? 'Yes' : 'No'),
+      _buildDetailRow(context, 'Product ID', productsModel.productId),
+      _buildDetailRow(context, 'Category ID', productsModel.categoryId),
+      _buildDetailRow(context, 'Synced to Server',
+          productsModel.isUploadedToServer == true ? 'Yes' : 'No'),
+    ];
+  }
+
+  Widget _buildDetailRow(BuildContext context, String label, String? value) {
+    return ListTile(
+      visualDensity: VisualDensity.compact,
+      contentPadding: EdgeInsets.zero,
+      horizontalTitleGap: 0.0,
+      minVerticalPadding: 0.0,
+      title: Text('$label : ',
+          style: Theme.of(context)
+              .textTheme
+              .labelMedium
+              ?.copyWith(fontWeight: FontWeight.bold)),
+      subtitle: Text(value ?? 'Not specified',
+          style: Theme.of(context)
+              .textTheme
+              .labelMedium
+              ?.copyWith(color: AppColors.cementGrey)),
     );
   }
 }

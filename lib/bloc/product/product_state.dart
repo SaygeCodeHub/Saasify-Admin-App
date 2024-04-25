@@ -24,12 +24,6 @@ class ProductsFetched extends ProductState {
   ProductsFetched({required this.categoryWiseProducts});
 }
 
-class ProductsCouldNotFetch extends ProductState {
-  final String errorMessage;
-
-  ProductsCouldNotFetch({required this.errorMessage});
-}
-
 class FetchingProducts extends ProductState {}
 
 class ProductFetched extends ProductState {

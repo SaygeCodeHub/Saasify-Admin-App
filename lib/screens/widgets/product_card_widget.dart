@@ -7,8 +7,6 @@ import 'package:saasify/configs/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:saasify/models/pos_model.dart';
 import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/screens/products/product_details_screen.dart';
-
 import '../../configs/app_spacing.dart';
 
 class ProductCardWidget extends StatelessWidget {
@@ -42,12 +40,12 @@ class ProductCardWidget extends StatelessWidget {
                           dataForCartMap);
                     }
                   } else {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProductDetailsScreen(
-                                categoryId: list[i].categoryId,
-                                productId: list[i].products[index].productId)));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => ProductDetailsScreen(
+                    //             categoryId: list[i].categoryId,
+                    //             productId: list[i].products[index].productId)));
                   }
                 },
                 child: Stack(
@@ -87,8 +85,10 @@ class ProductCardWidget extends StatelessWidget {
                         backgroundColor: Colors.white,
                         child: ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl:
-                                list[i].products[index].localImagePath.toString(),
+                            imageUrl: list[i]
+                                .products[index]
+                                .localImagePath
+                                .toString(),
                             placeholder: (context, url) => const Center(
                                 child: CircularProgressIndicator()),
                             errorWidget: (context, url, error) =>

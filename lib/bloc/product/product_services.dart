@@ -41,6 +41,13 @@ class ProductService {
     return categoryProductsMap;
   }
 
+  Future<ProductsModel> searchProductById(String productId) async {
+    final productsBox = Hive.box<ProductsModel>(HiveBoxes.products.boxName);
+    ProductsModel? product = productsBox.values
+        .firstWhere((product) => product.productId == productId);
+    return product;
+  }
+
   fetchProductsFromServerAndSave(Box<CategoriesModel> categoriesBox) async {
     List<ProductsModel> fetchedProductsList = [];
     await Future.forEach(categoriesBox.toMap().entries, (entry) async {

@@ -131,19 +131,19 @@ class ProductCardWidget extends StatelessWidget {
                         break;
                       }
                     }
-                    if (!found) {
-                      posDataList.add(PosModel(
-                          cost: variants[variantIndex].price!,
-                          name: dataForCartMap['product_name'],
-                          quantity: variants[variantIndex]
-                              .quantityAvailable
-                              .toString(),
-                          count: 1,
-                          variantCost: variants[variantIndex].price ?? 0.0,
-                          variantId: variants[variantIndex].variantId ?? '',
-                          description: dataForCartMap['description'],
-                          image: dataForCartMap['image'] ?? ''));
-                    }
+                    // if (!found) {
+                    //   posDataList.add(PosModel(
+                    //       cost: variants[variantIndex].price!,
+                    //       name: dataForCartMap['product_name'],
+                    //       quantity: variants[variantIndex]
+                    //           .quantityAvailable
+                    //           .toString(),
+                    //       count: 1,
+                    //       variantCost: variants[variantIndex].price ?? 0.0,
+                    //       variantId: variants[variantIndex].variantId ?? '',
+                    //       description: dataForCartMap['description'],
+                    //       image: dataForCartMap['image'] ?? ''));
+                    // }
                     context.read<PosBloc>().add(AddToCart(
                         posDataList: posDataList,
                         selectedVariantIndex: variantIndex));
@@ -164,11 +164,11 @@ class ProductCardWidget extends StatelessWidget {
                           style: const TextStyle(
                               color: Colors.white, fontSize: 16),
                         ),
-                        Text(
-                          '₹ ${variants[variantIndex].price.toString()}',
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 14),
-                        ),
+                        // Text(
+                        //   '₹ ${variants[variantIndex].price.toString()}',
+                        //   style: const TextStyle(
+                        //       color: Colors.white, fontSize: 14),
+                        // ),
                       ],
                     ),
                   ),

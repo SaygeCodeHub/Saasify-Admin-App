@@ -18,42 +18,44 @@ class ProductsModel {
   @HiveField(4)
   String? supplier;
   @HiveField(5)
-  int? minStockLevel;
-  @HiveField(6)
   String? description;
-  @HiveField(7)
+  @HiveField(6)
   String? localImagePath;
-  @HiveField(8)
+  @HiveField(7)
   DateTime? dateAdded;
-  @HiveField(9)
+  @HiveField(8)
   bool? isActive;
-  @HiveField(10)
+  @HiveField(9)
   String? soldBy;
-  @HiveField(11)
-  String? unit;
   List<ProductVariant>? variants;
-  @HiveField(12)
+  @HiveField(10)
   String? serverImagePath;
-  @HiveField(13)
+  @HiveField(11)
   bool? isUploadedToServer;
 
-  ProductsModel(
-      {this.productId,
-      this.name,
-      this.categoryId,
-      this.tax,
-      this.supplier,
-      this.minStockLevel,
-      this.description,
-      this.localImagePath,
-      this.dateAdded,
-      this.isActive = true,
-      this.soldBy,
-      this.unit,
-      this.variants,
-      this.serverImagePath,
-      this.isUploadedToServer});
+  // Constructor
+  ProductsModel({
+    this.productId,
+    this.name,
+    this.categoryId,
+    this.tax,
+    this.supplier,
+    this.description,
+    this.localImagePath,
+    DateTime? dateAdded,
+    bool? isActive,
+    this.soldBy,
+    this.variants,
+    this.serverImagePath,
+    bool? isUploadedToServer,
+  }) {
+    // Set default values for certain fields
+    this.dateAdded = dateAdded ?? DateTime.now();
+    this.isActive = isActive ?? true;
+    this.isUploadedToServer = isUploadedToServer ?? false;
+  }
 
+  // Factory method to create a ProductsModel from a map
   factory ProductsModel.fromMap(Map<String, dynamic> map) {
     return ProductsModel(
         productId: map['productId'],
@@ -61,23 +63,17 @@ class ProductsModel {
         categoryId: map['categoryId'],
         tax: map['tax'],
         supplier: map['supplier'],
-        minStockLevel: map['minStockLevel'],
         description: map['description'],
         localImagePath: map['localImagePath'],
         dateAdded:
             map['dateAdded'] != null ? DateTime.parse(map['dateAdded']) : null,
         isActive: map['isActive'],
         soldBy: map['soldBy'],
-        unit: map['unit'],
         serverImagePath: map['serverImagePath'],
         isUploadedToServer: map['isUploadedToServer']);
   }
 
-  @override
-  String toString() {
-    return 'ProductsModel(productId: $productId, name: $name, categoryId: $categoryId, tax: $tax, supplier: $supplier, minStockLevel: $minStockLevel, description: $description, localImagePath: $localImagePath, dateAdded: $dateAdded, isActive: $isActive, soldBy: $soldBy, unit: $unit,serverImagePath: $serverImagePath,isUploadedToServer: $isUploadedToServer, variants: $variants)';
-  }
-
+  // Convert the ProductsModel to a map
   Map<String, dynamic> toMap() {
     return {
       'productId': productId,
@@ -85,16 +81,20 @@ class ProductsModel {
       'categoryId': categoryId,
       'tax': tax,
       'supplier': supplier,
-      'minStockLevel': minStockLevel,
       'description': description,
       'localImagePath': localImagePath,
       'dateAdded': dateAdded?.toIso8601String(),
       'isActive': isActive,
       'soldBy': soldBy,
-      'unit': unit,
       'variants': variants?.map((variant) => variant.toMap()).toList(),
       'serverImagePath': serverImagePath,
-      'isUploadedToServer': isUploadedToServer
+      'isUploadedToServer': isUploadedToServer,
     };
+  }
+
+  // toString() method for debugging and logging
+  @override
+  String toString() {
+    return 'ProductsModel(productId: $productId, name: $name, categoryId: $categoryId, tax: $tax, supplier: $supplier, description: $description, localImagePath: $localImagePath, dateAdded: $dateAdded, isActive: $isActive, soldBy: $soldBy, serverImagePath: $serverImagePath, isUploadedToServer: $isUploadedToServer, variants: $variants)';
   }
 }

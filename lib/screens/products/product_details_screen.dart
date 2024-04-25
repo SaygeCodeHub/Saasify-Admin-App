@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/product/product_model.dart';
+import 'package:saasify/screens/products/variants/add_variant_screen.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
 import '../../configs/app_colors.dart';
 import '../../configs/app_dimensions.dart';
@@ -50,7 +51,14 @@ class ProductDetailsScreen extends StatelessWidget {
                     TextButton(
                         onPressed: () {}, child: const Text('Edit Product')),
                     TextButton(
-                        onPressed: () {}, child: const Text('Add Variant')),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddVariantScreen(
+                                      productsModel: productsModel)));
+                        },
+                        child: const Text('Add Variant')),
                     TextButton(
                         onPressed: () {}, child: const Text('Delete Product')),
                   ],
@@ -123,10 +131,7 @@ class ProductDetailsScreen extends StatelessWidget {
     return [
       _buildDetailRow(context, 'Tax', productsModel.tax?.toString() ?? 'N/A'),
       _buildDetailRow(context, 'Supplier', productsModel.supplier ?? 'N/A'),
-      _buildDetailRow(context, 'Minimum Stock Level',
-          productsModel.minStockLevel?.toString() ?? 'N/A'),
       _buildDetailRow(context, 'Sold By', productsModel.soldBy),
-      _buildDetailRow(context, 'Unit', productsModel.unit),
       _buildDetailRow(
           context, 'Active', productsModel.isActive == true ? 'Yes' : 'No'),
       _buildDetailRow(context, 'Product ID', productsModel.productId),

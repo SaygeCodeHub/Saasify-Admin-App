@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:saasify/bloc/category/category_event.dart';
 import 'package:saasify/bloc/category/category_services.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/models/category/categories_model.dart';
-import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/services/firebase_services.dart';
 import 'package:saasify/services/service_locator.dart';
 import 'package:saasify/utils/global.dart';
@@ -148,48 +145,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       emit(CategoriesWithProductsNotFetched(
           errorMessage: 'Error fetching categories: $e'));
     }
-  }
-
-  Future<List<ProductsModel>> fetchProductsByCategory(String categoryId) async {
-    List<ProductsModel> products = [];
-    QuerySnapshot productSnapshot =
-        await firebaseService.getProductsCollectionRef(categoryId).get();
-    for (var productDoc in productSnapshot.docs) {
-      Map<String, dynamic> productData =
-          productDoc.data() as Map<String, dynamic>;
-      ProductsModel product = ProductsModel(
-        productId: productDoc.id,
-        name: productData['name'] ?? '',
-        categoryId: productData['category'] ?? '',
-        description: productData['description'] ?? '',
-        soldBy: productData['soldBy'] ?? '',
-        unit: productData['unit'] ?? '',
-        supplier: productData['supplier'] ?? '',
-        minStockLevel: productData['minStockLevel'] ?? 0,
-        localImagePath: productData['localImagePath'] ?? '',
-      );
-      List<ProductVariant> variants = [];
-      QuerySnapshot variantSnapshot = await firebaseService
-          .getVariantsCollectionRef(categoryId, productDoc.id)
-          .where('productId', isEqualTo: productDoc.id)
-          .get();
-      for (var variantDoc in variantSnapshot.docs) {
-        Map<String, dynamic> variantData =
-            variantDoc.data() as Map<String, dynamic>;
-        ProductVariant variant = ProductVariant(
-            variantId: variantDoc.id,
-            productId: productDoc.id,
-            variantName: variantData['variantName'],
-            price: double.parse(variantData['price'].toString()),
-            cost: double.parse(variantData['price'].toString()),
-            quantityAvailable: variantData['quantityAvailable'] ?? 0,
-            isActive: true);
-        variants.add(variant);
-      }
-      product.variants = variants;
-      products.add(product);
-    }
-    return products;
   }
 
   FutureOr<void> _fetchProductForCategory(

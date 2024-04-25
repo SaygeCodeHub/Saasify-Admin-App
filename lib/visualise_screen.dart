@@ -1,13 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:saasify/models/supplier/add_supplier_model.dart';
-import 'package:saasify/utils/progress_bar.dart';
-
-import 'configs/hive_setup.dart';
 import 'enums/hive_boxes_enum.dart';
 import 'models/category/categories_model.dart';
 import 'models/couponsAndDiscounts/coupons_and_discounts.dart';
@@ -88,59 +81,32 @@ class HiveDataScreenState extends State<HiveDataScreen> {
       floatingActionButton: FloatingActionButton(
         // Using FAB for clear action
         onPressed: () async {
-          try {} catch (e) {
+          try {
+            deleteAllDataFromHive();
+          } catch (e) {
             print('An error occurred while clearing Hive boxes: $e');
           }
         },
         tooltip: 'Clear All Data',
         backgroundColor: Colors.red,
-        child: const Icon(Icons
-            .delete_forever), // Red color to indicate a potentially destructive action
+        child: const Icon(Icons.delete_forever),
       ),
     );
   }
 
-  Future<void> clearHiveAndReinitialize() async {
-    // Show the loader
-    ProgressBar.show(
-        context); // Replace YourLoaderWidget with your actual loader
+  void deleteAllDataFromHive() async {
+    final List<Box> boxesToClear = [
+      Hive.box<CategoriesModel>(HiveBoxes.categories.boxName),
+      Hive.box<ProductsModel>(HiveBoxes.products.boxName),
+    ];
 
-    try {
-      // Close all open Hive boxes
-      print('Closing all Hive boxes...');
-      await Hive.close();
-
-      // Get the application documents directory
-      final appDocumentDir = await getApplicationDocumentsDirectory();
-      final hiveDirectory = '${appDocumentDir.path}/hive';
-      final hiveDir = Directory(hiveDirectory);
-
-      // Check if the Hive directory exists
-      if (hiveDir.existsSync()) {
-        print('Deleting Hive directory at: $hiveDirectory');
-        // Delete the Hive directory and its contents
-        await hiveDir.delete(recursive: true);
-        print('Hive directory deleted successfully.');
-      } else {
-        print('Hive directory not found at: $hiveDirectory');
-      }
-
-      // Reinitialize Hive
-      print('Reinitializing Hive...');
-      await Hive.initFlutter(); // If you're using Hive for Flutter
-      print('Hive reinitialized successfully.');
-
-      // Call setupHive function to reinitialize all your boxes and data
-      print('Setting up Hive...');
-      await setupHive();
-      print('Hive setup complete.');
-    } catch (e) {
-      // Handle exceptions
-      print('An error occurred during clearHiveAndReinitialize: $e');
-    } finally {
-      // Hide the loader once the operation is complete
-      ProgressBar.dismiss(
-          context); // Replace YourLoaderWidget with your actual loader
+    for (Box box in boxesToClear) {
+      await box.clear();
     }
+    await Hive.close();
+    print('Reinitializing Hive...');
+    await Hive.initFlutter(); // If you're using Hive for Flutter
+    print('Hive reinitialized successfully.');
+    print('All data has been deleted from the specified Hive boxes.');
   }
 }

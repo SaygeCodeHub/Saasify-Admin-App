@@ -39,7 +39,6 @@ class ProductDetailsSection extends StatelessWidget {
                   Text('Category: ${products.categoryId}'),
                   Text('Description: ${products.description}'),
                   Text('Supplier: ${products.supplier}'),
-                  Text('Minimum Stock Level: ${products.minStockLevel}'),
                 ],
               )),
         ),

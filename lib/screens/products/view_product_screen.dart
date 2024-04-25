@@ -37,28 +37,28 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProductBloc, ProductState>(
-      listener: (context, state) {
-        if (state is ProductsFetched) {
-          dropdownMenuItems = state.categoryWiseProducts.entries
-              .map((entry) => DropdownMenuItem<String>(
-                    value: entry.key,
-                    child: Text(entry.key),
-                  ))
-              .toList();
-          if (dropdownMenuItems.isNotEmpty && selectedCategory == null) {
-            selectedCategory = dropdownMenuItems.first.value;
+    return SkeletonScreen(
+      appBarTitle: 'Products',
+      bottomBarButtons: const [],
+      bodyContent: BlocConsumer<ProductBloc, ProductState>(
+        listener: (context, state) {
+          if (state is ProductsFetched) {
+            dropdownMenuItems = state.categoryWiseProducts.entries
+                .map((entry) => DropdownMenuItem<String>(
+                      value: entry.key,
+                      child: Text(entry.key),
+                    ))
+                .toList();
+            if (dropdownMenuItems.isNotEmpty && selectedCategory == null) {
+              selectedCategory = dropdownMenuItems.first.value;
+            }
           }
-        }
-      },
-      builder: (context, state) {
-        if (state is FetchingProducts) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is ProductsFetched) {
-          return SkeletonScreen(
-            appBarTitle: 'Products',
-            bottomBarButtons: const [],
-            bodyContent: Column(
+        },
+        builder: (context, state) {
+          if (state is FetchingProducts) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is ProductsFetched) {
+            return Column(
               children: [
                 LabelDropdownWidget<String>(
                   label: "Category",
@@ -121,7 +121,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CircleAvatar(
-                                  backgroundColor:AppColors.lighterGrey,
+                                  backgroundColor: AppColors.lighterGrey,
                                   radius: 60,
                                   backgroundImage:
                                       FileImage(File(product.localImagePath!)),
@@ -145,15 +145,15 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                   ),
                 ),
               ],
-            ),
-          );
-        } else if (state is ProductNotFetched) {
-          return Center(
-            child: Text(state.errorMessage),
-          );
-        }
-        return const SizedBox.shrink();
-      },
+            );
+          } else if (state is ProductNotFetched) {
+            return Center(
+              child: Text(state.errorMessage),
+            );
+          }
+          return Container(color: AppColors.white);
+        },
+      ),
     );
   }
 }

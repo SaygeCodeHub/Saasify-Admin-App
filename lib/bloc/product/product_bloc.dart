@@ -34,7 +34,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   FutureOr<void> _addProduct(
       AddProduct event, Emitter<ProductState> emit) async {
     emit(AddingProduct());
-    try {
+   // try {
       event.products.productId = IDUtil.generateUUID();
       if (!await isProductPresent(event.products.name!)) {
         await _addToLocalDatabase(event.products);
@@ -46,15 +46,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           }
         }
       }
-    } catch (error) {
-      if (error is HiveError) {
-        emit(ProductNotAdded(
-            errorMessage:
-                'An error occurred while adding the product. Please try again!'));
-      } else {
-        rethrow;
-      }
-    }
+    // } catch (error) {
+    //   if (error is HiveError) {
+    //     emit(ProductNotAdded(
+    //         errorMessage:
+    //             'An error occurred while adding the product. Please try again!'));
+    //   } else {
+    //     rethrow;
+    //   }
+   // }
   }
 
   Future<void> _addToLocalDatabase(ProductsModel product) async {

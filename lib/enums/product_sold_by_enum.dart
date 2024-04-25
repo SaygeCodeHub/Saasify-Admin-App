@@ -1,6 +1,6 @@
 enum ProductSoldByEnum {
   each(soldBy: 'Each'),
-  quantity(soldBy: 'Quantity');
+  weight(soldBy: 'Weight');
 
   const ProductSoldByEnum({required this.soldBy});
 

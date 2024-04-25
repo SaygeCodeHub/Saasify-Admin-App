@@ -4,10 +4,8 @@ import 'package:saasify/bloc/category/category_bloc.dart';
 import 'package:saasify/configs/app_dimensions.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/enums/product_by_quantity_enum.dart';
 import 'package:saasify/enums/product_sold_by_enum.dart';
 import 'package:saasify/models/category/categories_model.dart';
-import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/screens/widgets/image_picker_widget.dart';
 import 'package:saasify/screens/widgets/label_and_textfield_widget.dart';
@@ -28,11 +26,10 @@ class AddProductSection extends StatefulWidget {
 
 class _AddProductSectionState extends State<AddProductSection> {
   ProductsModel products = getIt<ProductsModel>();
-  ProductVariant productVariant = getIt<ProductVariant>();
 
   @override
   Widget build(BuildContext context) {
-    products.unit = '';
+    products.soldBy = ProductSoldByEnum.each.name;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: spacingStandard),
       ImagePickerWidget(
@@ -113,75 +110,19 @@ class _AddProductSectionState extends State<AddProductSection> {
             });
           },
         ),
-        if (products.soldBy == 'Each')
-          LabelAndTextFieldWidget(
-            prefixIcon: const Icon(Icons.ad_units_outlined),
-            label: 'Quantity',
-            isRequired: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'This field is required';
-              }
-              return null;
-            },
+        LabelAndTextFieldWidget(
+            prefixIcon: const Icon(Icons.percent),
+            label: 'Tax',
             keyboardType: TextInputType.number,
             onTextFieldChanged: (String? value) {
-              productVariant.quantityAvailable = int.parse(value!);
-            },
-          ),
-        if (products.soldBy == 'Quantity')
-          LabelDropdownWidget<ProductByQuantityEnum>(
-            label: 'Select Quantity',
-            initialValue: ProductByQuantityEnum.kg,
-            items: ProductByQuantityEnum.values.map((byQuantity) {
-              return DropdownMenuItem<ProductByQuantityEnum>(
-                value: byQuantity,
-                child: Text("${byQuantity.name} "),
-              );
-            }).toList(),
-            onChanged: (ProductByQuantityEnum? newValue) {
-              setState(() {
-                productVariant.quantityAvailable =
-                    int.parse(newValue!.quantity);
-              });
-            },
-          ),
-        if (products.soldBy == 'Quantity')
-          LabelAndTextFieldWidget(
-              prefixIcon: const Icon(Icons.ad_units_outlined),
-              label: 'Quantity',
-              isRequired: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'This field is required';
-                }
-                return null;
-              },
-              keyboardType: TextInputType.number,
-              onTextFieldChanged: (String? value) {
-                productVariant.quantityAvailable = int.parse(value ?? '0');
-              }),
+              products.tax = double.parse(value ?? '0.0');
+            }),
         LabelAndTextFieldWidget(
             prefixIcon: const Icon(Icons.supervisor_account),
             label: 'Supplier',
             onTextFieldChanged: (String? value) {
               products.supplier = value;
             }),
-        if (products.soldBy == 'None')
-          LabelAndTextFieldWidget(
-              prefixIcon: const Icon(Icons.ad_units_outlined),
-              label: 'Tax',
-              keyboardType: TextInputType.number,
-              onTextFieldChanged: (String? value) {
-                products.tax = double.parse(value ?? '0.0');
-              }),
-        LabelAndTextFieldWidget(
-            prefixIcon: const Icon(Icons.local_shipping),
-            label: 'Minimum Stock Level',
-            keyboardType: TextInputType.number,
-            onTextFieldChanged: (String? value) {
-              products.minStockLevel = int.parse(value ?? '0');
-            })
       ])
     ]);
   }

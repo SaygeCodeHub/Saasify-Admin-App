@@ -20,17 +20,20 @@ class ProductVariantAdapter extends TypeAdapter<ProductVariant> {
       variantId: fields[0] as String?,
       productId: fields[1] as String?,
       variantName: fields[2] as String?,
-      price: fields[3] as double?,
-      cost: fields[4] as double?,
+      sellingPrice: fields[3] as double?,
+      purchasePrice: fields[4] as double?,
       quantityAvailable: fields[5] as int?,
       isActive: fields[6] as bool?,
+      dateAdded: fields[7] as DateTime?,
+      isUploadedToServer: fields[8] as bool?,
+      minStockLevel: fields[9] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProductVariant obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.variantId)
       ..writeByte(1)
@@ -38,13 +41,19 @@ class ProductVariantAdapter extends TypeAdapter<ProductVariant> {
       ..writeByte(2)
       ..write(obj.variantName)
       ..writeByte(3)
-      ..write(obj.price)
+      ..write(obj.sellingPrice)
       ..writeByte(4)
-      ..write(obj.cost)
+      ..write(obj.purchasePrice)
       ..writeByte(5)
       ..write(obj.quantityAvailable)
       ..writeByte(6)
-      ..write(obj.isActive);
+      ..write(obj.isActive)
+      ..writeByte(7)
+      ..write(obj.dateAdded)
+      ..writeByte(8)
+      ..write(obj.isUploadedToServer)
+      ..writeByte(9)
+      ..write(obj.minStockLevel);
   }
 
   @override

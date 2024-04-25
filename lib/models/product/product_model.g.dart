@@ -22,22 +22,20 @@ class ProductsModelAdapter extends TypeAdapter<ProductsModel> {
       categoryId: fields[2] as String?,
       tax: fields[3] as double?,
       supplier: fields[4] as String?,
-      minStockLevel: fields[5] as int?,
-      description: fields[6] as String?,
-      localImagePath: fields[7] as String?,
-      dateAdded: fields[8] as DateTime?,
-      isActive: fields[9] as bool?,
-      soldBy: fields[10] as String?,
-      unit: fields[11] as String?,
-      serverImagePath: fields[12] as String?,
-      isUploadedToServer: fields[13] as bool?,
+      description: fields[5] as String?,
+      localImagePath: fields[6] as String?,
+      dateAdded: fields[7] as DateTime?,
+      isActive: fields[8] as bool?,
+      soldBy: fields[9] as String?,
+      serverImagePath: fields[10] as String?,
+      isUploadedToServer: fields[11] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProductsModel obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.productId)
       ..writeByte(1)
@@ -49,22 +47,18 @@ class ProductsModelAdapter extends TypeAdapter<ProductsModel> {
       ..writeByte(4)
       ..write(obj.supplier)
       ..writeByte(5)
-      ..write(obj.minStockLevel)
-      ..writeByte(6)
       ..write(obj.description)
-      ..writeByte(7)
+      ..writeByte(6)
       ..write(obj.localImagePath)
-      ..writeByte(8)
+      ..writeByte(7)
       ..write(obj.dateAdded)
-      ..writeByte(9)
+      ..writeByte(8)
       ..write(obj.isActive)
-      ..writeByte(10)
+      ..writeByte(9)
       ..write(obj.soldBy)
-      ..writeByte(11)
-      ..write(obj.unit)
-      ..writeByte(12)
+      ..writeByte(10)
       ..write(obj.serverImagePath)
-      ..writeByte(13)
+      ..writeByte(11)
       ..write(obj.isUploadedToServer);
   }
 

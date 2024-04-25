@@ -34,7 +34,7 @@ class ProductVariantsSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: spacingXXSmall),
-                Text('₹ ${variants[index].price.toString()}'),
+                Text('₹ ${variants[index].sellingPrice.toString()}'),
                 Text('Stock: ${variants[index].quantityAvailable.toString()}')
               ],
             ),

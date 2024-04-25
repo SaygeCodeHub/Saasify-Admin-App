@@ -7,11 +7,14 @@ import 'package:saasify/screens/products/variants/add_variant_screen.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
 import '../../configs/app_colors.dart';
 import '../../configs/app_dimensions.dart';
+import '../../models/product/product_variant.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final ProductsModel productsModel;
+  final List<ProductVariant> variants;
 
-  const ProductDetailsScreen({super.key, required this.productsModel});
+  const ProductDetailsScreen(
+      {super.key, required this.productsModel, required this.variants});
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +116,41 @@ class ProductDetailsScreen extends StatelessWidget {
                             children: _buildDetailList(context),
                           ),
                         ),
-                        const Icon(Icons.settings,
-                            size: 10, color: AppColors.darkBlue),
+                        SingleChildScrollView(
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: variants.length,
+                              itemBuilder: (context, index) {
+                                return (variants.isEmpty)
+                                    ? const Text('No Variants')
+                                    : ListTile(
+                                        visualDensity: VisualDensity.compact,
+                                        contentPadding: EdgeInsets.zero,
+                                        horizontalTitleGap: 0.0,
+                                        minVerticalPadding: 0.0,
+                                        title: Text(
+                                            variants[index]
+                                                .variantName
+                                                .toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium
+                                                ?.copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                        subtitle: Text(
+                                            variants[index]
+                                                .sellingPrice
+                                                .toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium
+                                                ?.copyWith(
+                                                    color:
+                                                        AppColors.cementGrey)),
+                                      );
+                              }),
+                        ),
                       ],
                     ),
                   ),

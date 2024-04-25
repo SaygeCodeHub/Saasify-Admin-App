@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/supplier/add_supplier_model.dart';
 import 'enums/hive_boxes_enum.dart';
 import 'models/category/categories_model.dart';
@@ -25,6 +26,7 @@ class HiveDataScreenState extends State<HiveDataScreen> {
       HiveBoxes.customers.boxName,
       HiveBoxes.suppliers.boxName,
       HiveBoxes.coupons.boxName,
+      HiveBoxes.productVariants.boxName
     ]) {
       await Hive.box(boxName).clear();
     }
@@ -41,6 +43,8 @@ class HiveDataScreenState extends State<HiveDataScreen> {
       'customers': Hive.box<AddCustomerModel>(HiveBoxes.customers.boxName),
       'suppliers': Hive.box<AddSupplierModel>(HiveBoxes.suppliers.boxName),
       'coupons': Hive.box<CouponsAndDiscountsModel>(HiveBoxes.coupons.boxName),
+      'productVariants':
+          Hive.box<ProductVariant>(HiveBoxes.productVariants.boxName),
     };
 
     return Scaffold(

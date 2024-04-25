@@ -35,7 +35,7 @@ class ProductVariantsSection extends StatelessWidget {
               children: [
                 const SizedBox(height: spacingXXSmall),
                 Text('₹ ${variants[index].sellingPrice.toString()}'),
-                Text('Stock: ${variants[index].quantityAvailable.toString()}')
+                Text('Stock: ${variants[index].quantity.toString()}')
               ],
             ),
           ),

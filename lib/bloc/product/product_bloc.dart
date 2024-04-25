@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/product/product_event.dart';
@@ -34,10 +32,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   FutureOr<void> _addProduct(
       AddProduct event, Emitter<ProductState> emit) async {
     emit(AddingProduct());
-   // try {
+    try {
       event.products.productId = IDUtil.generateUUID();
       if (!await isProductPresent(event.products.name!)) {
-        await _addToLocalDatabase(event.products);
+        await _addProductToLocalDatabase(event.products);
         emit(ProductAdded(successMessage: 'Product added successfully'));
         if (kIsCloudVersion) {
           bool isUploadedToCloud = await _addProductToCloud(5, event.products);
@@ -46,18 +44,18 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           }
         }
       }
-    // } catch (error) {
-    //   if (error is HiveError) {
-    //     emit(ProductNotAdded(
-    //         errorMessage:
-    //             'An error occurred while adding the product. Please try again!'));
-    //   } else {
-    //     rethrow;
-    //   }
-   // }
+    } catch (error) {
+      if (error is HiveError) {
+        emit(ProductNotAdded(
+            errorMessage:
+                'An error occurred while adding the product. Please try again!'));
+      } else {
+        rethrow;
+      }
+    }
   }
 
-  Future<void> _addToLocalDatabase(ProductsModel product) async {
+  Future<void> _addProductToLocalDatabase(ProductsModel product) async {
     await safeHiveOperation(HiveBoxService.productsBox, (box) async {
       await box.put(product.productId, product);
     });
@@ -148,18 +146,94 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       AddVariant event, Emitter<ProductState> emit) async {
     try {
       emit(AddingVariant());
-      DocumentReference variantRef = await firebaseService
-          .getVariantsCollectionRef(
-              event.categoryId, productVariant.productId.toString())
-          .add(productVariant.toMap());
-      if (variantRef.id.isEmpty) {
-        emit(VariantNotAdded(errorMessage: 'Could not add Variant'));
+      productVariant.productId = event.productsModel.productId;
+      productVariant.serverImagePath = event.productsModel.serverImagePath;
+      productVariant.localImagePath = event.productsModel.localImagePath;
+      event.productVariant.variantId = IDUtil.generateUUID();
+      final bool isVariantExists =
+          await isVariantPresent(event.productVariant.variantName!);
+      if (!isVariantExists) {
+        await _addVariantToLocalDatabase(event.productVariant);
+        emit(VariantAdded(successMessage: 'Variant added successfully'));
+        if (kIsCloudVersion) {
+          bool isUploadedToCloud = await _addVariantToCloud(
+              5, event.productVariant, event.productsModel);
+          if (isUploadedToCloud) {
+            await _updateVariantLocalAndRemoteFlags(
+                event.productVariant, event.productsModel);
+          }
+        }
       } else {
-        emit(VariantAdded(successMessage: 'Variant added successfully.'));
+        emit(VariantNotAdded(errorMessage: 'Variant already exists.'));
       }
     } catch (e) {
       emit(VariantNotAdded(
           errorMessage: 'Could not add variant: ${e.toString()}'));
     }
+  }
+
+  Future<void> _addVariantToLocalDatabase(ProductVariant productVariant) async {
+    await safeHiveOperation(HiveBoxService.productVariantBox, (box) async {
+      await box.put(productVariant.variantId, productVariant);
+    });
+  }
+
+  Future<bool> isVariantPresent(String variantName) async {
+    final box = HiveBoxService.productVariantBox;
+    return box.values.any((variant) => variant.variantName == variantName);
+  }
+
+  Future<bool> _addVariantToCloud(int maxRetries, ProductVariant productVariant,
+      ProductsModel productsModel) async {
+    int attempt = 0;
+    while (attempt < maxRetries) {
+      try {
+        final productDocRef = firebaseService.getProductDocRef(
+            productsModel.categoryId!, productsModel.productId!);
+        final productDocSnapshot = await productDocRef.get();
+
+        if (!productDocSnapshot.exists) {
+          await productDocRef.set(productsModel.toMap());
+        }
+
+        final variantRef = firebaseService
+            .getVariantsCollectionRef(
+                productsModel.categoryId!, productsModel.productId!)
+            .doc(productVariant.variantId);
+        await variantRef.set(productVariant.toMap());
+
+        if (HiveBoxService.productVariantBox.isOpen) {
+          await safeHiveOperation(HiveBoxService.productVariantBox,
+              (box) async {
+            await box.put(productVariant.variantId, productVariant);
+          });
+        }
+        return true;
+      } catch (e) {
+        if (attempt >= maxRetries - 1) rethrow;
+        attempt++;
+        await Future.delayed(const Duration(seconds: 5));
+      }
+    }
+    return false;
+  }
+
+  Future<void> _updateVariantLocalAndRemoteFlags(
+      ProductVariant productVariant, ProductsModel productsModel) async {
+    final productReference = firebaseService.getVariantsCollectionRef(
+      productsModel.categoryId!,
+      productVariant.productId!,
+    );
+    await productReference
+        .doc(productVariant.variantId)
+        .update({'isUploadedToServer': true});
+    if (!HiveBoxService.productVariantBox.isOpen) {
+      throw Exception(
+          'Hive box is not open. Ensure that Hive is initialized and the box is open.');
+    }
+    productVariant.isUploadedToServer = true;
+    await safeHiveOperation(HiveBoxService.productVariantBox, (box) async {
+      await box.put(productVariant.variantId, productVariant);
+    });
   }
 }

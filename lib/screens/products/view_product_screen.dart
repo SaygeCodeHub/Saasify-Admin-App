@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_theme.dart';
+import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/screens/products/product_details_screen.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
 import '../../bloc/product/product_event.dart';
@@ -93,6 +94,11 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                             ProductService productService = ProductService();
                             ProductsModel productsModel = await productService
                                 .searchProductById(product.productId!);
+                            List<ProductVariant> variants = await productService
+                                .searchProductVariantsByProductId(
+                                    product.productId!);
+
+                            print('variatnntnntntn   ${variants.toString()}');
                             if (!context.mounted) {
                               return;
                             }
@@ -100,7 +106,8 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ProductDetailsScreen(
-                                      productsModel: productsModel)),
+                                      productsModel: productsModel,
+                                      variants: variants)),
                             );
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(

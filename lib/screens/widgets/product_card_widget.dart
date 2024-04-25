@@ -160,7 +160,7 @@ class ProductCardWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          variants[variantIndex].quantityAvailable.toString(),
+                          variants[variantIndex].quantity.toString(),
                           style: const TextStyle(
                               color: Colors.white, fontSize: 16),
                         ),

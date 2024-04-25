@@ -1,17 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:saasify/bloc/product/product_bloc.dart';
+import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/screens/widgets/buttons/primary_button.dart';
+import 'package:saasify/models/product/product_variant.dart';
+import 'package:saasify/screens/products/view_product_screen.dart';
+import 'package:saasify/utils/progress_bar.dart';
 
 import '../../../configs/app_colors.dart';
 import '../../../configs/app_dimensions.dart';
 import '../../../configs/app_spacing.dart';
 import '../../../enums/product_by_quantity_enum.dart';
 import '../../../models/product/product_model.dart';
+import '../../../services/service_locator.dart';
 import '../../widgets/label_and_textfield_widget.dart';
 import '../../widgets/label_dropdown_widget.dart';
 import '../../widgets/skeleton_screen.dart';
+import 'add_variant_button.dart';
 
 class AddVariantScreen extends StatefulWidget {
   final ProductsModel productsModel;
@@ -23,9 +30,10 @@ class AddVariantScreen extends StatefulWidget {
 }
 
 class _AddVariantScreenState extends State<AddVariantScreen> {
+  ProductVariant productVariant = getIt<ProductVariant>();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -86,7 +94,9 @@ class _AddVariantScreenState extends State<AddVariantScreen> {
                                 return null;
                               },
                               keyboardType: TextInputType.text,
-                              onTextFieldChanged: (String? value) {})
+                              onTextFieldChanged: (String? value) {
+                                productVariant.variantName = value!;
+                              })
                           : const SizedBox(),
                       const SizedBox(height: spacingSmall),
                       (widget.productsModel.soldBy == 'Each')
@@ -94,9 +104,12 @@ class _AddVariantScreenState extends State<AddVariantScreen> {
                               prefixIcon: const Icon(Icons.ac_unit),
                               label: 'Quantity',
                               keyboardType: TextInputType.number,
-                              onTextFieldChanged: (String? value) {})
+                              onTextFieldChanged: (String? value) {
+                                productVariant.quantity =
+                                    int.parse(value ?? '0');
+                              })
                           : LabelDropdownWidget<ProductByQuantityEnum>(
-                              label: 'Select Quantity',
+                              label: 'Select Weight',
                               initialValue: ProductByQuantityEnum.kg,
                               items: ProductByQuantityEnum.values
                                   .map((byQuantity) {
@@ -106,13 +119,15 @@ class _AddVariantScreenState extends State<AddVariantScreen> {
                                 );
                               }).toList(),
                               onChanged: (ProductByQuantityEnum? newValue) {
-                                setState(() {});
+                                setState(() {
+                                  productVariant.weight = newValue!.quantity;
+                                });
                               },
                             ),
                       const SizedBox(height: spacingSmall),
                       LabelAndTextFieldWidget(
                           prefixIcon: const Icon(Icons.price_change_rounded),
-                          label: 'Price',
+                          label: 'Selling Price',
                           isRequired: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -121,14 +136,33 @@ class _AddVariantScreenState extends State<AddVariantScreen> {
                             return null;
                           },
                           keyboardType: TextInputType.number,
-                          onTextFieldChanged: (String? value) {}),
+                          onTextFieldChanged: (String? value) {
+                            productVariant.sellingPrice =
+                                double.parse(value ?? '0');
+                          }),
+                      const SizedBox(height: spacingSmall),
+                      LabelAndTextFieldWidget(
+                          prefixIcon: const Icon(Icons.price_change_rounded),
+                          label: 'Purchase Price',
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'This field is required';
+                            }
+                            return null;
+                          },
+                          keyboardType: TextInputType.number,
+                          onTextFieldChanged: (String? value) {
+                            productVariant.purchasePrice =
+                                double.parse(value ?? '0.00');
+                          }),
                       const SizedBox(height: spacingSmall),
                       LabelAndTextFieldWidget(
                           prefixIcon: const Icon(Icons.local_shipping),
                           label: 'Minimum Stock Level',
                           keyboardType: TextInputType.number,
                           onTextFieldChanged: (String? value) {
-                            //   products.minStockLevel = int.parse(value ?? '0');
+                            productVariant.minStockLevel = int.tryParse(value!);
                           })
                     ],
                   ),
@@ -139,7 +173,23 @@ class _AddVariantScreenState extends State<AddVariantScreen> {
         ),
       ),
       bottomBarButtons: [
-        PrimaryButton(onPressed: () {}, buttonTitle: 'Add Variant')
+        BlocListener<ProductBloc, ProductState>(
+            listener: (context, state) {
+              if (state is AddingVariant) {
+                ProgressBar.show(context);
+              }
+              if (state is VariantAdded) {
+                ProgressBar.dismiss(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AllProductsScreen()));
+              }
+              if (state is VariantNotAdded) {
+                ProgressBar.dismiss(context);
+              }
+            },
+            child: AddVariantButton(productsModel: widget.productsModel))
       ],
     );
   }

@@ -29,7 +29,7 @@ class _AddProductSectionState extends State<AddProductSection> {
 
   @override
   Widget build(BuildContext context) {
-    products.soldBy = ProductSoldByEnum.each.name;
+    products.soldBy = ProductSoldByEnum.each.soldBy;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: spacingStandard),
       ImagePickerWidget(

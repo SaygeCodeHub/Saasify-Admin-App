@@ -27,6 +27,7 @@ Future<void> setupHive() async {
     Hive.openBox<UserDetails>('userDetails'),
     Hive.openBox<CategoriesModel>(HiveBoxes.categories.boxName),
     Hive.openBox<ProductsModel>(HiveBoxes.products.boxName),
+    Hive.openBox<ProductVariant>(HiveBoxes.productVariants.boxName),
     Hive.openBox<Map<String, dynamic>>('cartData'),
     Hive.openBox<AddCustomerModel>(HiveBoxes.customers.boxName),
     Hive.openBox<AddSupplierModel>(HiveBoxes.suppliers.boxName),

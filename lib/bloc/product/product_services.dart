@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:saasify/models/product/product_variant.dart';
 
 import '../../enums/hive_boxes_enum.dart';
 import '../../models/category/categories_model.dart';
@@ -46,6 +47,18 @@ class ProductService {
     ProductsModel? product = productsBox.values
         .firstWhere((product) => product.productId == productId);
     return product;
+  }
+
+  Future<List<ProductVariant>> searchProductVariantsByProductId(
+      String productId) async {
+    final productVariantBox =
+        Hive.box<ProductVariant>(HiveBoxes.productVariants.boxName);
+
+    List<ProductVariant> variants = productVariantBox.values
+        .where((variant) => variant.productId == productId)
+        .toList();
+
+    return variants;
   }
 
   fetchProductsFromServerAndSave(Box<CategoriesModel> categoriesBox) async {

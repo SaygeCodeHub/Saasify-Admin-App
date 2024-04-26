@@ -8,6 +8,7 @@ import 'package:saasify/bloc/companies/companies_bloc.dart';
 import 'package:saasify/bloc/couponsAndDiscounts/coupons_and_discounts_bloc.dart';
 import 'package:saasify/bloc/customers/customer_bloc.dart';
 import 'package:saasify/bloc/home/home_bloc.dart';
+import 'package:saasify/bloc/home/home_events.dart';
 import 'package:saasify/bloc/imagePicker/image_picker_bloc.dart';
 import 'package:saasify/bloc/orders/orders_bloc.dart';
 import 'package:saasify/bloc/pos/pos_bloc.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
               lazy: false,
               create: (context) =>
                   AuthenticationBloc()..add(CheckActiveSession())),
-          BlocProvider(lazy: false, create: (context) => HomeBloc()),
+          BlocProvider(lazy: false, create: (context) => HomeBloc()..add(SyncToServer())),
           BlocProvider(lazy: false, create: (context) => CategoryBloc()),
           BlocProvider(lazy: false, create: (context) => ProductBloc()),
           BlocProvider(lazy: false, create: (context) => CompaniesBloc()),

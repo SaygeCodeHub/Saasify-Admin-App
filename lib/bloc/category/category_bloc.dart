@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:saasify/bloc/category/category_event.dart';
-import 'package:saasify/bloc/category/category_services.dart';
 import 'package:saasify/bloc/category/category_state.dart';
 import 'package:saasify/models/category/categories_model.dart';
 import 'package:saasify/services/firebase_services.dart';
@@ -138,8 +137,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       if (categories.isNotEmpty) {
         emit(CategoriesWithProductsFetched(categories: categories));
       } else {
-        await CategoryService().fetchAndStoreCategoriesFromFirestore(
-            emit: emit, fromCategory: true);
+        emit(CategoriesWithProductsNotFetched(
+            errorMessage: 'Something went wrong'));
       }
     } catch (e) {
       emit(CategoriesWithProductsNotFetched(

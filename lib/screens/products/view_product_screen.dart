@@ -5,15 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/screens/products/product_details_screen.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
 import '../../bloc/product/product_event.dart';
-import '../../bloc/product/product_services.dart';
 import '../../configs/app_colors.dart';
 import '../../configs/app_dimensions.dart';
 import '../../configs/app_spacing.dart';
 import '../../models/product/product_model.dart';
+import '../../models/product/product_variant.dart';
+import '../../services/server_data_services.dart';
 import '../../utils/device_util.dart';
 import '../widgets/label_dropdown_widget.dart';
 
@@ -91,10 +91,11 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                       return InkWell(
                         onTap: () async {
                           try {
-                            ProductService productService = ProductService();
-                            ProductsModel productsModel = await productService
+                            ServerDataServices serviceDataServices =
+                                ServerDataServices();
+                            ProductsModel productsModel = await serviceDataServices
                                 .searchProductById(product.productId!);
-                            List<ProductVariant> variants = await productService
+                            List<ProductVariant> variants = await serviceDataServices
                                 .searchProductVariantsByProductId(
                                     product.productId!);
 

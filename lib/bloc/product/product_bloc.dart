@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:saasify/bloc/product/product_event.dart';
-import 'package:saasify/bloc/product/product_services.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/models/product/product_variant.dart';
 import 'package:saasify/models/product/product_model.dart';
@@ -16,7 +15,6 @@ import 'package:saasify/utils/unique_id.dart';
 import '../../enums/hive_boxes_enum.dart';
 import '../../models/category/categories_model.dart';
 import '../../services/safe_hive_operations.dart';
-import '../category/category_services.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductState get initialState => ProductInitial();
@@ -123,20 +121,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final categoriesBox =
           Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
       final productsBox = Hive.box<ProductsModel>(HiveBoxes.products.boxName);
-      if (await ProductService().checkIfCategoryExists()) {
-        if (await ProductService().checkIfProductExists()) {
-          Map<String, List<ProductsModel>> categoryProductsMap =
-              await ProductService()
-                  .fetchDataFromHive(categoriesBox, productsBox);
-          emit(ProductsFetched(categoryWiseProducts: categoryProductsMap));
-        } else {
-          ProductService().fetchProductsFromServerAndSave(categoriesBox);
+      Map<String, List<ProductsModel>> categoryProductsMap = {};
+      for (var category in categoriesBox.values) {
+        List<ProductsModel> products = productsBox.values
+            .where((product) => product.categoryId == category.categoryId)
+            .toList();
+        if (products.isNotEmpty) {
+          categoryProductsMap[category.name!] = products;
         }
-      } else {
-        await CategoryService()
-            .fetchAndStoreCategoriesFromFirestore(fromCategory: false);
-        add(FetchProducts());
       }
+      emit(ProductsFetched(categoryWiseProducts: categoryProductsMap));
     } catch (e) {
       emit(ProductNotFetched(errorMessage: e.toString()));
     }

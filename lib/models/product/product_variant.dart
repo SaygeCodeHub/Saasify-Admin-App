@@ -1,9 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../configs/hive_type_ids.dart';
-
 part 'product_variant.g.dart';
 
-@HiveType(typeId: HiveTypeIds.productVariants)
 class ProductVariant {
   @HiveField(0)
   late String? variantId; // Variant ID
@@ -33,20 +30,21 @@ class ProductVariant {
   late String? serverImagePath; // Server Image Path
 
   // Constructor with default values
-  ProductVariant(
-      {this.variantId = '',
-      this.productId = '',
-      this.variantName = '',
-      this.sellingPrice = 0.0,
-      this.purchasePrice = 0.0,
-      this.quantity = 0,
-      this.isActive = true,
-      DateTime? dateAdded,
-      this.isUploadedToServer = false,
-      this.minStockLevel = 0,
-      this.localImagePath = '',
-      this.serverImagePath = '',
-      this.weight = ''}) {
+  ProductVariant({
+    this.variantId = '',
+    this.productId = '',
+    this.variantName = '',
+    this.sellingPrice = 0.0,
+    this.purchasePrice = 0.0,
+    this.quantity = 0,
+    this.isActive = true,
+    DateTime? dateAdded,
+    this.isUploadedToServer = false,
+    this.minStockLevel = 0,
+    this.localImagePath = '',
+    this.serverImagePath = '',
+    this.weight = '',
+  }) {
     this.dateAdded = dateAdded ?? DateTime.now();
   }
 
@@ -65,8 +63,28 @@ class ProductVariant {
       'minStockLevel': minStockLevel,
       'weight': weight,
       'localImagePath': localImagePath,
-      'serverImagePath': serverImagePath
+      'serverImagePath': serverImagePath,
     };
+  }
+
+  // Convert a map to a ProductVariant instance
+  static ProductVariant fromMap(Map<String, dynamic> map) {
+    return ProductVariant(
+      variantId: map['variantId'] as String?,
+      productId: map['productId'] as String?,
+      variantName: map['variantName'] as String?,
+      sellingPrice: map['sellingPrice'] as double?,
+      purchasePrice: map['purchasePrice'] as double?,
+      quantity: map['quantity'] as int?,
+      isActive: map['isActive'] as bool?,
+      dateAdded:
+          map['dateAdded'] != null ? DateTime.parse(map['dateAdded']) : null,
+      isUploadedToServer: map['isUploadedToServer'] as bool?,
+      minStockLevel: map['minStockLevel'] as int?,
+      weight: map['weight'] as String?,
+      localImagePath: map['localImagePath'] as String?,
+      serverImagePath: map['serverImagePath'] as String?,
+    );
   }
 
   @override

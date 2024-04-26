@@ -8,6 +8,7 @@ import 'package:saasify/cache/company_cache.dart';
 import 'package:saasify/enums/firestore_collections_enum.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../cache/user_cache.dart';
+import '../../enums/currency_enum.dart';
 import '../../services/firebase_services.dart';
 import '../../services/service_locator.dart';
 
@@ -138,9 +139,16 @@ class AuthenticationBloc
         .doc(user.uid)
         .collection(FirestoreCollection.companies.collectionName)
         .get();
-
     for (var item in companyRef.docs) {
+      Map<String, dynamic> companyData = item.data() as Map<String, dynamic>;
       await CompanyCache.setCompanyId(item.id);
+      await CompanyCache.setCurrency(companyData['currency']);
+      await CompanyCache.setCompanyGstNo(companyData['einNumber']);
+      await CompanyCache.setCompanyLicenseNo(companyData['licenseNo']);
+      await CompanyCache.setCompanyLogoUrl(companyData['logoUrl']);
+      await CompanyCache.setIndustry(companyData['industryName']);
+      await CompanyCache.setUserAddress(companyData['address']);
+      await saveCompanyCurrencySymbol(companyData['currency']);
     }
 
     await UserCache.setUserLoggedIn(true);
@@ -148,6 +156,25 @@ class AuthenticationBloc
     await UserCache.setUsername(userName);
     await UserCache.setUserEmail(user.email ?? '');
     await UserCache.setUserCreatedAt(DateTime.now());
+  }
+
+  Future<void> saveCompanyCurrencySymbol(currencySelected) async {
+    String currency;
+    switch (currencySelected) {
+      case 'EUR':
+        currency = Currency.euro.symbol;
+        break;
+      case 'INR':
+        currency = Currency.indianRupee.symbol;
+        break;
+      case 'USD':
+        currency = Currency.usDollar.symbol;
+        break;
+      default:
+        currency = Currency.indianRupee.symbol;
+        break;
+    }
+    await CompanyCache.setCurrencySymbol(currency);
   }
 
   String _handleFirebaseAuthError(FirebaseAuthException e) {

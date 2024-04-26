@@ -11,7 +11,9 @@ import 'package:saasify/screens/home/widgets/open_tabs_widget.dart';
 import 'package:saasify/screens/home/widgets/settings_widget.dart';
 import 'package:saasify/screens/home/widgets/user_avatar_widget.dart';
 import 'package:saasify/utils/device_util.dart';
+import '../../cache/company_cache.dart';
 import '../../utils/feature_list.dart';
+import '../../utils/global.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = 'HomeScreen';
@@ -27,7 +29,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     context.read<HomeBloc>().add(InitializeHomeScreen());
+    readCurrencySymbol();
     super.initState();
+  }
+
+  Future<String> readCurrencySymbol() async {
+    currencySymbol = (await CompanyCache.getCurrency())!;
+    return currencySymbol;
   }
 
   @override

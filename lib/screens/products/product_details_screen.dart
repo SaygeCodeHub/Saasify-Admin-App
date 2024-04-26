@@ -1,13 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:saasify/cache/company_cache.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
+import 'package:saasify/models/companies/company.dart';
 import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/screens/products/variants/add_variant_screen.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../configs/app_colors.dart';
 import '../../configs/app_dimensions.dart';
 import '../../models/product/product_variant.dart';
+import '../../services/service_locator.dart';
+import '../../utils/global.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final ProductsModel productsModel;
@@ -101,7 +106,10 @@ class ProductDetailsScreen extends StatelessWidget {
                     labelStyle: Theme.of(context)
                         .textTheme
                         .labelTextStyle
-                        .copyWith(fontWeight: FontWeight.w100, fontSize: 14),
+                        .copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: AppColors.blue),
                     tabs: const [
                       Tab(text: 'Details'),
                       Tab(text: 'Variants'),
@@ -128,24 +136,27 @@ class ProductDetailsScreen extends StatelessWidget {
                                         contentPadding: EdgeInsets.zero,
                                         horizontalTitleGap: 0.0,
                                         minVerticalPadding: 0.0,
+                                        leading: Image.file(
+                                            File(productsModel.localImagePath!),
+                                            width: 100,
+                                            height: 100),
                                         title: Text(
                                             variants[index]
                                                 .variantName
                                                 .toString(),
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .labelMedium
-                                                ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                .labelTextStyle
+                                                .copyWith(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 15)),
                                         subtitle: Text(
-                                            variants[index]
-                                                .sellingPrice
-                                                .toString(),
+                                            '$currencySymbol ${variants[index].sellingPrice.toString()}',
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .labelMedium
-                                                ?.copyWith(
+                                                .labelTextStyle
+                                                .copyWith(
+                                                    fontSize: 13,
                                                     color:
                                                         AppColors.cementGrey)),
                                       );

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
@@ -127,34 +128,61 @@ class ProductDetailsScreen extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 return (variants.isEmpty)
                                     ? const Text('No Variants')
-                                    : ListTile(
-                                        visualDensity: VisualDensity.compact,
-                                        contentPadding: EdgeInsets.zero,
-                                        horizontalTitleGap: 0.0,
-                                        minVerticalPadding: 0.0,
-                                        leading: Image.file(
-                                            File(productsModel.localImagePath!),
-                                            width: 100,
-                                            height: 100),
-                                        title: Text(
-                                            variants[index]
-                                                .variantName
-                                                .toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelTextStyle
-                                                .copyWith(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 15)),
-                                        subtitle: Text(
-                                            '$currencySymbol ${variants[index].sellingPrice.toString()}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelTextStyle
-                                                .copyWith(
-                                                    fontSize: 13,
-                                                    color:
-                                                        AppColors.cementGrey)),
+                                    : Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(
+                                                spacingMedium),
+                                            child: CircleAvatar(
+                                              backgroundColor:
+                                                  AppColors.lighterGrey,
+                                              radius: 30,
+                                              backgroundImage: FileImage(File(
+                                                  productsModel
+                                                      .localImagePath!)),
+                                              onBackgroundImageError: (_, __) =>
+                                                  const AssetImage(
+                                                      'assets/no_image.jpeg'),
+                                            ),
+                                          ),
+                                          const SizedBox(width: spacingMedium),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                    variants[index]
+                                                        .variantName
+                                                        .toString(),
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelTextStyle
+                                                        .copyWith(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 15)),
+                                                const SizedBox(
+                                                    height: spacingSmall),
+                                                Text(
+                                                    '$currencySymbol ${variants[index].sellingPrice.toString()}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelTextStyle
+                                                        .copyWith(
+                                                            fontSize: 13,
+                                                            color: AppColors
+                                                                .cementGrey)),
+                                              ],
+                                            ),
+                                          )
+                                        ],
                                       );
                               }),
                         ),

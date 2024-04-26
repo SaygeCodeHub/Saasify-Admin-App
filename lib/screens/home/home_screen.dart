@@ -26,6 +26,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<NavigatorState> dialogNavigatorKey =
+      GlobalKey<NavigatorState>();
+
   @override
   void initState() {
     context.read<HomeBloc>().add(SyncToServer());
@@ -40,14 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocConsumer<HomeBloc, HomeState>(listener: (context, state) {
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {
         if (state is SyncingToServer) {
           showDialog(
             barrierDismissible: false,
             context: context,
-            builder: (BuildContext context) {
+            builder: (BuildContext dialogContext) {
               return AlertDialog(
+                key: dialogNavigatorKey,
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -64,10 +68,12 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           );
-        } else if (state is SyncedWithServer) {
-          Navigator.of(context).pop();
         }
-      }, builder: (context, state) {
+        if (state is SyncedWithServer || state is SyncingFailed) {
+          Navigator.canPop(context);
+        }
+      },
+      builder: (context, state) {
         return Scaffold(
           body: SingleChildScrollView(
             child: Padding(
@@ -165,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         );
-      }),
+      },
     );
   }
 }

@@ -52,7 +52,6 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
 
   fetchProductAndVariants(Emitter<HomeState> emit) async {
     await serverDataServices.fetchAndStoreProductsFromServer();
-    await serverDataServices.fetchAndStoreProductsFromServer();
     await serverDataServices
         .fetchAndStoreVariantsFromServer()
         .whenComplete(() => emit(SyncedWithServer()));

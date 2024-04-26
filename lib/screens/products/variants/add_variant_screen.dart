@@ -106,7 +106,7 @@ class _AddVariantScreenState extends State<AddVariantScreen> {
                               keyboardType: TextInputType.number,
                               onTextFieldChanged: (String? value) {
                                 productVariant.quantity =
-                                    int.parse(value ?? '0');
+                                    int.tryParse(value ?? '0');
                               })
                           : LabelDropdownWidget<ProductByQuantityEnum>(
                               label: 'Select Weight',

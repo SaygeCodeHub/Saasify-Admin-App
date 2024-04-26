@@ -41,130 +41,131 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<HomeBloc, HomeState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            if (state is SyncingToServer) {
-              return Container(
-                  color: AppColors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset('assets/syncing.gif', fit: BoxFit.cover),
-                      const Text(
-                          'Getting things ready for you, this might take a while!',
+      body: BlocConsumer<HomeBloc, HomeState>(listener: (context, state) {
+        if (state is SyncingToServer) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/syncing.gif', fit: BoxFit.cover),
+                    const Text(
+                        'Getting things ready for you, this might take a while!',
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center)
+                  ],
+                ),
+              );
+            },
+          );
+        } else if (state is SyncedWithServer) {
+          Navigator.of(context).pop();
+        }
+      }, builder: (context, state) {
+        return Scaffold(
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(spacingXXSmall),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: spacingStandard),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            UserAvatarWidget(userName: widget.userName),
+                            const Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SettingsScreen(),
+                                LogOutWidget(),
+                              ],
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: spacingLarge),
+                        const Text(
+                          "Today's Collection", // New text
                           style: TextStyle(
                               fontSize: 13,
                               color: Colors.grey,
                               fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center)
-                    ],
-                  ));
-            } else {
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(spacingXXSmall),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: spacingStandard),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                UserAvatarWidget(userName: widget.userName),
-                                const Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SettingsScreen(),
-                                    LogOutWidget(),
-                                  ],
-                                )
-                              ],
-                            ),
-                            const SizedBox(height: spacingLarge),
-                            const Text(
-                              "Today's Collection", // New text
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            const Text(
-                              'Rs. 1234.00',
-                              style: TextStyle(
-                                  fontSize: 35,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.black),
-                            ),
-                          ],
                         ),
-                      ),
-                      const Divider(),
-                      const Padding(
-                        padding: EdgeInsets.all(spacingMedium), // Add padding
-                        child: Text(
-                          'Open Tabs', // New text
+                        const Text(
+                          'Rs. 1234.00',
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.black),
                         ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(spacingMedium),
-                        child: OpenTabsWidget(),
-                      ),
-                      const SizedBox(height: spacingLarge),
-                      const Padding(
-                        padding: EdgeInsets.all(spacingMedium),
-                        child: Text(
-                          'Here are some things that you can do',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.all(spacingSmall),
-                          itemCount: features.length,
-                          gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: DeviceUtils.isMobile(context)
-                                  ? 2
-                                  : MediaQuery.of(context).size.width ~/
-                                  180,
-                              childAspectRatio:
-                              DeviceUtils.isMobile(context)
-                                  ? 1.25
-                                  : 1.1,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10),
-                          itemBuilder: (context, index) {
-                            return FeatureCardWidget(
-                              icon: features[index].icon,
-                              label: features[index].label,
-                              screen: features[index].screen,
-                            );
-                          })
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }
-          }),
+                  const Divider(),
+                  const Padding(
+                    padding: EdgeInsets.all(spacingMedium), // Add padding
+                    child: Text(
+                      'Open Tabs', // New text
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(spacingMedium),
+                    child: OpenTabsWidget(),
+                  ),
+                  const SizedBox(height: spacingLarge),
+                  const Padding(
+                    padding: EdgeInsets.all(spacingMedium),
+                    child: Text(
+                      'Here are some things that you can do',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(spacingSmall),
+                      itemCount: features.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: DeviceUtils.isMobile(context)
+                              ? 2
+                              : MediaQuery.of(context).size.width ~/ 180,
+                          childAspectRatio:
+                              DeviceUtils.isMobile(context) ? 1.25 : 1.1,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10),
+                      itemBuilder: (context, index) {
+                        return FeatureCardWidget(
+                          icon: features[index].icon,
+                          label: features[index].label,
+                          screen: features[index].screen,
+                        );
+                      })
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }
-

@@ -93,13 +93,13 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                           try {
                             ServerDataServices serviceDataServices =
                                 ServerDataServices();
-                            ProductsModel productsModel = await serviceDataServices
-                                .searchProductById(product.productId!);
-                            List<ProductVariant> variants = await serviceDataServices
-                                .searchProductVariantsByProductId(
-                                    product.productId!);
-
-                            print('variatnntnntntn   ${variants.toString()}');
+                            ProductsModel productsModel =
+                                await serviceDataServices
+                                    .searchProductById(product.productId!);
+                            List<ProductVariant> variants =
+                                await serviceDataServices
+                                    .searchProductVariantsByProductId(
+                                        product.productId!);
                             if (!context.mounted) {
                               return;
                             }

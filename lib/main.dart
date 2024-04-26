@@ -44,7 +44,9 @@ class MyApp extends StatelessWidget {
               lazy: false,
               create: (context) =>
                   AuthenticationBloc()..add(CheckActiveSession())),
-          BlocProvider(lazy: false, create: (context) => HomeBloc()..add(SyncToServer())),
+          BlocProvider(
+              lazy: false,
+              create: (context) => HomeBloc()..add(SyncToServer())),
           BlocProvider(lazy: false, create: (context) => CategoryBloc()),
           BlocProvider(lazy: false, create: (context) => ProductBloc()),
           BlocProvider(lazy: false, create: (context) => CompaniesBloc()),

@@ -6,6 +6,7 @@ class InitializeCategoryEvent extends CategoryEvent {}
 
 class AddCategory extends CategoryEvent {
   final CategoriesModel categoriesModel;
+
   AddCategory({required this.categoriesModel});
 }
 

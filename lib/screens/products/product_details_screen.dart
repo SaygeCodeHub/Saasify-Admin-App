@@ -1,17 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:saasify/cache/company_cache.dart';
 import 'package:saasify/configs/app_spacing.dart';
 import 'package:saasify/configs/app_theme.dart';
-import 'package:saasify/models/companies/company.dart';
 import 'package:saasify/models/product/product_model.dart';
 import 'package:saasify/screens/products/variants/add_variant_screen.dart';
 import 'package:saasify/screens/widgets/skeleton_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../configs/app_colors.dart';
 import '../../configs/app_dimensions.dart';
 import '../../models/product/product_variant.dart';
-import '../../services/service_locator.dart';
 import '../../utils/global.dart';
 
 class ProductDetailsScreen extends StatelessWidget {

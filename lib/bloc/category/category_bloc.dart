@@ -134,12 +134,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       categories = Hive.box<CategoriesModel>(HiveBoxes.categories.boxName)
           .values
           .toList();
-      if (categories.isNotEmpty) {
-        emit(CategoriesWithProductsFetched(categories: categories));
-      } else {
-        emit(CategoriesWithProductsNotFetched(
-            errorMessage: 'Something went wrong'));
-      }
+      emit(CategoriesWithProductsFetched(categories: categories));
     } catch (e) {
       emit(CategoriesWithProductsNotFetched(
           errorMessage: 'Error fetching categories: $e'));

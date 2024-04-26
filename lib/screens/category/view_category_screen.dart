@@ -37,7 +37,7 @@ class ViewCategoryScreen extends StatelessWidget {
                 child: Center(
                   child: ErrorDisplay(
                     pageNotFound: true,
-                    text: 'No category found!',
+                    text: 'No category found! Would you like to create a new one?',
                     buttonText: 'Add Category',
                     onPressed: () {
                       Navigator.pushReplacement(

@@ -26,9 +26,14 @@ class ErrorDisplay extends StatelessWidget {
       children: [
         (!pageNotFound!)
             ? Image.asset('assets/no-results.png', height: 150, width: 150)
-            : Image.asset('assets/empty-box.png', height: 150, width: 150),
+            : Image.asset('assets/no_data.jpeg'),
         const SizedBox(height: spacingSmall),
-        Text(text, style: Theme.of(context).textTheme.errorTextStyle),
+        Text(text,
+            style: Theme.of(context)
+                .textTheme
+                .productNameTextStyle
+                .copyWith(color: AppColors.darkBlue),
+            textAlign: TextAlign.center),
         const SizedBox(height: spacingLarge),
         (!pageNotFound!)
             ? TextButton(
@@ -39,7 +44,10 @@ class ErrorDisplay extends StatelessWidget {
                         .errorTextStyle
                         .copyWith(color: AppColors.red)))
             : PrimaryButton(
-                buttonWidth: 100, onPressed: onPressed, buttonTitle: buttonText)
+                buttonHeight: 40,
+                buttonWidth: 100,
+                onPressed: onPressed,
+                buttonTitle: buttonText)
       ],
     );
   }

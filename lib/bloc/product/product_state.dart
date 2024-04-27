@@ -1,5 +1,7 @@
 import 'package:saasify/models/product/product_model.dart';
 
+import '../../models/product/product_variant.dart';
+
 abstract class ProductState {}
 
 class ProductInitial extends ProductState {}
@@ -19,9 +21,10 @@ class ProductNotAdded extends ProductState {
 }
 
 class ProductsFetched extends ProductState {
-  final Map<String, List<ProductsModel>> categoryWiseProducts;
+  final Map<String, Map<ProductsModel, List<ProductVariant>>>
+      categoryWiseProductsVariants;
 
-  ProductsFetched({required this.categoryWiseProducts});
+  ProductsFetched({required this.categoryWiseProductsVariants});
 }
 
 class FetchingProducts extends ProductState {}

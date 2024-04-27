@@ -6,7 +6,7 @@ import 'package:saasify/bloc/product/product_bloc.dart';
 import 'package:saasify/bloc/product/product_state.dart';
 import 'package:saasify/configs/app_theme.dart';
 import 'package:saasify/models/product/product_variant.dart';
-import 'package:saasify/screens/products/view_product_screen.dart';
+import 'package:saasify/screens/products/view_all_products_screen.dart';
 import 'package:saasify/utils/progress_bar.dart';
 
 import '../../../configs/app_colors.dart';
@@ -183,7 +183,7 @@ class _AddVariantScreenState extends State<AddVariantScreen> {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AllProductsScreen()));
+                        builder: (context) => const ViewAllProductsScreen()));
               }
               if (state is VariantNotAdded) {
                 ProgressBar.dismiss(context);

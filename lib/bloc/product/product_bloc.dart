@@ -121,16 +121,28 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final categoriesBox =
           Hive.box<CategoriesModel>(HiveBoxes.categories.boxName);
       final productsBox = Hive.box<ProductsModel>(HiveBoxes.products.boxName);
-      Map<String, List<ProductsModel>> categoryProductsMap = {};
+      final variantsBox =
+          Hive.box<ProductVariant>(HiveBoxes.productVariants.boxName);
+      Map<String, Map<ProductsModel, List<ProductVariant>>>
+          categoryProductsVariantsMap = {};
       for (var category in categoriesBox.values) {
+        Map<ProductsModel, List<ProductVariant>> productsVariantsMap = {};
         List<ProductsModel> products = productsBox.values
             .where((product) => product.categoryId == category.categoryId)
             .toList();
-        if (products.isNotEmpty) {
-          categoryProductsMap[category.name!] = products;
+        for (var product in products) {
+          List<ProductVariant> variants = variantsBox.values
+              .where((variant) => variant.productId == product.productId)
+              .toList();
+          productsVariantsMap[product] = variants;
+        }
+
+        if (productsVariantsMap.isNotEmpty) {
+          categoryProductsVariantsMap[category.name!] = productsVariantsMap;
         }
       }
-      emit(ProductsFetched(categoryWiseProducts: categoryProductsMap));
+      emit(ProductsFetched(
+          categoryWiseProductsVariants: categoryProductsVariantsMap));
     } catch (e) {
       emit(ProductNotFetched(errorMessage: e.toString()));
     }

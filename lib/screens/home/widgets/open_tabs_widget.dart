@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:saasify/screens/pos/pos_screen.dart';
+import '../../billing/pos_view__category_wise_products_screen.dart';
 
 class OpenTabsWidget extends StatelessWidget {
   const OpenTabsWidget({super.key});
@@ -21,8 +21,11 @@ class OpenTabsWidget extends StatelessWidget {
                       shape: BoxShape.circle, color: Color(0xFFe9eaec)),
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => PosScreen()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  POSViewCategoryWiseProductScreen()));
                     },
                     child: const Center(
                       child: Icon(

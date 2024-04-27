@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: spacingLarge),
                         const Text(
-                          "Today's Collection", // New text
+                          "Total Collection", // New text
                           style: TextStyle(
                               fontSize: 13,
                               color: Colors.grey,

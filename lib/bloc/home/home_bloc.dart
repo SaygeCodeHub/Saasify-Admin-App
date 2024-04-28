@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saasify/bloc/home/home_events.dart';
 import 'package:saasify/bloc/home/home_state.dart';
+import 'package:saasify/utils/global.dart';
 
 import '../../services/firebase_services.dart';
 import '../../services/server_data_services.dart';
@@ -27,9 +28,11 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
         if (await serverDataServices.checkIfProductExists()) {
           if (await serverDataServices.checkIfProductVariantExists()) {
             emit(SyncedWithServer());
+            firstTimeSyncingDone = true;
           } else {
             await fetchVariants(emit);
             emit(SyncedWithServer());
+            firstTimeSyncingDone = true;
           }
         } else {
           await fetchProductAndVariants(emit);

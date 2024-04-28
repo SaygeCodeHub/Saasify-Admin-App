@@ -27,12 +27,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<NavigatorState> dialogNavigatorKey =
-      GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState>();
 
   @override
   void initState() {
-    context.read<HomeBloc>().add(SyncToServer());
-    readCurrencySymbol();
+    if (firstTimeSyncingDone) {
+      context.read<HomeBloc>().add(SyncToServer());
+      readCurrencySymbol();
+    }
     super.initState();
   }
 
@@ -68,9 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           );
-        }
-        if (state is SyncedWithServer || state is SyncingFailed) {
-          Navigator.canPop(context);
+        } else if (state is SyncedWithServer || state is SyncingFailed) {
+          // Dismiss the dialog when the state changes to SyncedWithServer or SyncingFailed
+          Navigator.pop(context);
         }
       },
       builder: (context, state) {
@@ -156,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? 2
                               : MediaQuery.of(context).size.width ~/ 180,
                           childAspectRatio:
-                              DeviceUtils.isMobile(context) ? 1.25 : 1.1,
+                          DeviceUtils.isMobile(context) ? 1.25 : 1.1,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10),
                       itemBuilder: (context, index) {
@@ -165,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           label: features[index].label,
                           screen: features[index].screen,
                         );
-                      })
+                      }),
                 ],
               ),
             ),
@@ -175,3 +177,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

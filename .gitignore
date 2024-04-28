@@ -33,6 +33,17 @@ android/
 /flutter-plugins
 .flutter-plugins
 .packages
+.filecache
+.app.dill
+.buildOutputCleanup.lock
+.debug_android_applications.stamp
+.executionHistory.bin
+.executionHistory.lock
+.fileHashes.bin
+.fileHashes.lock
+.flutter_assets.d
+.kernel_snapshot.d
+.kernel_snapshot.stamp
 .flutter-plugins-dependencies
 **/ios/Flutter/.last_build_id
 
@@ -45,10 +56,6 @@ android/
 app.*.symbols
 app.*.map.json
 
-# IntelliJ files
-*.iml
-*.ipr
-*.iws
 
 # Documentation directories
 /doc/api/
@@ -57,17 +64,7 @@ app.*.map.json
 **/*.map
 **/*.spec
 
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
 
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
 
 # Build artifacts for Android and iOS
 /android/app/debug/
